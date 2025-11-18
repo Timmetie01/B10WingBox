@@ -1,1 +1,4 @@
-#This is a commment
+def main():
+    pass
+
+#hi
