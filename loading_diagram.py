@@ -1,5 +1,6 @@
 #We will try to make the loading diagram here, hopefully should be fun!!!!!
-
+import math
+import constants
 def ISA(alt):
     g_0 = 9.80665
     R = 287
@@ -26,3 +27,6 @@ def ISA(alt):
 
     return t_1, p_1, rho
 
+LD_OEW = constants.const["eom"]
+LD_MTOW = constants.const["mtow"]
+LD_W3 = constants.const["eom"] + 1010
