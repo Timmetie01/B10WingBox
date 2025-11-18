@@ -1,5 +1,6 @@
 import math
 
+
 const = {
     # General Specs
     'maximum_take_off_mass': 12314.28, # [kg]
@@ -15,10 +16,27 @@ const = {
     'tip_chord': 0.98287858, # [m]
     'taper_ratio': 0.316224196, # [-]
     'mean_aerodynamic_chord': 2.229538428, # [m]
-    'coefficient_lift_cruise': 0.580201347, # [-]
-    'coefficient_lift_to_drag': 13.305, # [-]
-    'coefficient_lift_angle_of_attack_slope': 5.537, # [1/rad]
+    'lift_coefficient_cruise': 0.580201347, # [-]
+    'lift_to_drag': 13.305, # [-]
+    'lift_coefficient_slope': 5.537, # [1/rad]
+    'flap_start_position': 1.050, # [m]
+    'flap_end_position': 4.423, # [m]
+
+    #Fuselage specs
+    'fuselage_length': 15.85, # [m]
+    'nose_length': 3, # [m]
+    'tailcone_length': 6.234, # [m]
+    'fuselage_diameter': 2.078,# [m]
+
+    #Landing Gear specs
+    'ground_to_fuselage_height': 0.9795, # [m]
+    'main_landing_gear_wheel_diameter': 0.5588, # [m]
+    'main_landing_gear_width': 0.17145, # [m]
+    'nose_landing_gear_diameter': 0.5588, # [m]
+    'nose_landing_gear_width': 0.17145, # [m]
 }
+
+
 def sweep_at_chord_fraction(chord_fraction, leading_edge_sweep = const['leading_edge_sweep'], span = const['span'], taper = const['taper_ratio'], root_chord = const['root_chord']):
     if  chord_fraction < 0 or chord_fraction > 1:
         print(f'Cannot compute sweep. Chord fraction = {chord_fraction}, should be 0 =< chord_fraction =< 1.')
@@ -28,6 +46,7 @@ def sweep_at_chord_fraction(chord_fraction, leading_edge_sweep = const['leading_
     chord_fraction_sweep = math.atan(math.tan(leading_edge_sweep) - chord_fraction * 2 * root_chord / span * (1-taper)) # [rad]
 
     return chord_fraction_sweep
+
 
 def local_chord_at_span(target_span, root_chord = const['root_chord'], taper_ratio = const['taper_ratio'], total_span = const['span']):
     if abs(target_span) > total_span:
