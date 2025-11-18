@@ -40,8 +40,6 @@ const = {
     'main_lg_width': 0.17145,
     'nose_lg_diameter': 0.5588,
     'nose_lg_width': 0.17145, 
-    'test':0.5,
-
 }
 
 
