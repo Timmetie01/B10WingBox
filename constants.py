@@ -20,3 +20,5 @@ const = {
     'mean_aerodynamic_chord': 2.229538428,
 
 }
+
+print('Hello World')
