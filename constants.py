@@ -25,8 +25,21 @@ const = {
     'Cl_cruise': 0.580201347,
     'Cl_Cd_cruise': 13.305,
     'Cl_alpha': 5.537,
+    'flap_start_pos': 1.050,
+    'flap_end_pos': 4.423,
 
-    #... specs
+    #Fuselage specs
+    'fus_length': 15.85,
+    'nose_length': 3,
+    'tailcone_length': 6.234,
+    'fus_diameter': 2.078,
+
+    #Landing Gear specs
+    'ground_to_fuselage_height':0.9795,
+    'main_lg_wheel_diameter': 0.5588,
+    'main_lg_width': 0.17145,
+    'nose_lg_diameter': 0.5588,
+    'nose_lg_width': 0.17145, 
 
 
 }
