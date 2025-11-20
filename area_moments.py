@@ -26,7 +26,7 @@ def Torsional_constant(coords,t):
     return 4*A**2/integral
 
 #Returns the centroid coordinates
-def centroidcoords(panelcoords, panelthickness):
+def centroidcoords(panelcoords, panelthickness, stringercoords, stringerarea):
     panelaveragecoords = np.zeros((len(panelcoords), 2))
 
     #The center coordinates of the panel
@@ -36,10 +36,12 @@ def centroidcoords(panelcoords, panelthickness):
     panellength = np.sqrt((panelcoords[:,2] - panelcoords[:,0]) * (panelcoords[:,2] - panelcoords[:,0]) + (panelcoords[:,3] - panelcoords[:,1]) * (panelcoords[:,3] - panelcoords[:,1]))
     panellength = np.transpose(np.array([panellength]))
 
-    totalarea = np.sum(panellength * panelthickness)
+    totalarea = np.sum(panellength * panelthickness) + np.sum(stringerarea)
 
-    return np.array([np.sum(np.transpose(np.array([panelaveragecoords[:,0]])) * panellength * panelthickness), np.sum(np.transpose(np.array([panelaveragecoords[:,1]])) * panellength * panelthickness)]) / totalarea
+    wingboxcontribution = np.array([np.sum(np.transpose(np.array([panelaveragecoords[:,0]])) * panellength * panelthickness), np.sum(np.transpose(np.array([panelaveragecoords[:,1]])) * panellength * panelthickness)])
     
-
-testwingbox = data_import.import_wingbox('test_cross_section')
-print(centroidcoords(testwingbox.panels, testwingbox.panel_thickness))
+    print(stringercoords)
+    print(stringerarea)
+    stringercontribution = np.array([np.sum(np.transpose(np.array([panelaveragecoords[:,0]])) * stringerarea),  np.sum(np.transpose(np.array([panelaveragecoords[:,1]])) * stringerarea)])
+    
+    return (stringercontribution + wingboxcontribution) / totalarea
