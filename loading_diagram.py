@@ -62,9 +62,10 @@ def v_d(v_c, alt):
 
     v_d = v_c*1/0.8
     a = math.sqrt(1.4*287*ISA(alt)[0])
+    print(v_d)
 
     if (v_d*math.sqrt(1.225/ISA(alt)[2]))/a > 0.75:
-        return a*0.75*math.sqrt(1.225/ISA(alt)[2])
+        return a*0.75*math.sqrt(ISA(alt)[2]/1.225)
     else:
         return v_d
 
@@ -170,6 +171,8 @@ while v > 0:
     n = -(v/v_s1)**2
     vtab.append(v)
     ntab.append(n)
+
+print("The maximum loading factor is ", n_maximum)
 
 plt.figure()
 plt.plot(vtab, ntab)
