@@ -21,6 +21,6 @@ def contour_int(coords,t):
 #Outputs the torsional constant of a shape (the wingbox) when inputs are 1) a numpy nx2 array for the coordinates (of the winbox)
 #2) the thicknesses of each panel in a nx1 array
 def Torsional_constant(coords,t):
-    A = Area(coords)**2
+    A = Area(coords)
     integral = contour_int(coords,t)
-    return 4*A/integral
+    return 4*A**2/integral
