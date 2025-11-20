@@ -34,6 +34,12 @@ const = {
     'main_landing_gear_width': 0.17145, # [m]
     'nose_landing_gear_diameter': 0.5588, # [m]
     'nose_landing_gear_width': 0.17145, # [m]
+
+    #Material specs
+    'Density': 2780, #[kg/m^3]
+    'Modulus_of_Elasticity': 72400000000, # [Pa] (assumed same modulus for tension & compression - only 2% variation in aluminium alloys)
+    'Shear_Modulus': 28000000000, # [Pa]
+    
 }
 
 
