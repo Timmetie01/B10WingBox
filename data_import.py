@@ -1,5 +1,6 @@
 import numpy as np
-import classes
+from classes import Wingbox
+
 
 
 #State a wingbox folder (string), it returns a np array (n x 2) t of coordinates. File format for input:
@@ -75,13 +76,18 @@ def makepanels(inputcoordinates):
             panelarray[i,0:2] = inputcoordinates[i,:]
             panelarray[i,2:4] = inputcoordinates[i+1,:]
 
-    return panelarray
+    return panelarray   
 
 
+def import_wingbox(foldername):
+    wingboxclass = Wingbox(import_wingbox_points('data/' + foldername), import_wingbox_thickness('data/' + foldername), import_stringers('data/' + foldername)[0], import_stringers('data/' + foldername)[1])
+    return wingboxclass
+testwingbox = import_wingbox('test_cross_section')
 
+#testwingbox = Wingbox(import_wingbox_points('data/test_cross_section'), import_wingbox_thickness('data/test_cross_section'), import_stringers('data/test_cross_section')[0], import_stringers('data/test_cross_section')[1])
+    
 
-testwingbox = classes.Wingbox(makepanels(import_wingbox_points('data/test_cross_section')), import_wingbox_thickness('data/test_cross_section'), import_stringers('data/test_cross_section')[0], import_stringers('data/test_cross_section')[1])
-
+print(testwingbox.points)
 print(testwingbox.panels)
 print(testwingbox.panel_thickness)
 print(testwingbox.stringers)

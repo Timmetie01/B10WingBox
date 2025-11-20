@@ -1,5 +1,5 @@
 import numpy as np
-
+import data_import
 
 #Outputs the area of a polygon when input is a numpy nx2 array (coordinates of the wingbox)
 def Area(coords):
@@ -24,3 +24,18 @@ def Torsional_constant(coords,t):
     A = Area(coords)
     integral = contour_int(coords,t)
     return 4*A**2/integral
+
+def centroidcoords(panelcoords, panelthickness):
+    panelaveragecoords = np.zeros((len(panelcoords), 2))
+
+    #The center coordinates of the panel
+    panelaveragecoords[:,0] = (panelcoords[:,0] + panelcoords[:,2]) / 2
+    panelaveragecoords[:,1] = (panelcoords[:,1] + panelcoords[:,3]) / 2
+
+    panellength = np.sqrt((panelcoords[:,2] - panelcoords[:,0]) * (panelcoords[:,2] - panelcoords[:,0]) + (panelcoords[:,3] - panelcoords[:,1]) * (panelcoords[:,3] - panelcoords[:,1]))
+
+
+    return True
+
+
+
