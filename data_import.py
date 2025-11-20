@@ -1,12 +1,13 @@
 import numpy as np
+import classes
 
 
 #State a wingbox folder (string), it returns a lisnp array (n x 2) t of coordinates. File format:
 #Header row
 #x1  y1
 #x2  y2 etc etc
-def importpoints(filename):
-    with open(filename + '/wingbox_coords.txt') as airfoilpoints:
+def import_wingbox_points(foldername):
+    with open(foldername + '/wingbox_coords.txt') as airfoilpoints:
         lines = np.array(airfoilpoints.readlines())
 
     pointlist = np.zeros((len(lines) - 1,2))
@@ -19,8 +20,39 @@ def importpoints(filename):
 
     return pointlist
 
+def import_wingbox_thickness(foldername):
+    with open(foldername + '/wingbox_thickness.txt') as airfoilpoints:
+        lines = np.array(airfoilpoints.readlines())
 
-#Give a list of points (nx2 numpy array of coords). Close the section if necessary. return nx4 array of panel coordinates in x1 y1 x2 y2 format
+    thickness_list = np.zeros((len(lines) - 1,1))
+
+    for i in range(len(lines) - 1):
+        
+        thickness = str(lines[i + 1]).strip()
+        thickness_list[i] = np.float64(thickness)
+
+    return thickness_list
+
+
+def import_stringers(foldername):
+    with open(foldername + '/stringer_properties.txt') as airfoilpoints:
+        lines = np.array(airfoilpoints.readlines())
+
+    coordinate_list = np.zeros((len(lines) - 1,2))
+    area_list = np.zeros((len(lines) - 1, 1))
+    
+
+    for i in range(len(lines) - 1):
+
+        linestring = str(lines[i + 1]).strip()
+        linearray = np.array(linestring.split(), dtype=np.float64)
+        coordinate_list[i,0], coordinate_list[i,1]  = linearray[0], linearray[1]
+        area_list[i] = linearray[2]
+
+    return coordinate_list, area_list
+
+
+#Give a list of points (nx2 numpy array of coords). Closes the cross-section if necessary. return nx4 array of panel coordinates in x1 y1 x2 y2 format
 def makepanels(inputcoordinates):
 
     #If the pointlist ends with something else, close the section
@@ -38,5 +70,10 @@ def makepanels(inputcoordinates):
 
 
 
-print(importpoints('data/test_cross_section'))
-print(makepanels(importpoints('data/test_cross_section')))
+
+testwingbox = classes.Wingbox(makepanels(import_wingbox_points('data/test_cross_section')), import_wingbox_thickness('data/test_cross_section'), import_stringers('data/test_cross_section')[0], import_stringers('data/test_cross_section')[1])
+
+print(testwingbox.panels)
+print(testwingbox.panel_thickness)
+print(testwingbox.stringers)
+print(testwingbox.stringerarea)
