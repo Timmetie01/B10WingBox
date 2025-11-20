@@ -2,7 +2,11 @@ import numpy as np
 import scipy as sp
 from scipy import interpolate
 import matplotlib.pyplot as plt
+<<<<<<< HEAD
 import math as m
+=======
+from math import cos, sin, pi
+>>>>>>> 11f10baf7f1bc07d20257c433b2f975f760b0f6c
 
 #Constants
 cr = 3.108170068
@@ -13,7 +17,14 @@ rho = 0.28711101
 vinfinity = 200.5593111
 q = 0.5*rho*vinfinity**2
 CLcruise = 0.58020
+<<<<<<< HEAD
 g = 9.80665
+=======
+wing_fuel_percentage = 0.7
+fuel_weight = 4541.1
+wing_weight = 711.736
+alpha = float(float(input("Input an alpha value n degrees"))*pi/180)
+>>>>>>> 11f10baf7f1bc07d20257c433b2f975f760b0f6c
 
 #From xflr5
 CL0 =  0.179632
@@ -67,7 +78,7 @@ function_Cd_10 = sp.interpolate.interp1d(yspan_10,ICd_10,kind="cubic",fill_value
 function_cm4_0 = sp.interpolate.interp1d(yspan_0,CmAirfchord4_0,kind="cubic",fill_value="extrapolate")
 function_cm4_0 = sp.interpolate.interp1d(yspan_10,CmAirfchord4_10,kind="cubic",fill_value="extrapolate")
 
-def chordlength(ypos, cr, ct, span):
+def chord_length(ypos):
     chordlength = cr + (ct-cr)*2/span*ypos
     return chordlength
 
@@ -75,6 +86,7 @@ def chordlength2(cr,taper,span,ypos):
     chordlength2 = cr -cr*(1-taper)*ypos/(span/2)
     return chordlength2
 
+<<<<<<< HEAD
 def weightdistribution(y: float, alpha: float, step: float = span/2 / 200, LG_weight: float = 317.833/2, LG_y_pos: float = 1.9808):
     """A function that represents the weight distribution of the landing gear
     
@@ -127,6 +139,9 @@ def alphafromCLd(CLd):
 
 
 #Aerodynamic distribution for known CLd (it will give a function dependent on spanwise position)
+=======
+#Distrinuted lift coefficient which produces total lift CLdes (it will give a function dependent on spanwise position)
+>>>>>>> 11f10baf7f1bc07d20257c433b2f975f760b0f6c
 
 def liftdristribution(CLd):
     def Cldistr(y):
@@ -135,9 +150,11 @@ def liftdristribution(CLd):
         return Cl_0y + (Cl_10y - Cl_0y)/(CL10 - CL0)*(CLd - CL0)
     return Cldistr
 
+#Lift per unit span 
 def Lub(y):
-    return liftdristribution(CLcruise)(y)*q*chordlength(y,cr,ct,span)
+    return liftdristribution(CLcruise)(y)*q*chord_length(y)
 
+<<<<<<< HEAD
 def shear(y, alpha):
     S, error = sp.integrate.quad(Lub,y,span/2)
     W, error2 = sp.integrate.quad(weightdistribution, y, span/2, args = (alpha)) # add the weight distribution
@@ -155,6 +172,8 @@ plt.plot(ypoints,shearvalues)
 plt.xlabel("Spanwise position [m]")
 plt.ylabel("Shear Force[N]")
 plt.show()
+=======
+>>>>>>> 11f10baf7f1bc07d20257c433b2f975f760b0f6c
 
 #Another way
 #plt.title("Noisy data")
@@ -174,4 +193,37 @@ plt.show()
 #plt.show()
 
    # print(polynomial)
+
+
+#Weight distribution function
+
+fuel_weight = wing_fuel_percentage*fuel_weight
+total_wing_weight = wing_weight + fuel_weight
+
+halfspan_chord_summation, error = sp.integrate.quad(chord_length,0,span/2)
+
+print(halfspan_chord_summation)
+
+def distributed_weight(y):
+    return chord_length(y)/halfspan_chord_summation * total_wing_weight/2
+
+
+def shear(y):
+    if alpha == 0:
+        S, error = sp.integrate.quad(Lub,y,span/2)
+        S2, error = sp.integrate.quad(distributed_weight,y,span/2)
+        return -1*S1 + S2
+    else:
+        S1, error = sp.integrate.quad(Lub*cos(alpha),y,span/2)
+        S2, error = sp.integrate.quad(distributed_weight*cos(alpha),y,span/2)
+        return -1*S1 + S2
+
+
+ypoints = np.linspace(0, span/2,200)
+shearvalues = np.array([shear(y) for y in ypoints])
+
+plt.plot(ypoints,shearvalues)
+plt.xlabel("Spanwise position [m]")
+plt.ylabel("Shear Force[N]")
+plt.show()
 
