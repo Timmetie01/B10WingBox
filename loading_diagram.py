@@ -2,6 +2,8 @@
 import math
 import constants
 import matplotlib.pyplot as plt
+
+#ISA calculation, can be used for density, but now work for density as well
 def ISA(alt):
     g_0 = 9.80665
     R = 287
@@ -62,7 +64,7 @@ def v_d(v_c, alt):
     else:
         return v_d
 
-#Drawing of the diagram
+#Drawing of the diagram, ask the user for what kind of situation the graph is used
 print("Type 1 for OEW, type 2 for MTOW, type 3 for OEW + Payload")
 choice = input("Enter your choice:")
 altitude = int(input("Input the altitude in meters, max 20k:"))
@@ -77,6 +79,7 @@ else:
     print("Are you stupid?")
     exit()
 
+v_c = v_c * math.sqrt(ISA(altitude)[2]/1.225)
 vtab = []
 ntab = []
 
@@ -86,6 +89,8 @@ dv = 0.1
 dn = 0.001
 v = 0
 n = 0
+
+#Go up to N_max
 while n < n_maximum:
     ntab.append(n)
     vtab.append(v)
@@ -94,14 +99,14 @@ while n < n_maximum:
     if n - 2 <= 0.001:
         special_v = v
 
-print(n)
-
+# Go Down to 0
 while v > 0:
     ntab.append(n)
     vtab.append(v)
     v = v - dv
     n = (v/v_s1)**2
 
+#Go Up to N_max with flaps
 n = 0
 v = 0
 v_s0 = stallspeed(W, Clmax_flaps_landing)
@@ -111,22 +116,20 @@ while n < 2:
     v = v + dv
     n = (v/v_s0)**2
 
-
-
+#Go straight until it hits the line or hits a limiting speed
 while v < special_v and v < v_f:
     ntab.append(2)
     vtab.append(v)
     v = v + dv
 
-
+# Go up to N_max
 while n < n_maximum:
     ntab.append(n)
     vtab.append(v)
     v = v + dv
     n = (v/v_s1)**2
 
-print(n)
-
+#Go straight until it gets to dive speed
 v_dive = v_d(v_c, altitude)
 
 while v < v_dive:
@@ -134,6 +137,7 @@ while v < v_dive:
     vtab.append(v)
     v = v + dv
 
+#Go Down
 n = n_maximum
 
 while n > 0:
@@ -141,7 +145,7 @@ while n > 0:
     ntab.append(n)
     n = n - dn
 
-
+#Go down linearly to minimum loading factor
 slope = -1/(v_dive-v_c)
 
 while v > v_c:
@@ -150,11 +154,13 @@ while v > v_c:
     vtab.append(v)
     ntab.append(n)
 
+#Go horizontally back to stall speed
 while v > v_s1:
     v = v - dv
     vtab.append(v)
     ntab.append(-1)
 
+#Go back up to 0
 while v > 0:
     v = v - dv
     n = -(v/v_s1)**2
