@@ -73,7 +73,7 @@ def chordlength2(cr,taper,span,ypos):
     chordlength2 = cr -cr*(1-taper)*ypos/(span/2)
     return chordlength2
 
-#Aerodynamic distribution for known CLd (it will give a function dependent on spanwise position)
+#Distrinuted lift coefficient which produces total lift CLdes (it will give a function dependent on spanwise position)
 
 def liftdristribution(CLd):
     def Cldistr(y):
@@ -82,6 +82,7 @@ def liftdristribution(CLd):
         return Cl_0y + (Cl_10y - Cl_0y)/(CL10 - CL0)*(CLd - CL0)
     return Cldistr
 
+#Lift per unit span 
 def Lub(y):
     return liftdristribution(CLcruise)(y)*q*chordlength(y,cr,ct,span)
 
