@@ -7,8 +7,8 @@ import classes
 #x1  y1
 #x2  y2 etc etc
 def import_wingbox_points(foldername):
-    with open(foldername + '/wingbox_coords.txt') as airfoilpoints:
-        lines = np.array(airfoilpoints.readlines())
+    with open(foldername + '/wingbox_coords.txt') as wingboxpoints:
+        lines = np.array(wingboxpoints.readlines())
 
     pointlist = np.zeros((len(lines) - 1,2))
 
