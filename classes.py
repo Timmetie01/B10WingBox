@@ -24,3 +24,18 @@ class Wingbox:
         self.centroidal_stringers = self.stringers - self.centroid_coordinates
 
 
+class ScaledWingbox:
+    def __init__(self, originalclass, scale):
+        self.points = originalclass.points * scale
+        self.panels = originalclass.panels * scale
+        self.panel_thickness = originalclass.panel_thickness * scale
+        self.stringers = originalclass.stringers * scale
+        self.stringerarea = originalclass.stringers * scale ** 2
+
+        self.centroid_coordinates = originalclass.centroid_coordinates * scale
+        self.centroidal_points = originalclass.centroidal_points * scale
+        self.centroidal_panels = originalclass.centroidal_panels * scale
+        self.centroidal_stringers = originalclass.centroidal_stringers * scale
+
+
+
