@@ -1,6 +1,7 @@
 #We will try to make the loading diagram here, hopefully should be fun!!!!!
 import math
 import constants
+import matplotlib.pyplot as plt
 def ISA(alt):
     g_0 = 9.80665
     R = 287
@@ -28,5 +29,130 @@ def ISA(alt):
     return t_1, p_1, rho
 
 LD_OEW = constants.const["eom"]
-LD_MTOW = constants.const["mtow"]
+LD_MTOW = constants.const["mtom"]
 LD_W3 = constants.const["eom"] + 1010
+S = 35.98385994
+v_c = 200.687769
+
+#DO NOT QUESTION THESE VALUES
+Clmax_noflaps = 2.0236*0.8
+Clmax_flaps_landing = 2.1
+Clmax_flaps_takeoff = 2.0236*0.8+0.2
+
+def stallspeed(W, Clmax):
+    v_s = math.sqrt(2*W/(Clmax*S*1.225))
+    return v_s
+
+#Maximum speed at which flaps can be deployed
+v_f = max(1.6*stallspeed(LD_MTOW, Clmax_flaps_takeoff), 1.8*stallspeed(LD_MTOW, Clmax_flaps_landing))
+
+def n_max(W):
+    n_max = max(2.1 + 24000/(W*1/0.454+10000), 2.1)
+    if n_max > 3.8:
+        return 3.8
+    return n_max
+
+def v_d(v_c, alt):
+
+    v_d = v_c*1/0.8
+    a = math.sqrt(1.4*287*ISA(alt)[0])
+
+    if v_d/a > 0.75:
+        return a*0.75
+    else:
+        return v_d
+
+#Drawing of the diagram
+print("Type 1 for OEW, type 2 for MTOW, type 3 for OEW + Payload")
+choice = input("Enter your choice:")
+altitude = int(input("Input the altitude in meters, max 20k:"))
+
+if choice == "1":
+    W = LD_MTOW
+elif choice == "2":
+    W = LD_MTOW
+elif choice == "3":
+    W = LD_W3
+else:
+    print("Are you stupid?")
+    exit()
+
+vtab = []
+ntab = []
+
+v_s1 = stallspeed(W, Clmax_noflaps)
+n_maximum = n_max(W)
+dv = 0.1
+dn = 0.001
+v = 0
+n = 0
+while n < n_maximum:
+    n = (v/v_s1)**2
+    ntab.append(n)
+    vtab.append(v)
+    v = v + dv
+    if n - 2 <= 0.001:
+        special_v = v
+
+while v > 0:
+    n = (v/v_s1)**2
+    ntab.append(n)
+    vtab.append(v)
+    v = v - dv
+
+n = 0
+v = 0
+v_s0 = stallspeed(W, Clmax_flaps_landing)
+while n < 2:
+    n = (v/v_s0)**2
+    ntab.append(n)
+    vtab.append(v)
+    v = v + dv
+
+while v < special_v and v < v_f:
+    ntab.append(2)
+    vtab.append(v)
+    v = v + dv
+
+while n < n_maximum:
+    n = (v/v_s1)**2
+    ntab.append(n)
+    vtab.append(v)
+    v = v + dv
+
+v_dive = v_d(v_c, altitude)
+
+while v < v_dive:
+    ntab.append(n_maximum)
+    vtab.append(v)
+    v = v + dv
+
+n = n_maximum
+
+while n > 0:
+    vtab.append(v)
+    n = n - dn
+    ntab.append(n)
+
+slope = -1/(v_dive-v_c)
+
+while v > v_c:
+    v = v - dv*0.01
+    n = n + slope*dn
+    vtab.append(v)
+    ntab.append(n)
+
+while v > v_s1:
+    v = v - dv
+    vtab.append(v)
+    ntab.append(-1)
+
+while v > 0:
+    v = v - dv
+    n = -(v/v_s1)**2
+    vtab.append(v)
+    ntab.append(n)
+
+plt.figure()
+plt.plot(vtab, ntab)
+plt.show()
