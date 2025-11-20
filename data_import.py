@@ -2,7 +2,7 @@ import numpy as np
 import classes
 
 
-#State a wingbox folder (string), it returns a lisnp array (n x 2) t of coordinates. File format:
+#State a wingbox folder (string), it returns a np array (n x 2) t of coordinates. File format for input:
 #Header row
 #x1  y1
 #x2  y2 etc etc
@@ -20,6 +20,10 @@ def import_wingbox_points(foldername):
 
     return pointlist
 
+#State a wingbox folder (string), it returns a np array (n x 1) t of thickness of panels. File format for input:
+#Header row
+#thickness1
+#thickness2 etc etc
 def import_wingbox_thickness(foldername):
     with open(foldername + '/wingbox_thickness.txt') as airfoilpoints:
         lines = np.array(airfoilpoints.readlines())
@@ -33,7 +37,12 @@ def import_wingbox_thickness(foldername):
 
     return thickness_list
 
-
+#State a wingbox folder (string).
+#This returns both a nx2 array of coordinates of stringers, and a nx1 array of the areas of those stringers, as specified in the txt file
+#Input file format:
+#header row
+#x1 y1 area1
+#x2 y2 thickness2       etc etc
 def import_stringers(foldername):
     with open(foldername + '/stringer_properties.txt') as airfoilpoints:
         lines = np.array(airfoilpoints.readlines())
