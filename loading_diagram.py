@@ -3,7 +3,7 @@ import math
 import constants
 import matplotlib.pyplot as plt
 
-#ISA calculation, can be used for density, but now work for density as well
+#ISA calculation, can be used for density, temperature, etc.
 def ISA(alt):
     g_0 = 9.80665
     R = 287
@@ -30,6 +30,7 @@ def ISA(alt):
 
     return t_1, p_1, rho
 
+# Constants, pulls from constants.py
 LD_OEW = constants.const["eom"]
 LD_MTOW = constants.const["mtom"]
 LD_W3 = constants.const["eom"] + 1010
@@ -41,6 +42,7 @@ Clmax_noflaps = 2.0236*0.8
 Clmax_flaps_landing = 2.1
 Clmax_flaps_takeoff = 2.0236*0.8+0.2
 
+#Function that calculates the stall speed, duh
 def stallspeed(W, Clmax):
     v_s = math.sqrt(2*W/(Clmax*S*1.225))
     return v_s
@@ -48,19 +50,21 @@ def stallspeed(W, Clmax):
 #Maximum speed at which flaps can be deployed
 v_f = max(1.6*stallspeed(LD_MTOW, Clmax_flaps_takeoff), 1.8*stallspeed(LD_MTOW, Clmax_flaps_landing))
 
+#Function to calculate the maximum load factor
 def n_max(W):
     n_max = max(2.1 + 24000/(W*1/0.454+10000), 2.1)
     if n_max > 3.8:
         return 3.8
     return n_max
 
+#Function to calculate the dive speed, which is basically the maximum speed
 def v_d(v_c, alt):
 
     v_d = v_c*1/0.8
     a = math.sqrt(1.4*287*ISA(alt)[0])
 
-    if v_d/a > 0.75:
-        return a*0.75
+    if (v_d*math.sqrt(1.225/ISA(alt)[2]))/a > 0.75:
+        return a*0.75*math.sqrt(1.225/ISA(alt)[2])
     else:
         return v_d
 
