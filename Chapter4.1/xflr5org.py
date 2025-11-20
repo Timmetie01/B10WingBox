@@ -68,15 +68,11 @@ function_Cd_0 = sp.interpolate.interp1d(yspan_0,ICd_0,kind="cubic",fill_value="e
 function_Cd_10 = sp.interpolate.interp1d(yspan_10,ICd_10,kind="cubic",fill_value="extrapolate")
 
 function_cm4_0 = sp.interpolate.interp1d(yspan_0,CmAirfchord4_0,kind="cubic",fill_value="extrapolate")
-function_cm4_0 = sp.interpolate.interp1d(yspan_10,CmAirfchord4_10,kind="cubic",fill_value="extrapolate")
+function_cm4_10 = sp.interpolate.interp1d(yspan_10,CmAirfchord4_10,kind="cubic",fill_value="extrapolate")
 
 def chord_length(ypos):
     chordlength = cr + (ct-cr)*2/span*ypos
     return chordlength
-
-def chordlength2(cr,taper,span,ypos):
-    chordlength2 = cr -cr*(1-taper)*ypos/(span/2)
-    return chordlength2
 
 #Distrinuted lift coefficient which produces total lift CLdes (it will give a function dependent on spanwise position)
 
@@ -127,12 +123,12 @@ def distributed_weight(y):
 
 def shear(y):
     if alpha == 0:
-        S, error = sp.integrate.quad(Lub,y,span/2)
+        S1, error = sp.integrate.quad(Lub,y,span/2)
         S2, error = sp.integrate.quad(distributed_weight,y,span/2)
         return -1*S1 + S2
     else:
-        S1, error = sp.integrate.quad(Lub*cos(alpha),y,span/2)
-        S2, error = sp.integrate.quad(distributed_weight*cos(alpha),y,span/2)
+        S1, error = sp.integrate.quad(lambda yy: Lub(yy)*cos(alpha),y,span/2)
+        S2, error = sp.integrate.quad(lambda yy: distributed_weight(yy)*cos(alpha),y,span/2)
         return -1*S1 + S2
 
 
