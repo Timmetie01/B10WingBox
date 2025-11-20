@@ -78,7 +78,7 @@ def makepanels(inputcoordinates):
 
     return panelarray   
 
-
+#When a folder with fully correct syntax provides wingbox data, just input the folder name into this function and it will return a completely defined wingbox class!
 def import_wingbox(foldername):
     wingboxclass = Wingbox(import_wingbox_points('data/' + foldername), import_wingbox_thickness('data/' + foldername), import_stringers('data/' + foldername)[0], import_stringers('data/' + foldername)[1])
     return wingboxclass
