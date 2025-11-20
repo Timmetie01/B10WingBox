@@ -1,7 +1,6 @@
 import numpy as np
 
 
-
 #Arguments to create wingbox class:
 #1: n x 2 array of coords from wingbox
 #2: n x 1 array of thicknesses of the wingbox panels
@@ -20,7 +19,7 @@ class Wingbox:
 
         self.centroid_coordinates = area_moments.centroidcoords(self.panels, self.panel_thickness, self.stringers, self.stringerarea)
         self.centroidal_points = self.points - self.centroid_coordinates
-        self.centroidal_panels = self.points - np.array(self.centroid_coordinates + self.centroid_coordinates)
+        self.centroidal_panels = self.panels - np.array([self.centroid_coordinates[0], self.centroid_coordinates[1], self.centroid_coordinates[0], self.centroid_coordinates[1]])
         self.centroidal_stringers = self.stringers - self.centroid_coordinates
 
 
