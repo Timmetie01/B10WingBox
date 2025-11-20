@@ -2,11 +2,8 @@ import numpy as np
 import scipy as sp
 from scipy import interpolate
 import matplotlib.pyplot as plt
-<<<<<<< HEAD
 import math as m
-=======
 from math import cos, sin, pi
->>>>>>> 11f10baf7f1bc07d20257c433b2f975f760b0f6c
 
 #Constants
 cr = 3.108170068
@@ -17,14 +14,11 @@ rho = 0.28711101
 vinfinity = 200.5593111
 q = 0.5*rho*vinfinity**2
 CLcruise = 0.58020
-<<<<<<< HEAD
 g = 9.80665
-=======
 wing_fuel_percentage = 0.7
 fuel_weight = 4541.1
 wing_weight = 711.736
 alpha = float(float(input("Input an alpha value n degrees"))*pi/180)
->>>>>>> 11f10baf7f1bc07d20257c433b2f975f760b0f6c
 
 #From xflr5
 CL0 =  0.179632
@@ -86,7 +80,6 @@ def chordlength2(cr,taper,span,ypos):
     chordlength2 = cr -cr*(1-taper)*ypos/(span/2)
     return chordlength2
 
-<<<<<<< HEAD
 def weightdistribution(y: float, alpha: float, step: float = span/2 / 200, LG_weight: float = 317.833/2, LG_y_pos: float = 1.9808):
     """A function that represents the weight distribution of the landing gear
     
@@ -139,9 +132,7 @@ def alphafromCLd(CLd):
 
 
 #Aerodynamic distribution for known CLd (it will give a function dependent on spanwise position)
-=======
 #Distrinuted lift coefficient which produces total lift CLdes (it will give a function dependent on spanwise position)
->>>>>>> 11f10baf7f1bc07d20257c433b2f975f760b0f6c
 
 def liftdristribution(CLd):
     def Cldistr(y):
@@ -154,13 +145,10 @@ def liftdristribution(CLd):
 def Lub(y):
     return liftdristribution(CLcruise)(y)*q*chord_length(y)
 
-<<<<<<< HEAD
 def shear(y, alpha):
     S, error = sp.integrate.quad(Lub,y,span/2)
     W, error2 = sp.integrate.quad(weightdistribution, y, span/2, args = (alpha)) # add the weight distribution
     return -1*(S-W)
-
-
 
 ypoints = np.linspace(0, span/2,200)
 shearvalues = np.array([shear(y, 10*m.pi/180) for y in ypoints])
@@ -172,8 +160,6 @@ plt.plot(ypoints,shearvalues)
 plt.xlabel("Spanwise position [m]")
 plt.ylabel("Shear Force[N]")
 plt.show()
-=======
->>>>>>> 11f10baf7f1bc07d20257c433b2f975f760b0f6c
 
 #Another way
 #plt.title("Noisy data")
