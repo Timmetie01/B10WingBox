@@ -87,38 +87,45 @@ dn = 0.001
 v = 0
 n = 0
 while n < n_maximum:
-    n = (v/v_s1)**2
     ntab.append(n)
     vtab.append(v)
     v = v + dv
+    n = (v/v_s1)**2
     if n - 2 <= 0.001:
         special_v = v
 
+print(n)
+
 while v > 0:
-    n = (v/v_s1)**2
     ntab.append(n)
     vtab.append(v)
     v = v - dv
+    n = (v/v_s1)**2
 
 n = 0
 v = 0
 v_s0 = stallspeed(W, Clmax_flaps_landing)
 while n < 2:
-    n = (v/v_s0)**2
     ntab.append(n)
     vtab.append(v)
     v = v + dv
+    n = (v/v_s0)**2
+
+
 
 while v < special_v and v < v_f:
     ntab.append(2)
     vtab.append(v)
     v = v + dv
 
+
 while n < n_maximum:
-    n = (v/v_s1)**2
     ntab.append(n)
     vtab.append(v)
     v = v + dv
+    n = (v/v_s1)**2
+
+print(n)
 
 v_dive = v_d(v_c, altitude)
 
@@ -131,8 +138,9 @@ n = n_maximum
 
 while n > 0:
     vtab.append(v)
-    n = n - dn
     ntab.append(n)
+    n = n - dn
+
 
 slope = -1/(v_dive-v_c)
 
