@@ -53,17 +53,12 @@ def second_area_moment(y, wingbox):
     local_wingbox = classes.ScaledWingbox(wingbox, chord)
     panelcoords = local_wingbox.centroidal_panels
 
-    #print(local_wingbox.centroidal_panels)
-    #print(local_wingbox.panel_thickness)
-    #print(local_wingbox.centroidal_stringers)
-    #print(local_wingbox.stringer_area)
-
     #The center coordinates of the panel
     panelaveragecoords = np.zeros((len(panelcoords), 2)) 
     panelaveragecoords[:,0] = np.transpose((panelcoords[:,0] + panelcoords[:,2]) / 2)
     panelaveragecoords[:,1] = np.transpose((panelcoords[:,1] + panelcoords[:,3]) / 2)
 
-    panellength = np.sqrt((panelcoords[:,2] - panelcoords[:,0]) * (panelcoords[:,2] - panelcoords[:,0]) + (panelcoords[:,3] - panelcoords[:,1]) * (panelcoords[:,3] - panelcoords[:,1]))
+    panellength = np.sqrt((panelcoords[:,2] - panelcoords[:,0]) ** 2 + (panelcoords[:,3] - panelcoords[:,1]) ** 2 )
     panellength = np.transpose(np.array([panellength]))
 
     panelangle = np.transpose([np.arctan2(panelcoords[:,3] - panelcoords[:,1], panelcoords[:,2] - panelcoords[:,0])])
@@ -71,6 +66,7 @@ def second_area_moment(y, wingbox):
     Ixx = np.sum(local_wingbox.stringer_area * np.transpose([local_wingbox.centroidal_stringers[:,1]]) ** 2) + np.sum(local_wingbox.panel_thickness * panellength ** 3 * np.sin(panelangle) ** 2) / 12 + np.sum(local_wingbox.panel_thickness * panellength * np.transpose([panelaveragecoords[:,1]]) ** 2)
     Iyy = np.sum(local_wingbox.stringer_area * np.transpose([local_wingbox.centroidal_stringers[:,0]]) ** 2) + np.sum(local_wingbox.panel_thickness * panellength ** 3 * np.cos(panelangle) ** 2) / 12 + np.sum(local_wingbox.panel_thickness * panellength * np.transpose([panelaveragecoords[:,0]]) ** 2)
     Ixy = np.sum(local_wingbox.stringer_area * np.transpose([local_wingbox.centroidal_stringers[:,0]]) * local_wingbox.centroidal_stringers[:,1]) + np.sum(local_wingbox.panel_thickness * panellength ** 3 * np.sin(panelangle) * np.cos(panelangle)) / 12 + np.sum(local_wingbox.panel_thickness * panellength * np.transpose([panelaveragecoords[:,1]]) * np.transpose([panelaveragecoords[:,0]]))
+    
     return Ixx, Iyy, Ixy
 
     
