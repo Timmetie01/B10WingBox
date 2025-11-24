@@ -43,11 +43,12 @@ def centroidcoords(panelcoords, panelthickness, stringercoords, stringer_area):
 
     wingboxcontribution = np.array([np.sum(np.transpose(np.array([panelaveragecoords[:,0]])) * panellength * panelthickness), np.sum(np.transpose(np.array([panelaveragecoords[:,1]])) * panellength * panelthickness)])
     
-    stringercontribution = np.array([np.sum(np.transpose(np.array([panelaveragecoords[:,0]])) * stringer_area),  np.sum(np.transpose(np.array([panelaveragecoords[:,1]])) * stringer_area)])
+    stringercontribution = np.array([np.sum(np.transpose(np.array([stringercoords[:,0]])) * stringer_area),  np.sum(np.transpose(np.array([stringercoords[:,1]])) * stringer_area)])
     
     return (stringercontribution + wingboxcontribution) / totalarea
 
 #Used in calculating Ixx, Iyy and Ixy in the wingbox class. Also equires the spanwise position of the section, and automatically scales the wingbox to the chord length at that position.
+#returns Ixx, Iyy, Ixy in that order
 def second_area_moment(y, wingbox):
     chord = constants.local_chord_at_span(y)
     local_wingbox = classes.ScaledWingbox(wingbox, chord)
@@ -63,9 +64,17 @@ def second_area_moment(y, wingbox):
 
     panelangle = np.transpose([np.arctan2(panelcoords[:,3] - panelcoords[:,1], panelcoords[:,2] - panelcoords[:,0])])
 
-    Ixx = np.sum(local_wingbox.stringer_area * np.transpose([local_wingbox.centroidal_stringers[:,1]]) ** 2) + np.sum(local_wingbox.panel_thickness * panellength ** 3 * np.sin(panelangle) ** 2) / 12 + np.sum(local_wingbox.panel_thickness * panellength * np.transpose([panelaveragecoords[:,1]]) ** 2)
-    Iyy = np.sum(local_wingbox.stringer_area * np.transpose([local_wingbox.centroidal_stringers[:,0]]) ** 2) + np.sum(local_wingbox.panel_thickness * panellength ** 3 * np.cos(panelangle) ** 2) / 12 + np.sum(local_wingbox.panel_thickness * panellength * np.transpose([panelaveragecoords[:,0]]) ** 2)
-    Ixy = np.sum(local_wingbox.stringer_area * np.transpose([local_wingbox.centroidal_stringers[:,0]]) * local_wingbox.centroidal_stringers[:,1]) + np.sum(local_wingbox.panel_thickness * panellength ** 3 * np.sin(panelangle) * np.cos(panelangle)) / 12 + np.sum(local_wingbox.panel_thickness * panellength * np.transpose([panelaveragecoords[:,1]]) * np.transpose([panelaveragecoords[:,0]]))
+    Ixx = np.sum(local_wingbox.stringer_area * np.transpose([local_wingbox.centroidal_stringers[:,1]]) ** 2)            #Stringers
+    Ixx += np.sum(local_wingbox.panel_thickness * panellength ** 3 * np.sin(panelangle) ** 2) / 12                      #Plates
+    Ixx += np.sum(local_wingbox.panel_thickness * panellength * np.transpose([panelaveragecoords[:,1]]) ** 2)           #Plates, parallel axis THM
+
+    Iyy = np.sum(local_wingbox.stringer_area * np.transpose([local_wingbox.centroidal_stringers[:,0]]) ** 2)            #Stringers
+    Iyy += np.sum(local_wingbox.panel_thickness * panellength ** 3 * np.cos(panelangle) ** 2) / 12                      #Plates
+    Iyy += np.sum(local_wingbox.panel_thickness * panellength * np.transpose([panelaveragecoords[:,0]]) ** 2)           #Plates, parallel axis THM
+
+    Ixy = np.sum(local_wingbox.stringer_area * np.transpose([local_wingbox.centroidal_stringers[:,0]]) * local_wingbox.centroidal_stringers[:,1])       #Stringers
+    Ixy += np.sum(local_wingbox.panel_thickness * panellength ** 3 * np.sin(panelangle) * np.cos(panelangle)) / 12                                      #Plates
+    Ixy += np.sum(local_wingbox.panel_thickness * panellength * np.transpose([panelaveragecoords[:,1]]) * np.transpose([panelaveragecoords[:,0]]))      #Plates, parallel axis THM
     
     return Ixx, Iyy, Ixy
 

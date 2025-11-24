@@ -1,5 +1,5 @@
 import numpy as np
-
+import matplotlib.pyplot as plt
 
 #Arguments to create wingbox class:
 #1: n x 2 array of coords from wingbox
@@ -33,7 +33,8 @@ class Wingbox:
     def Ixy(self, y):
         import area_moments
         return area_moments.second_area_moment(y, self)[2]
-
+    
+    
 #When requiring full-size wingbox instead of unit length airfoil one, the class below can be used
 #Enter the unit-length-airfoil class and the scale (i.e. chord length)
 class ScaledWingbox:

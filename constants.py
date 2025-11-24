@@ -37,8 +37,8 @@ const = {
 
     #Material specs
     'Density': 2780, #[kg/m^3]
-    'Modulus_of_Elasticity': 72400000000, # [Pa] (assumed same modulus for tension & compression - only 2% variation in aluminium alloys)
-    'Shear_Modulus': 28000000000, # [Pa]
+    'Modulus_of_Elasticity': 72.4e9, # [Pa] (assumed same modulus for tension & compression - only 2% variation in aluminium alloys)
+    'Shear_Modulus': 28e9, # [Pa]
     
 }
 
