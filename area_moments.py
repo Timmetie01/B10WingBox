@@ -1,5 +1,8 @@
 import numpy as np
 import data_import
+import constants
+from constants import const
+import classes
 
 #Outputs the area of a polygon when input is a numpy nx2 array (coordinates of the wingbox)
 def Area(coords):
@@ -25,8 +28,8 @@ def Torsional_constant(coords,t):
     integral = contour_int(coords,t)
     return 4*A**2/integral
 
-#Returns the centroid coordinates
-def centroidcoords(panelcoords, panelthickness, stringercoords, stringerarea):
+#Returns the centroid coordinates, is called inside the Wingbox class
+def centroidcoords(panelcoords, panelthickness, stringercoords, stringer_area):
     panelaveragecoords = np.zeros((len(panelcoords), 2))
 
     #The center coordinates of the panel
@@ -36,12 +39,34 @@ def centroidcoords(panelcoords, panelthickness, stringercoords, stringerarea):
     panellength = np.sqrt((panelcoords[:,2] - panelcoords[:,0]) * (panelcoords[:,2] - panelcoords[:,0]) + (panelcoords[:,3] - panelcoords[:,1]) * (panelcoords[:,3] - panelcoords[:,1]))
     panellength = np.transpose(np.array([panellength]))
 
-    totalarea = np.sum(panellength * panelthickness) + np.sum(stringerarea)
+    totalarea = np.sum(panellength * panelthickness) + np.sum(stringer_area)
 
     wingboxcontribution = np.array([np.sum(np.transpose(np.array([panelaveragecoords[:,0]])) * panellength * panelthickness), np.sum(np.transpose(np.array([panelaveragecoords[:,1]])) * panellength * panelthickness)])
     
-    print(stringercoords)
-    print(stringerarea)
-    stringercontribution = np.array([np.sum(np.transpose(np.array([panelaveragecoords[:,0]])) * stringerarea),  np.sum(np.transpose(np.array([panelaveragecoords[:,1]])) * stringerarea)])
+    stringercontribution = np.array([np.sum(np.transpose(np.array([panelaveragecoords[:,0]])) * stringer_area),  np.sum(np.transpose(np.array([panelaveragecoords[:,1]])) * stringer_area)])
     
     return (stringercontribution + wingboxcontribution) / totalarea
+
+#Used in calculating Ixx, Iyy and Ixy in the wingbox class. Also equires the spanwise position of the section, and automatically scales the wingbox to the chord length at that position.
+def second_area_moment(y, wingbox):
+    chord = constants.local_chord_at_span(y)
+    local_wingbox = classes.ScaledWingbox(wingbox, chord)
+    panelcoords = local_wingbox.centroidal_panels
+
+    #The center coordinates of the panel
+    panelaveragecoords = np.zeros((len(panelcoords), 2)) 
+    panelaveragecoords[:,0] = (panelcoords[:,0] + panelcoords[:,2]) / 2
+    panelaveragecoords[:,1] = (panelcoords[:,1] + panelcoords[:,3]) / 2
+
+    panellength = np.sqrt((panelcoords[:,2] - panelcoords[:,0]) * (panelcoords[:,2] - panelcoords[:,0]) + (panelcoords[:,3] - panelcoords[:,1]) * (panelcoords[:,3] - panelcoords[:,1]))
+    panellength = np.transpose(np.array([panellength]))
+
+    panelangle = np.arctan2(panelcoords[:,3] - panelcoords[:,1], panelcoords[:,2] - panelcoords[:,0])
+    
+    Ixx = np.sum(local_wingbox.stringer_area * local_wingbox.centroidal_stringers[:,1] ** 2) + np.sum(local_wingbox.panel_thickness * panellength ** 3 * np.sin(panelangle) ** 2) / 12
+    Iyy = np.sum(local_wingbox.stringer_area * local_wingbox.centroidal_stringers[:,0] ** 2) + np.sum(local_wingbox.panel_thickness * panellength ** 3 * np.cos(panelangle) ** 2) / 12
+    Ixy = np.sum(local_wingbox.stringer_area * local_wingbox.centroidal_stringers[:,0] * local_wingbox.centroidal_stringers[:,1]) + np.sum(local_wingbox.panel_thickness * panellength ** 3 * np.sin(panelangle) * np.cos(panelangle)) / 12
+    return Ixx, Iyy, Ixy
+
+    
+

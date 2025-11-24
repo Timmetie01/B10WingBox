@@ -55,11 +55,11 @@ def sweep_at_chord_fraction(chord_fraction, leading_edge_sweep = const['leading_
 
 
 def local_chord_at_span(target_span, root_chord = const['root_chord'], taper_ratio = const['taper_ratio'], total_span = const['span']):
-    if abs(target_span) > total_span:
+    if abs(target_span) > total_span / 2:
         print(f'Target span out of bounds')
         quit()
 
     # ADSEE formula for trapezoidal planform
-    local_chord = root_chord - root_chord * (1-taper_ratio) * abs(target_span) / total_span / 2
+    local_chord = root_chord - root_chord * (1-taper_ratio) * abs(target_span) / (total_span / 2)
 
     return local_chord
