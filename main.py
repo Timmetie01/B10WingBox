@@ -10,6 +10,8 @@ testclass = data_import.import_wingbox('test_cross_section')
 
 #The Ixx, Iyy and Ixy functions must be checked to confirm if they work. 
 print(testclass.Ixx(0))
-print(testclass.Iyy(0))
-print(testclass.Ixy(0))
+print(testclass.Ixx(2))
+print(testclass.Ixx(4))
+print(testclass.Ixx(6))
+print(testclass.Ixx(8))
 
