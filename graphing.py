@@ -32,6 +32,7 @@ def I_plot(wingbox, npoints=100):
     plt.grid(axis='y', ls='--')
     plt.show()
 
+#Enter the wingbox class. When show_wing is true, it plots the upper and lower sides of the wing surface using the thickness-to-chord and chord functions
 def deflection_plot(wingbox, show_wing=True):
     y_list = np.linspace(0, const['span']/2, 100)
     v_list = []
@@ -52,10 +53,12 @@ def deflection_plot(wingbox, show_wing=True):
         plt.plot(y_list, top_wing_list, color='black')
         plt.plot(y_list, bottom_wing_list, color='black')
     plt.gca().set_aspect('equal')
+    plt.title('Wing Deflection')
     plt.xlabel('Spanwise position (m)')
     plt.ylabel('Deflection (m)')
     plt.show()
 
+#Enter the wingbox class, shows graph of resulting twist at certain span locations
 def twist_plot(wingbox):
     y_list = np.linspace(0, const['span']/2, 100)
     theta_list = []
@@ -63,12 +66,13 @@ def twist_plot(wingbox):
         theta_list.append(deflection_functions.theta(wingbox, i) * 180 / np.pi)
 
     plt.plot(y_list, theta_list)
+    plt.title('Wing twist at different spanwise positions')
     plt.xlabel('Spanwise position (m)')
     plt.ylabel('Twist (deg)')
     plt.show()
 
-from data_import import import_wingbox
-testclass = import_wingbox('test_cross_section')
-deflection_plot(testclass)
-twist_plot(testclass)
+
+
+
+
 

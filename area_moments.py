@@ -4,7 +4,7 @@ from constants import const
 import classes
 
 #Outputs the area of a polygon when input is a numpy nx2 array (coordinates of the wingbox)
-def Area(coords):
+def polygon_area(coords):
     x = coords[:,0]
     y = coords[:,1]
     return 0.5 * np.abs(
@@ -24,11 +24,11 @@ def contour_int(coords,t):
 #Outputs the torsional constant of a shape (the wingbox) when inputs are 1) a numpy nx2 array for the coordinates (of the winbox)
 #2) the thicknesses of each panel in a nx1 array
 def Torsional_constant(coords,t):
-    A = Area(coords)
+    A = polygon_area(coords)
     integral = contour_int(coords,t)
     return 4*A**2/integral
 
-#Returns the centroid coordinates, is called inside the Wingbox class
+#Returns the centroid coordinates, is called inside the Wingbox class. Not necessary to call elsewhere, just use the classes properly.
 def centroidcoords(panelcoords, panelthickness, stringercoords, stringer_area):
     panelaveragecoords = np.zeros((len(panelcoords), 2))
 
