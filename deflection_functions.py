@@ -2,10 +2,11 @@ import numpy as np
 import scipy as sp
 from constants import const
 from area_moments import Torsional_constant
+import data_import
+import classes
+from loading_diagram import M
 
-
-
-
+testclass = data_import.import_wingbox('test_cross_section')
 
 E = const.get('Modulus_of_Elasticity')
 b = const.get('span')
