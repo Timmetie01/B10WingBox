@@ -12,14 +12,14 @@ E = const.get('Modulus_of_Elasticity')
 b = const.get('span')
 G = const['Shear_Modulus']
 
-def T(y):
+def T(y): #random linear function used to test output, to be replaced by 4.1s torsion distribution 
     return 50000*(1-y)/(b/2)
 
-def dtheta_dz(y, wingbox):
+def dtheta_dy(y, wingbox): #outputs the derivative of the twist wrt the spanwose position, using the torsion distribution and torsional constant
     return T(y)/(G*wingbox.J(y))
 
-def theta(wingbox, y=b/2):
-    result, error = sp.integrate.quad(dtheta_dz,0,y, args=(wingbox,))
+def theta(wingbox, y=b/2): #ouputs the twist distribution as a function of the spanwise position of the wing by integrating the function above
+    result, error = sp.integrate.quad(dtheta_dy,0,y, args=(wingbox,))
     return result
 
 
