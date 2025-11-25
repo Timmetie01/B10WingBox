@@ -21,6 +21,7 @@ const = {
     'lift_coefficient_slope': 5.537, # [1/rad]
     'flap_start_position': 1.050, # [m]
     'flap_end_position': 4.423, # [m]
+    'thickness_to_chord': 0.12, # [-]
 
     #Fuselage specs
     'fuselage_length': 15.85, # [m]
@@ -37,12 +38,12 @@ const = {
 
     #Material specs
     'Density': 2780, #[kg/m^3]
-    'Modulus_of_Elasticity': 72400000000, # [Pa] (assumed same modulus for tension & compression - only 2% variation in aluminium alloys)
-    'Shear_Modulus': 28000000000, # [Pa]
+    'Modulus_of_Elasticity': 72.4e9, # [Pa] (assumed same modulus for tension & compression - only 2% variation in aluminium alloys)
+    'Shear_Modulus': 28e9, # [Pa]
     
 }
 
-
+#Returns the sweep angle (always in radians!!) at a certain chord fraction
 def sweep_at_chord_fraction(chord_fraction, leading_edge_sweep = const['leading_edge_sweep'], span = const['span'], taper = const['taper_ratio'], root_chord = const['root_chord']):
     if  chord_fraction < 0 or chord_fraction > 1:
         print(f'Cannot compute sweep. Chord fraction = {chord_fraction}, should be 0 =< chord_fraction =< 1.')
@@ -53,13 +54,13 @@ def sweep_at_chord_fraction(chord_fraction, leading_edge_sweep = const['leading_
 
     return chord_fraction_sweep
 
-
+#Returns the chord length at a certain span location of the wing
 def local_chord_at_span(target_span, root_chord = const['root_chord'], taper_ratio = const['taper_ratio'], total_span = const['span']):
-    if abs(target_span) > total_span:
+    if abs(target_span) > total_span / 2:
         print(f'Target span out of bounds')
         quit()
 
     # ADSEE formula for trapezoidal planform
-    local_chord = root_chord - root_chord * (1-taper_ratio) * abs(target_span) / total_span / 2
+    local_chord = root_chord - root_chord * (1-taper_ratio) * abs(target_span) / (total_span / 2)
 
     return local_chord

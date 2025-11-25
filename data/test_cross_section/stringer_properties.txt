@@ -1,0 +1,7 @@
+This header row will be ignored. Format: x  y  area
+0.25 -0.1 2e-5
+0.35 -0.1 2e-5
+0.45 -0.1 2e-5
+0.25 0.1 2e-5
+0.35 0.1 2e-5
+0.45 0.1 2e-5
