@@ -17,6 +17,7 @@ def Area(coords):
 def contour_int(coords,t):
     d = np.roll(coords, -1, axis=0) - coords
     ds = np.linalg.norm(d, axis=1)
+    ds = ds.reshape(-1,1)
     integral = np.sum(ds / t)
     return integral
 
@@ -79,4 +80,3 @@ def second_area_moment(y, wingbox):
     return Ixx, Iyy, Ixy
 
     
-
