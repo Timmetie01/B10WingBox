@@ -75,7 +75,6 @@ def lg_weightdistribution(y: float, alpha: float, step: float = span/2 / 400, LG
     
     if y - step/2 < LG_y_pos < y + step/2:
         weight_at_y += LG_weight * g
-        print (f"interval {y -step/2} , {y +step/2}")
 
     return weight_at_y * m.cos(alpha)
 
@@ -85,7 +84,7 @@ alpha = alphafromCLd(CLd)
 print(f"Calculations for alpha = {alpha} rad ({m.degrees(alpha)} deg) for CLd={CLd}")
 
 #Organised aerodynamic coefficients
-tablezeroalpha = np.genfromtxt("B10WingBox\Chapter4.1\MainWing_a=0.00HighpanelFinal.csv", delimiter=",", skip_header=91, skip_footer=5743)
+tablezeroalpha = np.genfromtxt("Chapter4.1\MainWing_a=0.00HighpanelFinal.csv", delimiter=",", skip_header=91, skip_footer=5743)
 
 yspan_0 = tablezeroalpha[:,0]
 chordlength_0 = tablezeroalpha[:,1]
@@ -98,7 +97,7 @@ CmAirfchord4_0 = tablezeroalpha[:,7]
 posofcp_0 = tablezeroalpha[:,10]
 
 
-tabletenalpha = np.genfromtxt("B10WingBox\Chapter4.1\MainWing_a=10.00HighplaneFinal.csv", delimiter=",", skip_header=91, skip_footer=5743)
+tabletenalpha = np.genfromtxt("Chapter4.1\MainWing_a=10.00HighplaneFinal.csv", delimiter=",", skip_header=91, skip_footer=5743)
 
 yspan_10 = tabletenalpha[:,0]
 chordlength_10 = tabletenalpha[:,1]
@@ -231,4 +230,27 @@ shearvalues = np.array([shear(y) for y in ypoints])
 plt.plot(ypoints,shearvalues)
 plt.xlabel("Spanwise position [m]")
 plt.ylabel("Shear Force[N]")
+plt.show()
+
+order = 15
+coefficients = np.polyfit(ypoints,shearvalues,order)
+polynomial = np.poly1d(coefficients)
+shearsmooth = np.polyval(polynomial,ypoints)
+
+plt.plot(ypoints,shearsmooth)
+plt.plot(ypoints,shearvalues,"r+")
+plt.title(f"Polynomial of {order}th order")
+plt.show()
+
+#Moment Function dM/dy = V
+
+def Moment(y):
+    M,_ = sp.integrate.quad(polynomial,y,span/2.0)
+    return M
+
+momentvalues = np.array([Moment(y) for y in ypoints])
+
+plt.plot(ypoints,momentvalues)
+plt.xlabel("Spanwise position [m]")
+plt.ylabel("Moment Force[N*m]")
 plt.show()
