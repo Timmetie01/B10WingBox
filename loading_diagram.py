@@ -66,7 +66,6 @@ def v_d(v_c, alt):
     if (v_d*math.sqrt(0.2346*1.225/ISA(alt)[2]))/a > 0.75:
         return a*0.75*math.sqrt(ISA(alt)[2]/1.225)
     else:
-        print(v_d*math.sqrt(0.2346*1.225/1.225))
         return v_d*math.sqrt(0.2346*1.225/1.225)
 
 #Drawing of the diagram, ask the user for what kind of situation the graph is used
