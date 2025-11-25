@@ -74,21 +74,19 @@ choice = input("Enter your choice:")
 altitude = int(input("Input the altitude in meters, max 20k:"))
 
 if choice == "1":
-    W = LD_MTOW
-elif choice == "2":
-    W = LD_MTOW
-elif choice == "3":
-    W = LD_W3
-else:
-    print("Are you stupid?")
-    exit()
+    W_current = LD_OEW
+if choice == "2":
+    W_current = LD_MTOW
+if choice == "3":
+    W_current = LD_W3
 
 v_c = v_c * math.sqrt(ISA(altitude)[2]/1.225)
 vtab = []
 ntab = []
 
-v_s1 = stallspeed(W, Clmax_noflaps)
-n_maximum = n_max(W)
+print(W_current)
+v_s1 = stallspeed(W_current, Clmax_noflaps)
+n_maximum = n_max(W_current)
 dv = 0.1
 dn = 0.001
 v = 0
@@ -113,7 +111,7 @@ while v > 0:
 #Go Up to N_max with flaps
 n = 0
 v = 0
-v_s0 = stallspeed(W, Clmax_flaps_landing)
+v_s0 = stallspeed(W_current, Clmax_flaps_landing)
 while n < 2:
     ntab.append(n)
     vtab.append(v)
