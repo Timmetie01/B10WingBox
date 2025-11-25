@@ -6,6 +6,9 @@ import graphing
 
 testclass = data_import.import_wingbox('test_cross_section')
 
+print(testclass.J(0))
+
+
 #print(testclass.centroidal_panels)
 #print(testscale.centroidal_panels)
 
