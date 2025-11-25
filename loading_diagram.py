@@ -35,7 +35,7 @@ LD_OEW = constants.const["eom"]
 LD_MTOW = constants.const["mtom"]
 LD_W3 = constants.const["eom"] + 1010
 S = 35.98385994
-v_c = 200.687769
+
 
 #DO NOT QUESTION THESE VALUES
 Clmax_noflaps = 2.0236*0.8
@@ -57,16 +57,22 @@ def n_max(W):
         return 3.8
     return n_max
 
+#Function to calculate cruise speed. Note we assume cruise Mach number to be the same everywhere
+def cruisespeed(alt):
+    v_c = 0.68*math.sqrt(1.4*287*ISA(alt)[0])
+    v_c = v_c*math.sqrt(ISA(altitude)[2]/1.225)
+    return v_c
+
 #Function to calculate the dive speed, which is basically the maximum speed
 def v_d(v_c, alt):
 
     v_d = v_c*1/0.8
     a = math.sqrt(1.4*287*ISA(alt)[0])
 
-    if (v_d*math.sqrt(0.2346*1.225/ISA(alt)[2]))/a > 0.75:
+    if (v_d*math.sqrt(1.225/ISA(alt)[2]))/a > 0.75:
         return a*0.75*math.sqrt(ISA(alt)[2]/1.225)
     else:
-        return v_d*math.sqrt(0.2346*1.225/1.225)
+        return v_d
 
 #Drawing of the diagram, ask the user for what kind of situation the graph is used
 print("Type 1 for OEW, type 2 for MTOW, type 3 for OEW + Payload")
@@ -75,12 +81,15 @@ altitude = int(input("Input the altitude in meters, max 20k:"))
 
 if choice == "1":
     W_current = LD_OEW
-if choice == "2":
+elif choice == "2":
     W_current = LD_MTOW
-if choice == "3":
+elif choice == "3":
     W_current = LD_W3
+else:
+    print("Are you capable of pressing either 1, 2, or 3 on your keyboard even?")
+    quit()
 
-v_c = v_c * math.sqrt(ISA(altitude)[2]/1.225)
+v_c = cruisespeed(altitude)
 vtab = []
 ntab = []
 
@@ -147,7 +156,6 @@ while n > 0:
     n = n - dn
 
 #Go down linearly to minimum loading factor
-v_c = v_c*math.sqrt(0.2346*1.225/1.225)
 slope = -1/(v_dive-v_c)
 
 while v > v_c:
