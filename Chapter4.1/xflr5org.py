@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import math as m
 from math import cos, sin, pi
 
-
 #Constants
 cr = 3.108170068
 ct = 0.98287858
