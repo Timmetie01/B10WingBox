@@ -63,10 +63,11 @@ def v_d(v_c, alt):
     v_d = v_c*1/0.8
     a = math.sqrt(1.4*287*ISA(alt)[0])
 
-    if (v_d*math.sqrt(1.225/ISA(alt)[2]))/a > 0.75:
+    if (v_d*math.sqrt(0.2346*1.225/ISA(alt)[2]))/a > 0.75:
         return a*0.75*math.sqrt(ISA(alt)[2]/1.225)
     else:
-        return v_d
+        print(v_d*math.sqrt(0.2346*1.225/1.225))
+        return v_d*math.sqrt(0.2346*1.225/1.225)
 
 #Drawing of the diagram, ask the user for what kind of situation the graph is used
 print("Type 1 for OEW, type 2 for MTOW, type 3 for OEW + Payload")
@@ -150,6 +151,7 @@ while n > 0:
     n = n - dn
 
 #Go down linearly to minimum loading factor
+v_c = v_c*math.sqrt(0.2346*1.225/1.225)
 slope = -1/(v_dive-v_c)
 
 while v > v_c:
