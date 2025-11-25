@@ -34,6 +34,16 @@ class Wingbox:
         import area_moments
         return area_moments.second_area_moment(y, self)[2]
     
+    def J(self, y):
+        import area_moments
+        import constants
+        scale = constants.local_chord_at_span(y)
+        current_wingbox = ScaledWingbox(self, scale)
+        return area_moments.Torsional_constant(current_wingbox.centroidal_points, current_wingbox.panel_thickness)
+
+
+    
+    
     
 #When requiring full-size wingbox instead of unit length airfoil one, the class below can be used
 #Enter the unit-length-airfoil class and the scale (i.e. chord length)
