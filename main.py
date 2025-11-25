@@ -12,8 +12,8 @@ testclass = data_import.import_wingbox('test_cross_section')
 
 
 #Testing the deflection plots, just 
-#from data_import import import_wingbox
-#testclass = import_wingbox('test_cross_section')
-#graphing.deflection_plot(testclass)
-#graphing.twist_plot(testclass)
+from data_import import import_wingbox
+testclass = import_wingbox('test_cross_section')
+graphing.deflection_plot(testclass)
+graphing.twist_plot(testclass)
 
