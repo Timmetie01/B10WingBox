@@ -171,6 +171,20 @@ while v > 0:
 
 print("The maximum loading factor is ", n_maximum)
 
-plt.figure()
-plt.plot(vtab, ntab)
+if choice == "1":
+    weight_choice = "OEW"
+elif choice == "2":
+    weight_choice = "MTOW"
+elif choice == "3":
+    weight_choice = "OEW + Payload"
+else:
+    print("something went wrong, please choose 1, 2 or 3 for the loading conditions.")
+    quit()
+
+    
+plt.title(f"Loading Diagram for BTA10, {weight_choice} loading, altitude: {altitude}m")
+plt.plot(vtab, ntab, color="darkblue")
+plt.gca().grid(axis='y', ls='--')
+plt.xlabel("Indicated Airspeed (m/s)")
+plt.ylabel("Load Factor")
 plt.show()
