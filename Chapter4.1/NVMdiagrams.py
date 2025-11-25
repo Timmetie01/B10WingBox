@@ -117,6 +117,7 @@ plt.title("Coefficient of lift for half-span")
 plt.xlabel("Span position [m]")
 plt.ylabel("Coefficient of lift")
 plt.legend(("alpha = 0","alpha=10"))
+plt.tight_layout()
 plt.show()
 
 #Function relating cl,cd,cm4 to y position
@@ -230,6 +231,8 @@ shearvalues = np.array([shear(y) for y in ypoints])
 plt.plot(ypoints,shearvalues)
 plt.xlabel("Spanwise position [m]")
 plt.ylabel("Shear Force[N]")
+plt.title("Internal Shear Force Diagram")
+plt.tight_layout()
 plt.show()
 
 order = 15
@@ -252,7 +255,8 @@ momentvalues = np.array([Moment(y) for y in ypoints])
 
 plt.plot(ypoints,momentvalues)
 plt.xlabel("Spanwise position [m]")
-plt.ylabel("Moment Force[N*m]")
+plt.ylabel("Moment [N*m]")
+plt.title("Internal Moment Diagram")
 plt.show()
 
 #Torsion = momentarm * Lift *cos(alpha) + momentarm * Drag*sin(alpha)
