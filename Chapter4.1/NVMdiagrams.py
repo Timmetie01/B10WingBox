@@ -221,7 +221,7 @@ def shear(y):
         S2, error = sp.integrate.quad(lambda yy: distributed_weight(yy)*m.cos(alpha),y,span/2.0)
         WLg, error2 = sp.integrate.quad(lg_weightdistribution, y, span/2.0, args = (alpha)) # add the weight distribution
         S3,error = sp.integrate.quad(lambda yy: Dub(yy)*m.sin(alpha), y, span/2.0)
-        return  -S1 + S2 + WLg - S3
+        return  - S1 + S2 + WLg - S3
 
 
 ypoints = np.linspace(0.0, span/2.0 ,200)
@@ -254,3 +254,10 @@ plt.plot(ypoints,momentvalues)
 plt.xlabel("Spanwise position [m]")
 plt.ylabel("Moment Force[N*m]")
 plt.show()
+
+#Torsion = momentarm * Lift *cos(alpha) + momentarm * Drag*sin(alpha)
+
+#   momentarm (y) * Lub(y) 
+# momentarm (y) * Dub(y)
+
+# Torsion = integration accounting for angles and then return sum 
