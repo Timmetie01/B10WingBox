@@ -84,7 +84,6 @@ v_c = v_c * math.sqrt(ISA(altitude)[2]/1.225)
 vtab = []
 ntab = []
 
-print(W_current)
 v_s1 = stallspeed(W_current, Clmax_noflaps)
 n_maximum = n_max(W_current)
 dv = 0.1
