@@ -1,5 +1,4 @@
 import numpy as np
-import data_import
 import constants
 from constants import const
 import classes
