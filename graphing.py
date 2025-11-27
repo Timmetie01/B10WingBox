@@ -52,6 +52,8 @@ def deflection_plot(wingbox, show_wing=True):
     if show_wing:
         plt.plot(y_list, top_wing_list, color='black')
         plt.plot(y_list, bottom_wing_list, color='black')
+
+    plt.plot([const['span']/2 - 1, const['span']/2 + 0.3], [const['span'] * const['max_deflection_fraction'], const['span'] * const['max_deflection_fraction']], color='red')
     plt.gca().set_aspect('equal')
     plt.title('Wing Deflection')
     plt.xlabel('Spanwise position (m)')

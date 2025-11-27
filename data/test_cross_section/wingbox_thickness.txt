@@ -1,5 +1,5 @@
 This is a header row that will be ignored :D. Format: t
-0.002
-0.001
-0.002
-0.001
+0.006
+0.003
+0.006
+0.003
