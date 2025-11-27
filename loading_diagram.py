@@ -90,8 +90,12 @@ else:
     quit()
 
 v_c = cruisespeed(altitude)
-vtab = []
-ntab = []
+vpositivetab = []
+npositivetab = []
+vflapstab = []
+nflapstab = []
+vnegativetab = []
+nnegativetab = []
 
 v_s1 = stallspeed(W_current, Clmax_noflaps)
 n_maximum = n_max(W_current)
@@ -103,56 +107,43 @@ v_dive = v_d(v_c, altitude)
 
 #Go up to N_max
 while n < n_maximum and v < v_dive:
-    ntab.append(n)
-    vtab.append(v)
+    npositivetab.append(n)
+    vpositivetab.append(v)
     v = v + dv
     n = (v/v_s1)**2
     if n - 2 <= 0.001:
         special_v = v
-
-# Go Down to 0
-while v > 0:
-    ntab.append(n)
-    vtab.append(v)
-    v = v - dv
-    n = (v/v_s1)**2
 
 #Go Up to N_max with flaps
 n = 0
 v = 0
 v_s0 = stallspeed(W_current, Clmax_flaps_landing)
 while n < 2:
-    ntab.append(n)
-    vtab.append(v)
+    nflapstab.append(n)
+    vflapstab.append(v)
     v = v + dv
     n = (v/v_s0)**2
 
 #Go straight until it hits the line or hits a limiting speed
 while v < special_v and v < v_f:
-    ntab.append(2)
-    vtab.append(v)
+    nflapstab.append(2)
+    vflapstab.append(v)
     v = v + dv
 
-# Go up to N_max
-
-while n < n_maximum and v < v_dive:
-    ntab.append(n)
-    vtab.append(v)
-    v = v + dv
-    n = (v/v_s1)**2
-
+v = vpositivetab[-1]
+n = npositivetab[-1]
 #Go straight until it gets to dive speed
 if v < v_dive:
     while v < v_dive:
-        ntab.append(n_maximum)
-        vtab.append(v)
+        npositivetab.append(n_maximum)
+        vpositivetab.append(v)
         v = v + dv
 
 #Go Down
 
 while n > 0:
-    vtab.append(v)
-    ntab.append(n)
+    vpositivetab.append(v)
+    npositivetab.append(n)
     n = n - dn
 
 #Go down linearly to minimum loading factor
@@ -161,21 +152,21 @@ slope = -1/(v_dive-v_c)
 while v > v_c:
     v = v - dv*0.01
     n = n + slope*dn
-    vtab.append(v)
-    ntab.append(n)
+    vnegativetab.append(v)
+    nnegativetab.append(n)
 
 #Go horizontally back to stall speed
 while v > v_s1:
     v = v - dv
-    vtab.append(v)
-    ntab.append(-1)
+    vnegativetab.append(v)
+    nnegativetab.append(-1)
 
 #Go back up to 0
 while v > 0:
     v = v - dv
     n = -(v/v_s1)**2
-    vtab.append(v)
-    ntab.append(n)
+    vnegativetab.append(v)
+    nnegativetab.append(n)
 
 print("The maximum loading factor is ", n_maximum)
 
@@ -191,7 +182,9 @@ else:
 
     
 plt.title(f"Loading Diagram for BTA10, {weight_choice} loading, altitude: {altitude}m")
-plt.plot(vtab, ntab, color="darkblue")
+plt.plot(vpositivetab, npositivetab, color="darkblue")
+plt.plot(vnegativetab, nnegativetab, color="darkblue")
+plt.plot(vflapstab, nflapstab, color="red")
 plt.gca().grid(axis='y', ls='--')
 plt.xlabel("Indicated Airspeed (m/s)")
 plt.ylabel("Load Factor")
