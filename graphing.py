@@ -90,5 +90,22 @@ def airfoil_pointplot(showplot=True):
         plt.show()
 
 
+#When using showplot=False, no styling will be done and plt.show won't be called.
+def wingbox_plot(wingbox, showplot=True):
+    wingbox_points = wingbox.points
+
+    if wingbox_points[0,0] != wingbox_points[-1,0] or wingbox_points[0,1] != wingbox_points[-1,1]:
+        wingbox_points = np.vstack((wingbox_points, wingbox_points[0,:]))
+
+    wingbox_xcoords, wingbox_ycoords = wingbox_points[:,0], wingbox_points[:,1]
+
+    plt.plot(wingbox_xcoords, wingbox_ycoords, color='darkblue')
+    plt.scatter(wingbox.stringers[:,0], wingbox.stringers[:,1], s=wingbox.stringer_area * 1e6, c='green', marker='o')
+
+    if showplot:
+        plt.gca().set_aspect('equal')
+        plt.show()
+
+
 
 
