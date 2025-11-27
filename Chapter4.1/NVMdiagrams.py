@@ -231,3 +231,10 @@ plt.plot(ypoints,momentvalues)
 plt.xlabel("Spanwise position [m]")
 plt.ylabel("Moment Force[N*m]")
 plt.show()
+
+#Torsion = momentarm * Lift *cos(alpha) + momentarm * Drag*sin(alpha)
+
+#   momentarm (y) * Lub(y) 
+# momentarm (y) * Dub(y)
+
+# Torsion = integration accounting for angles and then return sum 
