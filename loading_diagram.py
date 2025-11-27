@@ -95,13 +95,14 @@ ntab = []
 
 v_s1 = stallspeed(W_current, Clmax_noflaps)
 n_maximum = n_max(W_current)
-dv = 0.1
-dn = 0.001
+dv = 0.01
+dn = 0.0001
 v = 0
 n = 0
+v_dive = v_d(v_c, altitude)
 
 #Go up to N_max
-while n < n_maximum:
+while n < n_maximum and v < v_dive:
     ntab.append(n)
     vtab.append(v)
     v = v + dv
@@ -133,22 +134,21 @@ while v < special_v and v < v_f:
     v = v + dv
 
 # Go up to N_max
-while n < n_maximum:
+
+while n < n_maximum and v < v_dive:
     ntab.append(n)
     vtab.append(v)
     v = v + dv
     n = (v/v_s1)**2
 
 #Go straight until it gets to dive speed
-v_dive = v_d(v_c, altitude)
-
-while v < v_dive:
-    ntab.append(n_maximum)
-    vtab.append(v)
-    v = v + dv
+if v < v_dive:
+    while v < v_dive:
+        ntab.append(n_maximum)
+        vtab.append(v)
+        v = v + dv
 
 #Go Down
-n = n_maximum
 
 while n > 0:
     vtab.append(v)
