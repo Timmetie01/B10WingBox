@@ -31,9 +31,9 @@ def ISA(alt):
     return t_1, p_1, rho
 
 # Constants, pulls from constants.py
-LD_OEW = constants.const["eom"]
-LD_MTOW = constants.const["mtom"]
-LD_W3 = constants.const["eom"] + 1010
+LD_OEW = (constants.const["eom"])*9.81
+LD_MTOW = (constants.const["mtom"])*9.81
+LD_W3 = (constants.const["eom"] + 1010)*9.81
 S = 35.98385994
 
 
@@ -52,7 +52,7 @@ v_f = max(1.6*stallspeed(LD_MTOW, Clmax_flaps_takeoff), 1.8*stallspeed(LD_MTOW, 
 
 #Function to calculate the maximum load factor
 def n_max(W):
-    n_max = max(2.1 + 24000/(W*1/0.454+10000), 2.1)
+    n_max = max(2.1 + 24000/(W*1/(9.81*0.454)+10000), 2.1)
     if n_max > 3.8:
         return 3.8
     return n_max
