@@ -73,8 +73,11 @@ def twist_plot(wingbox):
     plt.ylabel('Twist (deg)')
     plt.show()
 
-#Enter the airfoil points. Shows plot by default, but if required to plot another layer on top of this one, the function can be called using showplot=False
-def airfoil_pointplot(inputcoordinates, showplot=True):
+#Shows airfoil plot by default, but if required to plot another layer on top of this one, the function can be called using showplot=False
+#When using showplot=False, no styling will be done and plt.show won't be called.
+def airfoil_pointplot(showplot=True):
+    import data_import
+    inputcoordinates = data_import.import_airfoil_points()
     plt.plot(inputcoordinates[:, 0], inputcoordinates[:, 1], 'k-')
 
     if showplot:

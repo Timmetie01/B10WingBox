@@ -18,4 +18,4 @@ testclass = data_import.import_wingbox('test_cross_section')
 #graphing.twist_plot(testclass)
 
 
-graphing.airfoil_pointplot(data_import.import_airfoil_points())
+graphing.airfoil_pointplot()
