@@ -31,9 +31,9 @@ def ISA(alt):
     return t_1, p_1, rho
 
 # Constants, pulls from constants.py
-LD_OEW = (constants.const["eom"])*9.81
-LD_MTOW = (constants.const["mtom"])*9.81
-LD_W3 = (constants.const["eom"] + 1010)*9.81
+LD_OEW = (constants.const["empty_operating_mass"])*9.81
+LD_MTOW = (constants.const["maximum_take_off_mass"])*9.81
+LD_W3 = (constants.const["empty_operating_mass"] + 1010)*9.81
 S = 35.98385994
 
 
