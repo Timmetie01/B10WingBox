@@ -61,7 +61,6 @@ def n_max(W):
 def cruisespeed(alt):
     v_c = 0.68*math.sqrt(1.4*287*ISA(12496)[0])
     if v_c*math.sqrt(ISA(12496)[2]/ISA(alt)[2]) > 0.7*math.sqrt(1.4*287*ISA(alt)[0]):
-        print("mach problems vc")
         return  0.7*math.sqrt(1.4*287*ISA(alt)[0])*math.sqrt(ISA(alt)[2]/1.225)
     v_c = v_c*math.sqrt(ISA(12496)[2]/1.225)
     return v_c
