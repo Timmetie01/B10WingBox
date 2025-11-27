@@ -166,7 +166,7 @@ def create_airfoil_like_wingbox(xstart, xend, thickness, thicknesstype, stringer
     #[top, right, bottom, left] array when  thicknesstype = 'partially_constant'
     #Or full array in order of panel when thicknesstype = 'full_array'
     if thicknesstype == 'constant':
-        thickness = np.transpose(np.array([[thickness] * len(panelcount)]))
+        thickness = np.transpose(np.array([[thickness] * panelcount]))
     elif thicknesstype == 'partially_constant':
         if len(thickness) != 4:
             print('When using partially constant panel thicknesses, an array of length 4 must be provided!')
@@ -177,6 +177,7 @@ def create_airfoil_like_wingbox(xstart, xend, thickness, thicknesstype, stringer
         thickness_left = np.ones((1,1)) * thickness[3]
         thickness = np.vstack((thickness_top, thickness_right, thickness_bottom, thickness_left))    
     elif thicknesstype == 'full_array':
+        thickness = np.transpose([thickness])
         if len(thickness) != panelcount:
             print('Make sure to give the thickness array with equal length as the amount of panels')
             quit()

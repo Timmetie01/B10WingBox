@@ -15,11 +15,9 @@ testclass = data_import.import_wingbox('test_cross_section')
 #graphing.deflection_plot(testclass)
 #graphing.twist_plot(testclass)
 
-#graphing.wingbox_plot(testclass, showplot=False)
 graphing.airfoil_pointplot(showplot=False)
-#print(data_import.airfoil_interpolation([0.1, 0.2, 0.3], side='top'))
 
-newtestclass = data_import.create_airfoil_like_wingbox(0.1, 0.6, thickness=[0.003, 0.001, 0.003, 0.001], thicknesstype='partially_constant', stringercount=12, stringer_areas=2e-5, panelcount=100)
+newtestclass = data_import.create_airfoil_like_wingbox(0.1, 0.6, thickness=[0.003, 0.001, 0.003, 0.001], thicknesstype='full_array', stringercount=12, stringer_areas=2e-5, panelcount=4)
 
 graphing.wingbox_plot(newtestclass)
 graphing.deflection_plot(newtestclass, two_wings=False)
