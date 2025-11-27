@@ -9,7 +9,8 @@ from math import cos, sin, pi
 cr = 3.108170068
 ct = 0.98287858
 taper = 0.316224196
-span = 17.59150919
+span = 17.5746
+#span = 17.59150919
 rho = 0.28711101
 vinfinity = 200.5593111
 q = 0.5*rho*vinfinity**2
@@ -183,7 +184,7 @@ def shear(y):
         return  V
 
 
-ypoints = np.linspace(0.0, span/2.0 ,200)
+ypoints = np.linspace(0.0, span/2.0 ,100)
 shearvalues = np.array([shear(y) for y in ypoints])
 
 plt.plot(ypoints,shearvalues)

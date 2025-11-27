@@ -51,50 +51,51 @@ posofcp_10 = table10alpha[:,10]
 posofcplist = [posofcp_0, posofcp_1, posofcp_2, posofcp_3, posofcp_4, posofcp_5, posofcp_6, posofcp_7, posofcp_8, posofcp_9, posofcp_10]
 
 
-def xcppos_func(CLd_specific, y):
-    alpha: float = abs(m.degrees(alphafromCLd(CLd_specific)))
+def xcppos_func(CLd_specific):
+    def xcp_officialpos(y):
+        alpha: float = abs(m.degrees(alphafromCLd(CLd_specific)))
 
-    # Make sure the alpha is in the correct range
-    if alpha > 10:
-        raise Exception("CLd out of range. Only values for angle of attack from -10 to 10 work")
-    
-    # One y index
-    idx_1 = abs(yspan_0 - y).argmin()
+        # Make sure the alpha is in the correct range
+        if alpha > 10:
+            raise Exception("CLd out of range. Only values for angle of attack from -10 to 10 work")
+        
+        # One y index
+        idx_1 = abs(yspan_0 - y).argmin()
 
-    # Find out if it is the lower or higher value
-    y_1 = yspan_0[idx_1]
-    if y_1 < y: # It is the lower bound
-        idx_2 = idx_1 + 1
-    else: # It is the higher bound
-        idx_2 = idx_1 - 1  
-    y_2 = yspan_0[idx_2]
+        # Find out if it is the lower or higher value
+        y_1 = yspan_0[idx_1]
+        if y_1 < y: # It is the lower bound
+            idx_2 = idx_1 + 1
+        else: # It is the higher bound
+            idx_2 = idx_1 - 1  
+        y_2 = yspan_0[idx_2]
 
-    # Finding weight for the alpha
-    diff = y - y_1
-    weight1 = diff / abs(y_2-y_1)
-    weight2 = 1 - weight1
+        # Finding weight for the alpha
+        diff = y - y_1
+        weight1 = diff / abs(y_2-y_1)
+        weight2 = 1 - weight1
 
-    # Find the lower alpha
-    alpha_lower: int = int(alpha)
-    alpha_higher: int = alpha_lower + 1
+        # Find the lower alpha
+        alpha_lower: int = int(alpha)
+        alpha_higher: int = alpha_lower + 1
 
 
-    # Find a middle value for lower angle
-    alpha1 = posofcplist[alpha_lower][idx_1]
-    alpha2 = posofcplist[alpha_lower][idx_2]
+        # Find a middle value for lower angle
+        alpha1 = posofcplist[alpha_lower][idx_1]
+        alpha2 = posofcplist[alpha_lower][idx_2]
 
-    # Weight the values to get average for 
-    avg1 = weight1 * alpha1 + weight2 * alpha2
+        # Weight the values to get average for 
+        avg1 = weight1 * alpha1 + weight2 * alpha2
 
-    # Find a middle value for hogher angle
-    alpha1 = posofcplist[alpha_higher][idx_1]
-    alpha2 = posofcplist[alpha_higher][idx_2]
+        # Find a middle value for hogher angle
+        alpha1 = posofcplist[alpha_higher][idx_1]
+        alpha2 = posofcplist[alpha_higher][idx_2]
 
-    # Weight the values to get average for 
-    avg2 = weight1 * alpha1 + weight2 * alpha2
+        # Weight the values to get average for 
+        avg2 = weight1 * alpha1 + weight2 * alpha2
 
-    # Find weight for interpolating across alpha
-    weight1 = (alpha - alpha_lower)
-    weight2 = 1 - weight1
-
-    return avg1 * weight1 + avg2 * weight2
+        # Find weight for interpolating across alpha
+        weight1 = (alpha - alpha_lower)
+        weight2 = 1 - weight1
+        return avg1 * weight1 + avg2 * weight2
+    return xcp_officialpos

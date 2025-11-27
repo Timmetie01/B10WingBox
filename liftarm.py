@@ -1,9 +1,16 @@
-from NVMdiagrams import posofcp_0
-from NVMdiagrams import posofcp_10
-from NVMdiagrams import yspan_0
-from NVMdiagrams import yspan_10
+from NVMdiagrams import chord_length
+from NVMdiagrams import alpha
+from NVMdiagrams import Lub
+from NVMdiagrams import Dub
+import math as m
 import data_import 
+import scipy as sp
+import numpy as np
+from NVMdiagrams import span
 import matplotlib.pyplot as plt
+from data_from_xflr5 import xcppos_func
+from NVMdiagrams import CLd
+
 
 testclass = data_import.import_wingbox('test_cross_section')
 
@@ -13,7 +20,7 @@ def get_centroid(wingbox):
 
 print(f"This is the x coord for testclass {get_centroid(testclass)}")
 
-
+'''
 #Find avg cp position at AOA 0            
 def cp_avg(posofcp_0):
     cp_total = 0
@@ -45,47 +52,35 @@ def cp_avg(posofcp_10):
 
 average = cp_avg(posofcp_10)
 print("Avg CP at 10 AOA:",average)
+'''
+# Position of xcp as a funciton of alpha and the span position
 
-#function of y which describes the distance of the shear center from the center of pressure
-def cp_sc_dist(yspan_0,posofcp_0):
-    sc = 0 #shear center pos
-    y_values = []
-    dist_values = []
+#We're going to have xcp as a funciton of (y)
+xcppos_func1 = xcppos_func(CLd)
 
-    for i in range(len(posofcp_0)):
-        distance = sc + posofcp_0[i]
-        y = yspan_0[i]
-        y_values.append(y)
-        dist_values.append(distance)
+#Moment arm for a specific alpha and span position
+def moment_arm(wingbox):
+    def distance(y):
+        sc = get_centroid(wingbox)
+        return (xcppos_func1(y) - sc) * chord_length(y)
+    return distance
 
-    return y_values, dist_values
+MA = moment_arm(testclass)
 
-y0, dist0 = cp_sc_dist(yspan_0, posofcp_0)
+def infinites_torque(y):
+    return MA(y) * (Lub(y) * m.cos(alpha) + Dub(y) * m.sin(alpha))
 
-# plt.plot(y, dist)
-# plt.title("AOA 0")
-# plt.xlabel("y")
-# plt.ylabel("cp - sc distance")
-# plt.show()
+def Torsion(y):
+    T,_ = sp.integrate.quad(lambda yy: infinites_torque(yy), y, span/2.0)
+    return T
 
-def cp_sc_dist(yspan_10,posofcp_10):
-    sc = 0
-    y_values = []
-    dist_values = []
+ypoints = np.linspace(0.0, span/2.0 ,200)
+torsion_values = np.array([Torsion(y) for y in ypoints])
 
-    for i in range(len(posofcp_10)):
-        distance = sc + posofcp_10[i]
-        y = yspan_10[i]
-        y_values.append(y)
-        dist_values.append(distance)
-
-    return y_values, dist_values
-
-y10, dist10 = cp_sc_dist(yspan_10, posofcp_10)
-
-plt.plot(y0, dist0, y10, dist10)
-plt.title("Lift Arm")
-plt.xlabel("Spanwise position")
-plt.ylabel("CP to SC distance")
-plt.legend(("alpha = 0", "alpha = 10"))
+plt.plot(ypoints,torsion_values)
+plt.xlabel("Spanwise position [m]")
+plt.ylabel("Torsion [Nm]")
+plt.title("Internal Torsion Diagram")
+plt.tight_layout()
 plt.show()
+
