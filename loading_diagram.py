@@ -59,8 +59,11 @@ def n_max(W):
 
 #Function to calculate cruise speed. Note we assume cruise Mach number to be the same everywhere
 def cruisespeed(alt):
-    v_c = 0.68*math.sqrt(1.4*287*ISA(alt)[0])
-    v_c = v_c*math.sqrt(ISA(altitude)[2]/1.225)
+    v_c = 0.68*math.sqrt(1.4*287*ISA(12496)[0])
+    if v_c*math.sqrt(ISA(12496)[2]/ISA(alt)[2]) > 0.7*math.sqrt(1.4*287*ISA(alt)[0]):
+        print("mach problems vc")
+        return  0.7*math.sqrt(1.4*287*ISA(alt)[0])*math.sqrt(ISA(alt)[2]/1.225)
+    v_c = v_c*math.sqrt(ISA(12496)[2]/1.225)
     return v_c
 
 #Function to calculate the dive speed, which is basically the maximum speed
@@ -118,7 +121,7 @@ while n < n_maximum and v < v_dive:
 n = 0
 v = 0
 v_s0 = stallspeed(W_current, Clmax_flaps_landing)
-while n < 2:
+while n < 2 and v < v_dive:
     nflapstab.append(n)
     vflapstab.append(v)
     v = v + dv
@@ -132,12 +135,13 @@ while v < special_v and v < v_f:
 
 v = vpositivetab[-1]
 n = npositivetab[-1]
-#Go straight until it gets to dive speed
-if v < v_dive:
-    while v < v_dive:
-        npositivetab.append(n_maximum)
-        vpositivetab.append(v)
-        v = v + dv
+
+#Go straight until it gets to dive speed, but only if it's necessary
+
+while v < v_dive:
+    npositivetab.append(n)
+    vpositivetab.append(v)
+    v = v + dv
 
 #Go Down
 
@@ -180,7 +184,10 @@ else:
     print("something went wrong, please choose 1, 2 or 3 for the loading conditions.")
     quit()
 
-    
+print("The manoeuvring speed in m/s is", v_s1* (n_maximum)**0.5 )
+print("The cruisespeed in m/s is ", v_c)
+print("The dive speed in m/s is", v_dive)
+          
 plt.title(f"Loading Diagram for BTA10, {weight_choice} loading, altitude: {altitude}m")
 plt.plot(vpositivetab, npositivetab, color="darkblue")
 plt.plot(vnegativetab, nnegativetab, color="darkblue")
