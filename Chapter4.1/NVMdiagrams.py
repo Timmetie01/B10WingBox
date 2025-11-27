@@ -23,6 +23,10 @@ wing_weight = 711.736
 CL0 =  0.179632
 CL10 = 1.004670
 
+# Landing gear
+LG_weight = 317.833/2
+LG_y_pos = 1.9808
+
 def chord_length(ypos):
 
     return cr + (ct-cr)*2/span*ypos
@@ -44,39 +48,6 @@ def alphafromCLd(CLd):
 
     alpha_deg = (CLd - CL0)/(CL10-CL0)*10.0
     return m.radians(alpha_deg)
-
-
-def lg_weightdistribution(y: float, alpha: float, step: float = span/2 / 400, LG_weight: float = 317.833/2, LG_y_pos: float = 1.9808):
-    """A function that represents the weight distribution of the landing gear
-    
-    Parameters
-    ----------
-    y: float
-        y position for which the weight should be given
-    alpha: float
-        angle of attack
-    step:
-        the step size of the integration to create a range in which the point mass acts
-        Default is span/400
-    LG_weight: float
-        mass of one side of main LG in [kg]
-        Default is 317.833/2
-    LG_y_pos: float
-        y position of the main landing gear CG
-        Default is 1.9808
-    
-    Returns
-    -------
-    weight_at_y: float
-        weight at y position in [N]
-    """
-    
-    weight_at_y = 0.0 #add weight at chord, fuel at chord...
-    
-    if y - step/2 < LG_y_pos < y + step/2:
-        weight_at_y += LG_weight * g
-
-    return weight_at_y * m.cos(alpha)
 
 CLd = float(input("Input a CLd = "))
 alpha = alphafromCLd(CLd)
@@ -220,9 +191,15 @@ def distributed_weight(y):
 def shear(y):
         S1, error = sp.integrate.quad(lambda yy: Lub(yy)*m.cos(alpha),y,span/2.0)
         S2, error = sp.integrate.quad(lambda yy: distributed_weight(yy)*m.cos(alpha),y,span/2.0)
-        WLg, error2 = sp.integrate.quad(lg_weightdistribution, y, span/2.0, args = (alpha)) # add the weight distribution
         S3,error = sp.integrate.quad(lambda yy: Dub(yy)*m.sin(alpha), y, span/2.0)
-        return  - S1 + S2 + WLg - S3
+
+        #V = -S1 + S2 - S3
+        V = 0
+
+        if y < LG_y_pos:
+            V += LG_weight * g
+
+        return  V
 
 
 ypoints = np.linspace(0.0, span/2.0 ,200)
