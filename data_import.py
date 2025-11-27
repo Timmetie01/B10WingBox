@@ -84,5 +84,18 @@ def import_wingbox(foldername):
     return wingboxclass
 testwingbox = import_wingbox('test_cross_section')
 
+
+#Returns the coordinates of the airfoil we used for the wing. Call once and save array instead of calling multiple times to improve performance!
+def import_airfoil_points():
+    with open('data/Airfoils/Project_Airfoil_Coords.txt') as airfoilpoints:
+        lines = np.array(airfoilpoints.readlines())
     
+    pointlist = np.zeros((len(lines) - 1,2))
+
+    for i in range(len(lines) - 1):
+        point = str(lines[i + 1]).strip()
+        coordinates = np.array(point.split(), dtype=np.float64)
+        pointlist[i] = coordinates
+
+    return pointlist
 
