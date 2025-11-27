@@ -2,7 +2,16 @@ from NVMdiagrams import posofcp_0
 from NVMdiagrams import posofcp_10
 from NVMdiagrams import yspan_0
 from NVMdiagrams import yspan_10
+import data_import 
 import matplotlib.pyplot as plt
+
+testclass = data_import.import_wingbox('test_cross_section')
+
+def get_centroid(wingbox):
+    scpos = wingbox.centroid_coordinates[0]
+    return scpos 
+
+print(f"This is the x coord for testclass {get_centroid(testclass)}")
 
 
 #Find avg cp position at AOA 0            

@@ -55,7 +55,7 @@ alpha = alphafromCLd(CLd)
 print(f"Calculations for alpha = {alpha} rad ({m.degrees(alpha)} deg) for CLd={CLd}")
 
 #Organised aerodynamic coefficients
-tablezeroalpha = np.genfromtxt("Chapter4.1\MainWing_a=0.00HighpanelFinal.csv", delimiter=",", skip_header=91, skip_footer=5743)
+tablezeroalpha = np.genfromtxt("MainWing_a=0.00HighpanelFinal.csv", delimiter=",", skip_header=91, skip_footer=5743)
 
 yspan_0 = tablezeroalpha[:,0]
 chordlength_0 = tablezeroalpha[:,1]
@@ -68,7 +68,7 @@ CmAirfchord4_0 = tablezeroalpha[:,7]
 posofcp_0 = tablezeroalpha[:,10]
 
 
-tabletenalpha = np.genfromtxt("Chapter4.1\MainWing_a=10.00HighplaneFinal.csv", delimiter=",", skip_header=91, skip_footer=5743)
+tabletenalpha = np.genfromtxt("MainWing_a=10.00HighplaneFinal.csv", delimiter=",", skip_header=91, skip_footer=5743)
 
 yspan_10 = tabletenalpha[:,0]
 chordlength_10 = tabletenalpha[:,1]
@@ -157,25 +157,6 @@ lift_dist_func = liftdristribution(CLd)
 def Lub(y):
     return lift_dist_func(y)*q*chord_length(y)
 
-#Another way
-#plt.title("Noisy data")
-#plt.plot(yspan_0,Cl_0,"r+")
-#plt.show()
-
-
-#order = 20
-
-#coefficients = np.polyfit(yspan_0,Cl_0,order)
-#polynomial = np.poly1d(coefficients)
-#ysmooth = np.polyval(polynomial,yspan_0)
-
-#plt.plot(yspan_0,ysmooth)
-#plt.plot(yspan_0,Cl_0,"r+")
-#plt.title(f"polynomial {order} order")
-#plt.show()
-
-   # print(polynomial)
-
 
 #Weight distribution function
 
@@ -193,8 +174,8 @@ def shear(y):
         S2, error = sp.integrate.quad(lambda yy: distributed_weight(yy)*m.cos(alpha),y,span/2.0)
         S3,error = sp.integrate.quad(lambda yy: Dub(yy)*m.sin(alpha), y, span/2.0)
 
-        #V = -S1 + S2 - S3
-        V = 0
+        V = -S1 + S2 - S3
+        #V = 0
 
         if y < LG_y_pos:
             V += LG_weight * g
