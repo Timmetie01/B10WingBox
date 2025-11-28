@@ -27,7 +27,7 @@ def theta(wingbox, y=b/2):
 
 #random linear function used to test output, to be replaced by 4.1s bending distribution
 def M(y):
-    return -1.5e6*(1-y/(b/2))
+    return -1.4e6*(1-y/(b/2))
 
 #outputs the second derivative of the deflection wrt the spanwise position, using the bending distribution and Ixx
 #wingbox: input a wingbox class variable
