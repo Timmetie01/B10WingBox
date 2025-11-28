@@ -24,7 +24,7 @@ deflection = 100
 wingboxthickness = 0
 while deflection > const['span'] * const['max_deflection_fraction']:
     wingboxthickness += 1e-5
-    iterationwingbox = data_import.create_airfoil_like_wingbox(0.1, 0.6, thickness=[wingboxthickness, 0.005, wingboxthickness, 0.005], thicknesstype='partially_constant', stringercount=40, stringer_areas=3e-5, panelcount=50)
+    iterationwingbox = data_import.create_airfoil_like_wingbox(0.1, 0.6, thickness=[wingboxthickness, 0.005, wingboxthickness, 0.005], thicknesstype='partially_constant', stringercount=40, stringer_areas=2e-5, panelcount=50)
 
     deflection = deflection_functions.v(iterationwingbox)
 
