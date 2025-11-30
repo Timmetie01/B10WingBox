@@ -24,6 +24,7 @@ def M(y, file_name):
     bending = data["bending"]
     return np.interp(y, ypoints, bending)
 
+
 def T(y, file_name):
     data = load_case(file_name)
     torsion = data["torsion"]
@@ -55,3 +56,5 @@ def T(y, file_name):
 # print(V(0, 'abs_min_shear'))
 # print(M(0, 'abs_min_bending'))
 # print(T(0, 'abs_min_torsion'))
+
+M(5, 'abs_max_bending')

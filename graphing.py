@@ -34,19 +34,17 @@ def I_plot(wingbox, npoints=100):
 
 #Enter the wingbox class. When show_wing is true, it plots the upper and lower sides of the wing surface using the thickness-to-chord and chord functions
 def deflection_plot(wingbox, show_wing=True, two_wings=False):
-    y_list = np.linspace(0, const['span']/2, 100)
-    v_list = []
+    y_list, v_list = deflection_functions.v_trapezoidal(wingbox)
+
     if show_wing:
         top_wing_list = []
         bottom_wing_list = []
+        for i in range(len(y_list)):
+            wingthickness = const['thickness_to_chord'] * constants.local_chord_at_span(y_list[i])
+            top_wing_list.append(v_list[i] + 0.5 * wingthickness)
+            bottom_wing_list.append(v_list[i] - 0.5 * wingthickness)
 
-    for i in y_list:
-        current_v = deflection_functions.v(wingbox, i)
-        v_list.append(current_v)
-        if show_wing:
-            wingthickness = const['thickness_to_chord'] * constants.local_chord_at_span(i)
-            top_wing_list.append(current_v + 0.5 * wingthickness)
-            bottom_wing_list.append(current_v - 0.5 * wingthickness)
+    
 
     plt.plot(y_list, v_list, color='darkblue')
     if show_wing:
@@ -116,6 +114,20 @@ def wingbox_plot(wingbox, showplot=True):
         plt.gca().set_aspect('equal')
         plt.show()
 
+def worst_moment_plot():
+    from worst_cases import worst_case_loading
+    
+    ytab = np.linspace(0, const['span']/2, 1000)
+    Mtab = []
+    for i in ytab:
+        Mtab.append(worst_case_loading.M(i, 'abs_max_bending'))
+
+    plt.plot(ytab, Mtab)
+    plt.title('Bending moment over the wing span')
+    plt.xlabel('y (m)')
+    plt.ylabel('Bending moment (Nm)')
+
+    plt.show()
 
 
 

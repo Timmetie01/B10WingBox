@@ -2,6 +2,8 @@ import data_import
 from constants import const
 import graphing
 import deflection_functions
+from worst_cases import worst_case_loading
+import numpy as np
 
 testclass = data_import.import_wingbox('test_cross_section')
 
@@ -14,22 +16,27 @@ testclass = data_import.import_wingbox('test_cross_section')
 #graphing.deflection_plot(testclass)
 #graphing.twist_plot(testclass)
 
-graphing.airfoil_pointplot(showplot=False)
 
-#newtestclass = data_import.create_airfoil_like_wingbox(0.1, 0.6, thickness=[0.003, 0.001, 0.003, 0.001], thicknesstype='full_array', stringercount=12, stringer_areas=2e-5, panelcount=4)
-#graphing.wingbox_plot(newtestclass)
-#graphing.deflection_plot(newtestclass, two_wings=False)
+graphing.worst_moment_plot()
 
 deflection = 100
+twist = 100
 wingboxthickness = 0
-while deflection > const['span'] * const['max_deflection_fraction']:
-    wingboxthickness += 1e-5
-    iterationwingbox = data_import.create_airfoil_like_wingbox(0.1, 0.6, thickness=[wingboxthickness, 0.005, wingboxthickness, 0.005], thicknesstype='partially_constant', stringercount=40, stringer_areas=2e-5, panelcount=50)
+while deflection > const['span'] * const['max_deflection_fraction'] or abs(twist) > const['max_twist_degrees']:
+    wingboxthickness += 5e-5
+    iterationwingbox = data_import.create_airfoil_like_wingbox(0.2, 0.5, thickness=[wingboxthickness, wingboxthickness, wingboxthickness, wingboxthickness], thicknesstype='partially_constant', stringercount=0, stringer_areas=1e-5, panelcount=50)
 
-    deflection = deflection_functions.v(iterationwingbox)
+    y_list, v_list = deflection_functions.v_trapezoidal(iterationwingbox)
+    deflection = max(v_list)
+    twist = deflection_functions.theta(iterationwingbox) * 180 / np.pi
 
 print(wingboxthickness)
+
+
+graphing.airfoil_pointplot(showplot=False)
 graphing.wingbox_plot(iterationwingbox)
+
 graphing.deflection_plot(iterationwingbox, two_wings=False)
+graphing.twist_plot(iterationwingbox)
 
 

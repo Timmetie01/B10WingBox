@@ -1,7 +1,9 @@
 import scipy as sp
 from constants import const
-from area_moments import Torsional_constant
 import data_import
+from worst_cases import worst_case_loading
+import numpy as np
+
 
 testclass = data_import.import_wingbox('test_cross_section')
 
@@ -26,13 +28,13 @@ def theta(wingbox, y=b/2):
 
 
 #random linear function used to test output, to be replaced by 4.1s bending distribution
-def M(y):
-    return -1.4e6*(1-y/(b/2))
+#def M(y):
+#    return -1.4e6*(1-y/(b/2))
 
 #outputs the second derivative of the deflection wrt the spanwise position, using the bending distribution and Ixx
 #wingbox: input a wingbox class variable
 def d2v_dy2(y, wingbox):
-    return -M(y) / (E * wingbox.Ixx(y))
+    return worst_case_loading.M(y, 'abs_max_bending') / (E * wingbox.Ixx(y))
 
 #outputs the derivative of the deflection wrt the spanwise position, using the bending distribution and Ixx
 #wingbox: input a wingbox class variable
@@ -45,4 +47,24 @@ def dv_dy(y, wingbox):
 def v(wingbox, y=b/2):
     result, error = sp.integrate.quad(dv_dy, 0, y, args=(wingbox,))
     return result
+    
+def d2v_dy2_trapezoidal(y, wingbox):
+    y = np.asarray(y)
+    M = worst_case_loading.M(y, 'abs_max_bending')
+    Ixxlist = np.zeros_like(y, dtype=float)
+    for i in range(len(y)):
+        Ixxlist[i] = wingbox.Ixx(y[i])
+    return M / (E * Ixxlist)
 
+def v_trapezoidal(wingbox, y_end=None, N=5000):
+    if y_end is None:
+        y_end = const['span'] / 2
+
+    y = np.linspace(0, y_end, N)
+    
+    f = d2v_dy2_trapezoidal(y, wingbox)
+
+    dv_dy_values = sp.integrate.cumulative_trapezoid(f, y, initial=0)
+    v_values = sp.integrate.cumulative_trapezoid(dv_dy_values, y, initial=0)
+
+    return y, v_values
