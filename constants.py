@@ -35,6 +35,8 @@ const = {
     'main_landing_gear_width': 0.17145, # [m]
     'nose_landing_gear_diameter': 0.5588, # [m]
     'nose_landing_gear_width': 0.17145, # [m]
+    'main_landing_gear_mass': 317.833/2, # [kg] (one side)
+    'main_landing_gear_y_position': 1.9808, # [m] (from axis of symmetry to main landing gear cg)
 
     #Material specs
     'Density': 2780, #[kg/m^3]
@@ -68,3 +70,30 @@ def local_chord_at_span(target_span, root_chord = const['root_chord'], taper_rat
     local_chord = root_chord - root_chord * (1-taper_ratio) * abs(target_span) / (total_span / 2)
 
     return local_chord
+
+# ISA values calculator to an altitude of 20000m by Adam
+def ISA(alt):
+    g_0 = 9.80665
+    R = 287
+    T_0 = 288.15
+    p_0 = 101325
+    a = -0.0065
+
+    alt1 = min(11000, alt)
+
+    t_1 = T_0 + a*(alt1)
+
+    p_1 = p_0*((t_1/T_0)**((-g_0)/(a*R)))
+
+    rho = p_1/(t_1*R)
+
+    if alt <= 11000:
+        return t_1, p_1, rho
+    
+    alt1 = min(20000,alt)
+
+    p_1 = p_1*math.exp((-g_0/(R*t_1))*(alt1-11000))
+
+    rho = p_1/(t_1*R)
+
+    return t_1, p_1, rho
