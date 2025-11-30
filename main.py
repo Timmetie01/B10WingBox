@@ -18,12 +18,13 @@ testclass = data_import.import_wingbox('test_cross_section')
 
 
 graphing.worst_moment_plot()
+graphing.worst_torsion_plot()
 
 deflection = 100
 twist = 100
 wingboxthickness = 0
 while deflection > const['span'] * const['max_deflection_fraction'] or abs(twist) > const['max_twist_degrees']:
-    wingboxthickness += 5e-5
+    wingboxthickness += 1e-4
     iterationwingbox = data_import.create_airfoil_like_wingbox(0.1, 0.5, thickness=[wingboxthickness, wingboxthickness, wingboxthickness,  wingboxthickness], thicknesstype='partially_constant', stringercount=0, stringer_areas=1e-5, panelcount=50)
 
     y_list, v_list = deflection_functions.v(iterationwingbox)

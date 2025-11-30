@@ -70,10 +70,8 @@ def deflection_plot(wingbox, show_wing=True, two_wings=False):
 
 #Enter the wingbox class, shows graph of resulting twist at certain span locations
 def twist_plot(wingbox):
-    y_list = np.linspace(0, const['span']/2, 100)
-    theta_list = []
-    for i in y_list:
-        theta_list.append(deflection_functions.theta(wingbox, i) * 180 / np.pi)
+    y_list, theta_list = deflection_functions.theta(wingbox)
+    theta_list = theta_list * 180 / np.pi
 
     plt.plot(y_list, theta_list)
     plt.title('Wing twist at different spanwise positions')
@@ -132,5 +130,22 @@ def worst_moment_plot():
 
     plt.show()
 
+def worst_torsion_plot():
+    from worst_cases import worst_case_loading
+    
+    ytab = np.linspace(0, const['span']/2, 1000)
+    thetatabmax = []
+    thetatabmin = []
+    for i in ytab:
+        thetatabmax.append(worst_case_loading.M(i, 'abs_max_torsion'))
+        thetatabmin.append(worst_case_loading.M(i, 'abs_min_torsion'))
+
+    plt.plot(ytab, thetatabmax)
+    plt.plot(ytab, thetatabmin)
+    plt.title('Torsion over the wing span')
+    plt.xlabel('y (m)')
+    plt.ylabel('Torsion (Nm)')
+
+    plt.show()
 
 
