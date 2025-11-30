@@ -1,6 +1,5 @@
 import numpy as np
 import math as m
-from NVMdiagrams import alphafromCLd
 
 # AOA = 0deg
 tablezeroalpha = np.genfromtxt(r"xflr5data\MainWing_a=0.00_v=10.00ms.csv", delimiter=",", skip_header=21)
@@ -48,15 +47,50 @@ posofcp_9 = table9alpha[:,10]
 table10alpha = np.genfromtxt(r"xflr5data\MainWing_a=10.00_v=10.00ms.csv", delimiter=",", skip_header=21)
 posofcp_10 = table10alpha[:,10]
 
-posofcplist = [posofcp_0, posofcp_1, posofcp_2, posofcp_3, posofcp_4, posofcp_5, posofcp_6, posofcp_7, posofcp_8, posofcp_9, posofcp_10]
+# AOA = 11deg
+table11alpha = np.genfromtxt(r"xflr5data\MainWing_a=11.00_v=10.00ms.csv", delimiter=",", skip_header=21)
+posofcp_11 = table11alpha[:,10]
+
+# AOA = 12deg
+table12alpha = np.genfromtxt(r"xflr5data\MainWing_a=12.00_v=10.00ms.csv", delimiter=",", skip_header=21)
+posofcp_12 = table12alpha[:,10]
+
+# AOA = 13deg
+table13alpha = np.genfromtxt(r"xflr5data\MainWing_a=13.00_v=10.00ms.csv", delimiter=",", skip_header=21)
+posofcp_13 = table13alpha[:,10]
+
+# AOA = 14deg
+table14alpha = np.genfromtxt(r"xflr5data\MainWing_a=14.00_v=10.00ms.csv", delimiter=",", skip_header=21)
+posofcp_14 = table14alpha[:,10]
+
+# AOA = 15deg
+table15alpha = np.genfromtxt(r"xflr5data\MainWing_a=15.00_v=10.00ms.csv", delimiter=",", skip_header=21)
+posofcp_15 = table15alpha[:,10]
+
+# AOA = 16deg
+table16alpha = np.genfromtxt(r"xflr5data\MainWing_a=16.00_v=10.00ms.csv", delimiter=",", skip_header=21)
+posofcp_16 = table16alpha[:,10]
+
+# AOA = 17deg
+table17alpha = np.genfromtxt(r"xflr5data\MainWing_a=17.00_v=10.00ms.csv", delimiter=",", skip_header=21)
+posofcp_17 = table17alpha[:,10]
+
+# AOA = 18deg
+table18alpha = np.genfromtxt(r"xflr5data\MainWing_a=18.00_v=10.00ms.csv", delimiter=",", skip_header=21)
+posofcp_18 = table18alpha[:,10]
+
+posofcplist = [posofcp_0, posofcp_1, posofcp_2, posofcp_3, posofcp_4, posofcp_5, posofcp_6, posofcp_7, posofcp_8, posofcp_9, 
+               posofcp_10, posofcp_11, posofcp_12, posofcp_13, posofcp_14, posofcp_15, posofcp_16, posofcp_17, posofcp_18]
 
 
 def xcppos_func(CLd_specific):
+    from NVMdiagrams import alphafromCLd
+
     def xcp_officialpos(y):
         alpha: float = abs(m.degrees(alphafromCLd(CLd_specific)))
 
         # Make sure the alpha is in the correct range
-        if alpha > 10:
+        if alpha > 18:
             raise Exception("CLd out of range. Only values for angle of attack from -10 to 10 work")
         
         # One y index
