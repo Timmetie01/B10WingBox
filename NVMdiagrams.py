@@ -21,7 +21,7 @@ span = 17.5746
 g = 9.80665
 
 # Fuel
-wing_fuel_percentage = 0.7
+wing_fuel_percentage = 0
 fuel_weight = 4541.1
 
 # Wing
@@ -156,20 +156,31 @@ def loading(CL_design: float, q: float, wingbox: Wingbox, show_graphs: bool = Fa
 
     def shear(y):
             S1, error = sp.integrate.quad(lambda yy: Lub(yy)*m.cos(alpha),y,span/2.0)
-            S2, error = sp.integrate.quad(lambda yy: distributed_weight(yy)*m.cos(alpha),y,span/2.0)
+            #S2, error = sp.integrate.quad(lambda yy: distributed_weight(yy)*m.cos(alpha),y,span/2.0)
             S3,error = sp.integrate.quad(lambda yy: Dub(yy)*m.sin(alpha), y, span/2.0)
 
-            V = -S1 + S2 - S3
-            #V = 0
+            #V = -S1 + S2 - S3
+            V = 0
+            V = -S1 - S3
 
             if y < LG_y_pos:
                 V += LG_weight * g
 
             return  V
+    
+
 
 
     ypoints = np.linspace(0.0, span/2.0 ,100)
-    shearvalues = np.array([shear(y) for y in ypoints])
+
+    # Distributed weight
+    new_distr_w = np.array([total_wing_weight/const['wing_area']*chord_length(y)*span/2 /100 * g for y in ypoints])
+    new_distr_w = new_distr_w[::-1]
+    new_distr_w = np.cumsum(new_distr_w)
+    new_distr_w = new_distr_w[::-1]
+    
+    print(np.sum(new_distr_w))
+    shearvalues = np.array([shear(y) for y in ypoints]) + new_distr_w
 
     if show_graphs:
         plt.plot(ypoints,shearvalues)
@@ -373,4 +384,4 @@ if __name__ == "__main__":
     testclass = data_import.import_wingbox('test_cross_section')
     #find_worst_loading(1, 30, testclass)
 
-    generate_loading(15, testclass, show_graphs=True)
+    generate_loading(13, testclass, show_graphs=True)
