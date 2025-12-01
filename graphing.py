@@ -151,7 +151,7 @@ def worst_torsion_plot():
     plt.show()
 
 #Plots the currently designed wingbox under worst possible conditions (worst bending and worst torsion.)
-def wing_plot(wingbox, Npoints=20):
+def wing_plot(wingbox, Npoints=20, twowings=False):
     import deflection_functions
     import data_import
     y_list, v_list = deflection_functions.v(wingbox, N=Npoints)
@@ -166,20 +166,27 @@ def wing_plot(wingbox, Npoints=20):
 
         #Airfoil + deflection + twist (Assuming twist angle small)
         Ztop[i] = data_import.airfoil_interpolation(np.linspace(0, 1, Npoints), side='top') * chord + v_list[i]
-        Ztop[i] += np.linspace(-1 * chord /4 * np.sin(theta_list[i]), 3 * chord / 4 * np.sin(theta_list[i]), Npoints)
+        Ztop[i] += np.linspace(1 * chord /4 * np.sin(theta_list[i]), -3 * chord / 4 * np.sin(theta_list[i]), Npoints)
         
         #Airfoil + deflection + twist (Assuming twist angle small)
         Zbottom[i] = data_import.airfoil_interpolation(np.linspace(0, 1, Npoints), side='bottom') * chord + v_list[i]
-        Zbottom[i] += np.linspace(-1 * chord /4 * np.sin(theta_list[i]), 3 * chord / 4 * np.sin(theta_list[i]), Npoints)
+        Zbottom[i] += np.linspace(1 * chord /4 * np.sin(theta_list[i]), -3 * chord / 4 * np.sin(theta_list[i]), Npoints)
         
     fig, ax = plt.subplots(subplot_kw={'projection': '3d'})
-    surface1 = ax.plot_surface(X, Y, Ztop, antialiased=False)
-    surface2 = ax.plot_surface(X, Y, Zbottom, antialiased=False)
+    X = np.vstack((np.flip(X), X))
+    Y = np.vstack((np.flip(Y), Y))
+    Z = np.vstack((np.flip(Ztop), Zbottom))
+    ax.plot_surface(X, Y, Z, antialiased=True, color='grey')
+    if twowings:
+        ax.plot_surface(X, -1*Y, Z, antialiased=True, color='grey')
+    ax.set_proj_type('persp')
     plt.xlabel('x (m)')
     plt.ylabel('Span (m)')
     plt.gca().set_aspect('equal')
     
+    
     plt.show()
+
 
 
 
