@@ -150,8 +150,8 @@ def worst_torsion_plot():
 
     plt.show()
 
-#Plots the currently designed wingbox under worst possible conditions (worst bending and worst torsion.)
-def wing_plot(wingbox, Npoints=20, twowings=False):
+#Plots the entered designed wingbox under current worst possible conditions (worst bending and worst torsion.)
+def wing_plot(wingbox, Npoints=50, twowings=False):
     import deflection_functions
     import data_import
     y_list, v_list = deflection_functions.v(wingbox, N=Npoints)
@@ -164,18 +164,18 @@ def wing_plot(wingbox, Npoints=20, twowings=False):
         chord = constants.local_chord_at_span(Y[i,0])
         X[i] = np.linspace( Y[i,0] * np.tan(const['leading_edge_sweep']), Y[i,0] * np.tan(const['leading_edge_sweep']) + chord, Npoints)
 
-        #Airfoil + deflection + twist (Assuming twist angle small)
+        #Airfoil + deflection + twist (Assuming twist angle small, only vertically using twist displacement (cos(theta)=1))
         Ztop[i] = data_import.airfoil_interpolation(np.linspace(0, 1, Npoints), side='top') * chord + v_list[i]
         Ztop[i] += np.linspace(1 * chord /4 * np.sin(theta_list[i]), -3 * chord / 4 * np.sin(theta_list[i]), Npoints)
         
-        #Airfoil + deflection + twist (Assuming twist angle small)
+        #Airfoil + deflection + twist (Assuming twist angle small, only vertically using twist displacement (cos(theta)=1))
         Zbottom[i] = data_import.airfoil_interpolation(np.linspace(0, 1, Npoints), side='bottom') * chord + v_list[i]
         Zbottom[i] += np.linspace(1 * chord /4 * np.sin(theta_list[i]), -3 * chord / 4 * np.sin(theta_list[i]), Npoints)
-        
-    fig, ax = plt.subplots(subplot_kw={'projection': '3d'})
+         
     X = np.vstack((np.flip(X), X))
     Y = np.vstack((np.flip(Y), Y))
     Z = np.vstack((np.flip(Ztop), Zbottom))
+    fig, ax = plt.subplots(subplot_kw={'projection': '3d'})
     ax.plot_surface(X, Y, Z, antialiased=True, color='grey')
     if twowings:
         ax.plot_surface(X, -1*Y, Z, antialiased=True, color='grey')

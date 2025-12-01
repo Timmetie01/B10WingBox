@@ -23,12 +23,12 @@ while deflection > const['span'] * const['max_deflection_fraction'] or abs(twist
 print(f'The final wingbox thickness is {round(const['root_chord'] * wingboxthickness * 1000, 5)} mm at the chord, and {round(const['tip_chord'] * wingboxthickness * 1000, 5)} mm at the tip!')
 
 
-#graphing.airfoil_pointplot(showplot=False)
-#graphing.wingbox_plot(iterationwingbox)
+graphing.airfoil_pointplot(showplot=False)
+graphing.wingbox_plot(iterationwingbox)
 
-graphing.wing_plot(iterationwingbox)
-#graphing.deflection_plot(iterationwingbox, two_wings=False)
-#graphing.twist_plot(iterationwingbox)
+graphing.wing_plot(iterationwingbox, twowings=False)
+graphing.deflection_plot(iterationwingbox, two_wings=False)
+graphing.twist_plot(iterationwingbox)
 
 #graphing.I_plot(iterationwingbox)
 
