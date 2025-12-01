@@ -15,7 +15,7 @@ G = const['Shear_Modulus']
 #wingbox: input a wingbox class variable
 def dtheta_dy(y, wingbox): 
     np.asarray(y)
-    T = worst_case_loading.M(y, 'abs_max_torsion')
+    T = worst_case_loading.T(y, 'abs_max_torsion')
     J_list = np.zeros_like(y, dtype=float)
     for i in range(len(y)):
         J_list[i] = wingbox.J(y[i])

@@ -25,7 +25,7 @@ twist = 100
 wingboxthickness = 0
 while deflection > const['span'] * const['max_deflection_fraction'] or abs(twist) > const['max_twist_degrees']:
     wingboxthickness += 1e-4
-    iterationwingbox = data_import.create_airfoil_like_wingbox(0.1, 0.5, thickness=[wingboxthickness, wingboxthickness, wingboxthickness,  wingboxthickness], thicknesstype='partially_constant', stringercount=0, stringer_areas=1e-5, panelcount=50)
+    iterationwingbox = data_import.create_airfoil_like_wingbox(0.1, 0.5, thickness=[wingboxthickness, wingboxthickness, wingboxthickness,  wingboxthickness], thicknesstype='partially_constant', stringercount=18, stringer_areas=2e-5, panelcount=50, stringerspacing='constant_no_endpoints')
 
     y_list, v_list = deflection_functions.v(iterationwingbox)
     deflection = max(v_list)

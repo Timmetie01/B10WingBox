@@ -137,8 +137,8 @@ def worst_torsion_plot():
     thetatabmax = []
     thetatabmin = []
     for i in ytab:
-        thetatabmax.append(worst_case_loading.M(i, 'abs_max_torsion'))
-        thetatabmin.append(worst_case_loading.M(i, 'abs_min_torsion'))
+        thetatabmax.append(worst_case_loading.T(i, 'abs_max_torsion'))
+        thetatabmin.append(worst_case_loading.T(i, 'abs_min_torsion'))
 
     plt.plot(ytab, thetatabmax)
     plt.plot(ytab, thetatabmin)
