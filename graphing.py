@@ -112,6 +112,7 @@ def wingbox_plot(wingbox, showplot=True):
         plt.gca().set_aspect('equal')
         plt.show()
 
+#Plots the worst case moment
 def worst_moment_plot():
     from worst_cases import worst_case_loading
     
@@ -130,6 +131,7 @@ def worst_moment_plot():
 
     plt.show()
 
+#Plots the worst case Torsion
 def worst_torsion_plot():
     from worst_cases import worst_case_loading
     
@@ -147,5 +149,37 @@ def worst_torsion_plot():
     plt.ylabel('Torsion (Nm)')
 
     plt.show()
+
+#Plots the currently designed wingbox under worst possible conditions (worst bending and worst torsion.)
+def wing_plot(wingbox, Npoints=20):
+    import deflection_functions
+    import data_import
+    y_list, v_list = deflection_functions.v(wingbox, N=Npoints)
+    y_list, theta_list = deflection_functions.theta(wingbox, N=Npoints)
+    Y = np.transpose(np.array([y_list] * len(y_list)))
+    X = np.ones_like(Y, dtype=float)
+    Ztop = np.ones_like(Y, dtype=float)
+    Zbottom = np.ones_like(Y, dtype=float) 
+    for i in range(len(y_list)):
+        chord = constants.local_chord_at_span(Y[i,0])
+        X[i] = np.linspace( Y[i,0] * np.tan(const['leading_edge_sweep']), Y[i,0] * np.tan(const['leading_edge_sweep']) + chord, Npoints)
+
+        #Airfoil + deflection + twist (Assuming twist angle small)
+        Ztop[i] = data_import.airfoil_interpolation(np.linspace(0, 1, Npoints), side='top') * chord + v_list[i]
+        Ztop[i] += np.linspace(-1 * chord /4 * np.sin(theta_list[i]), 3 * chord / 4 * np.sin(theta_list[i]), Npoints)
+        
+        #Airfoil + deflection + twist (Assuming twist angle small)
+        Zbottom[i] = data_import.airfoil_interpolation(np.linspace(0, 1, Npoints), side='bottom') * chord + v_list[i]
+        Zbottom[i] += np.linspace(-1 * chord /4 * np.sin(theta_list[i]), 3 * chord / 4 * np.sin(theta_list[i]), Npoints)
+        
+    fig, ax = plt.subplots(subplot_kw={'projection': '3d'})
+    surface1 = ax.plot_surface(X, Y, Ztop, antialiased=False)
+    surface2 = ax.plot_surface(X, Y, Zbottom, antialiased=False)
+    plt.xlabel('x (m)')
+    plt.ylabel('Span (m)')
+    plt.gca().set_aspect('equal')
+    
+    plt.show()
+
 
 

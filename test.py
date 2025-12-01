@@ -3,9 +3,11 @@ import numpy as np
 import graphing
 import deflection_functions
 import matplotlib.pyplot as plt
+from constants import const
 
-newtestclass = data_import.create_airfoil_like_wingbox(0.2, 0.4, thickness=[0.001, 0.0005, 0.001, 0.0005], thicknesstype='partially_constant', stringercount=10, stringer_areas=0e-5, panelcount=50)
+t = 3.26358 / const['root_chord']
 
-ylist, vlist = deflection_functions.v_trapezoidal(newtestclass)
+iterationwingbox = data_import.create_airfoil_like_wingbox(0.1, 0.5, thickness=[t, t, t,  t], thicknesstype='partially_constant', stringercount=20, stringer_areas=1e-5, panelcount=50, stringerspacing='constant_no_endpoints')
 
-graphing.deflection_plot(newtestclass, two_wings=False)
+
+graphing.wing_plot(iterationwingbox)

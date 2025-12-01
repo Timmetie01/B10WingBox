@@ -27,7 +27,7 @@ def dtheta_dy(y, wingbox):
 #    result, error = sp.integrate.quad(dtheta_dy,0,y, args=(wingbox,))
 #    return result
 
-def theta(wingbox, y_end=None, N=5000):
+def theta(wingbox, y_end=None, N=2000):
     if y_end is None:
         y_end = const['span'] / 2
 
@@ -65,7 +65,7 @@ def d2v_dy2(y, wingbox):
         Ixx_list[i] = wingbox.Ixx(y[i])
     return - M / (E * Ixx_list)
 
-def v(wingbox, y_end=None, N=5000):
+def v(wingbox, y_end=None, N=2000):
     if y_end is None:
         y_end = const['span'] / 2
 

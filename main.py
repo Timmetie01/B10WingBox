@@ -5,10 +5,6 @@ import deflection_functions
 from worst_cases import worst_case_loading
 import numpy as np
 
-testclass = data_import.import_wingbox('test_cross_section')
-
-#graphing.I_plot(iterationwingbox)
-
 deflection = 100
 twist = 100
 wingboxthickness = 0
@@ -30,7 +26,10 @@ print(f'The final wingbox thickness is {round(const['root_chord'] * wingboxthick
 graphing.airfoil_pointplot(showplot=False)
 graphing.wingbox_plot(iterationwingbox)
 
+
 graphing.deflection_plot(iterationwingbox, two_wings=False)
 graphing.twist_plot(iterationwingbox)
+
+#graphing.I_plot(iterationwingbox)
 
 

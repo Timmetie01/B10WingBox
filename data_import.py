@@ -107,12 +107,13 @@ def airfoil_interpolation(x, side='top'):
         quit()
     
     if side == 'top':
-        airfoil_points = airfoil_points[:(len(airfoil_points) // 2),:]
+        airfoil_points = airfoil_points[:(len(airfoil_points) // 2)+1,:]
         airfoil_points = np.flip(airfoil_points, 0)
     else:
         airfoil_points = airfoil_points[(len(airfoil_points) // 2):,:]
 
-    return np.interp(np.array(x), airfoil_points[:,0], airfoil_points[:,1], period=None)
+    return np.interp(np.asarray(x), airfoil_points[:,0], airfoil_points[:,1], period=None)
+
 
 
 #The following function makes a wingbox that follows the contours of the airfoil between two x values
