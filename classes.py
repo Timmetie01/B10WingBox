@@ -85,6 +85,11 @@ class Wingbox:
         
         return max(stress_tab), y_max_stress
     
+    def area(self, y):
+        import area_moments
+        import constants
+        current_wingbox = ScaledWingbox(self, constants.local_chord_at_span(y))
+        return area_moments.polygon_area(current_wingbox.points)
     
 #When requiring full-size wingbox instead of unit length airfoil one, the class below can be used
 #Enter the unit-length-airfoil class and the scale (i.e. chord length)
