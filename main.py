@@ -24,12 +24,16 @@ print(f'The final wingbox thickness is {round(const['root_chord'] * wingboxthick
 
 
 graphing.airfoil_pointplot(showplot=False)
-graphing.wingbox_plot(iterationwingbox)
+iterationwingbox.plot()
 
-graphing.wing_plot(iterationwingbox, twowings=False)
-graphing.deflection_plot(iterationwingbox, two_wings=False)
-graphing.twist_plot(iterationwingbox)
+iterationwingbox.wing_plot(twowings=False)
 
+iterationwingbox.deflection_plot()
+iterationwingbox.twist_plot()
+
+graphing.worst_moment_plot()
 #graphing.I_plot(iterationwingbox)
 
+print(iterationwingbox.max_bending_stress())
 
+graphing.bending_stress_plot(iterationwingbox)
