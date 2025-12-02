@@ -21,7 +21,6 @@ span = 17.5746
 g = 9.80665
 
 # Fuel
-wing_fuel_percentage = 0
 fuel_weight = 4541.1
 
 # Wing
@@ -126,9 +125,10 @@ def get_centroid(wingbox):
         scpos = wingbox.centroid_coordinates[0]
         return scpos 
 
-def loading(CL_design: float, q: float, wingbox: Wingbox, show_graphs: bool = False):
+def loading(CL_design: float, q: float, wingbox: Wingbox, wing_fuel_percentage: float, show_graphs: bool = False):
     CLd = CL_design
     alpha = alphafromCLd(CLd)
+    wing_fuel_percentage = wing_fuel_percentage
 
     #This is going to give Cd_distr(y)
     drag_dist_func = drag_distr(CLd)
@@ -146,13 +146,6 @@ def loading(CL_design: float, q: float, wingbox: Wingbox, show_graphs: bool = Fa
 
     #Weight distribution function
     fuel_weight_used = wing_fuel_percentage * fuel_weight
-    total_wing_weight = wing_weight + fuel_weight_used
-
-    halfspan_chord_summation, error = sp.integrate.quad(chord_length,0.0,span/2.0)
-    #print(f"Half-span chord integral = {halfspan_chord_summation}")
-
-    def distributed_weight(y):
-        return chord_length(y)/halfspan_chord_summation * total_wing_weight/2.0 * g
 
     def shear(y):
             S1, error = sp.integrate.quad(lambda yy: Lub(yy)*m.cos(alpha),y,span/2.0)
@@ -173,14 +166,30 @@ def loading(CL_design: float, q: float, wingbox: Wingbox, show_graphs: bool = Fa
 
     ypoints = np.linspace(0.0, span/2.0 ,100)
 
-    # Distributed weight
-    new_distr_w = np.array([total_wing_weight/const['wing_area']*chord_length(y)*span/2 /100 * g for y in ypoints])
+    # Distributed structural weight
+    new_distr_w = np.array([wing_weight/const['wing_area']*chord_length(y)*span/2 /100 * g for y in ypoints])
     new_distr_w = new_distr_w[::-1]
     new_distr_w = np.cumsum(new_distr_w)
     new_distr_w = new_distr_w[::-1]
+
+    # Distributed fuel weight
+    ypoints_A = np.array([wingbox.area(y) for y in ypoints])
+    totalA = np.sum(ypoints_A)
+    fuel_distr_w = ypoints_A/totalA * fuel_weight_used/2 * g
+    print(np.sum(fuel_distr_w))
+    if show_graphs:
+        plt.plot(ypoints,fuel_distr_w)
+        plt.xlabel("Spanwise position [m]")
+        plt.ylabel("Fuel Weight [N]")
+        plt.title("Fuel Weight Distribution")
+        plt.tight_layout()
+        plt.show()
+    fuel_distr_w = fuel_distr_w[::-1]
+    fuel_distr_w = np.cumsum(fuel_distr_w)
+    fuel_distr_w = fuel_distr_w[::-1]
     
-    print(np.sum(new_distr_w))
-    shearvalues = np.array([shear(y) for y in ypoints]) + new_distr_w
+    
+    shearvalues = fuel_distr_w + np.array([shear(y) for y in ypoints]) + new_distr_w
 
     if show_graphs:
         plt.plot(ypoints,shearvalues)
@@ -263,8 +272,10 @@ def generate_loading(case_number: int, wingbox: Wingbox, show_graphs = False):
     q = 1/2 * density * TAS**2
     CL = n*W/(q*const['wing_area'])
 
+    wing_fuel_percentage = 0 if W < 12000 * g else 0.7
+
     # Actually assumes that the whole lift curve is linear, which is of course nonsensical, maybe we could hardcode some values
-    results = loading(CL, q, wingbox, show_graphs)
+    results = loading(CL, q, wingbox, wing_fuel_percentage, show_graphs)
     return results[0], results[1], results[2]
 
 
