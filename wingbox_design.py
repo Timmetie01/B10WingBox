@@ -36,8 +36,22 @@ def thickness_iteration(xstart, xend, stringercount, stringer_areas, thicknessty
     return iterationwingbox, iteration_thickness
 
 
+#Design 1:
+#thickness constant
+#design1_wingbox, thickness1 = thickness_iteration(0.2, 0.6, stringercount=0, stringer_areas=3e-5, stringerspacing='constant_no_endpoints', panelcount=50)
+#print(thickness1)
 
-        
+#Design 2
+#Thickness constant, stringer area constant
+#design2_wingbox, thickness2 = thickness_iteration(0.2, 0.6, stringercount=30, stringer_areas=2.8e-5, stringerspacing='constant_no_endpoints', panelcount=50)
+#print(thickness2)
+
+
+#Design 3
+#Thickness Variable, stringer area constant
+design3_wingbox, thickness3 = thickness_iteration(0.2, 0.6, stringercount=30, stringer_areas=2.8e-5, stringerspacing='constant_no_endpoints', panelcount=50)
+print(thickness3)
+     
 
 
 

@@ -100,7 +100,7 @@ class ScaledWingbox:
         self.panels = originalclass.panels * scale
         self.panel_thickness = originalclass.panel_thickness * scale
         self.stringers = originalclass.stringers * scale
-        self.stringer_area = originalclass.stringer_area * scale ** 2
+        self.stringer_area = originalclass.stringer_area * scale# ** 2
 
         self.centroid_coordinates = originalclass.centroid_coordinates * scale
         self.centroidal_points = originalclass.centroidal_points * scale
