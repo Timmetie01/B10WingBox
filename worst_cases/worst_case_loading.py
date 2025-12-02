@@ -55,3 +55,7 @@ def T(y, file_name):
 # print(V(0, 'abs_min_shear'))
 # print(M(0, 'abs_min_bending'))
 # print(T(0, 'abs_min_torsion'))
+
+for i in ['abs_max_shear', 'abs_min_shear', 'abs_max_bending', 'abs_min_bending', 'abs_max_torsion', 'abs_min_torsion']:
+    data = np.load(f"worst_cases/{i}.npz")
+    print(f'For {i}, the worst case is LC-{data["case_number"]}')

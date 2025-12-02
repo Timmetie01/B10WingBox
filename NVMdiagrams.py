@@ -21,7 +21,6 @@ span = 17.5746
 g = 9.80665
 
 # Fuel
-wing_fuel_percentage = 0.7
 fuel_weight = 4541.1
 
 # Wing
@@ -61,15 +60,7 @@ cmgeom_10 = tabletenalpha[:,6]
 CmAirfchord4_10 = tabletenalpha[:,7]
 posofcp_10 = tabletenalpha[:,10]
 
-# Visual Check
-# plt.plot(yspan_0,Cl_0)
-# plt.plot(yspan_10,Cl_10)
-# plt.title("Coefficient of lift for half-span")
-# plt.xlabel("Span position [m]")
-# plt.ylabel("Coefficient of lift")
-# plt.legend(("alpha = 0","alpha=10"))
-# plt.tight_layout()
-# plt.show()
+
 
 #Function relating cl,cd,cm4 to y position
 
@@ -126,9 +117,10 @@ def get_centroid(wingbox):
         scpos = wingbox.centroid_coordinates[0]
         return scpos 
 
-def loading(CL_design: float, q: float, wingbox: Wingbox, show_graphs: bool = False):
+def loading(CL_design: float, q: float, wingbox: Wingbox, fuel_weight_percentage: float, show_graphs: bool = False, ):
     CLd = CL_design
     alpha = alphafromCLd(CLd)
+    wing_fuel_percentage = fuel_weight_percentage
 
     #This is going to give Cd_distr(y)
     drag_dist_func = drag_distr(CLd)
@@ -156,20 +148,42 @@ def loading(CL_design: float, q: float, wingbox: Wingbox, show_graphs: bool = Fa
 
     def shear(y):
             S1, error = sp.integrate.quad(lambda yy: Lub(yy)*m.cos(alpha),y,span/2.0)
-            S2, error = sp.integrate.quad(lambda yy: distributed_weight(yy)*m.cos(alpha),y,span/2.0)
+            #S2, error = sp.integrate.quad(lambda yy: distributed_weight(yy)*m.cos(alpha),y,span/2.0)
             S3,error = sp.integrate.quad(lambda yy: Dub(yy)*m.sin(alpha), y, span/2.0)
 
-            V = -S1 + S2 - S3
-            #V = 0
+            #V = -S1 + S2 - S3
+            V = 0
+            V = -S1 - S3
 
             if y < LG_y_pos:
                 V += LG_weight * g
 
             return  V
+    
+
 
 
     ypoints = np.linspace(0.0, span/2.0 ,100)
-    shearvalues = np.array([shear(y) for y in ypoints])
+
+    # Distributed weight
+    new_distr_w = np.array([total_wing_weight/const['wing_area']*chord_length(y)*span/2 /100 * g for y in ypoints])
+    new_distr_w = new_distr_w[::-1]
+    new_distr_w = np.cumsum(new_distr_w)
+    new_distr_w = new_distr_w[::-1]
+
+    # Visual Check
+    if show_graphs:
+        lift_dist = np.array([lift_dist_func(y) for y in ypoints])
+        plt.plot(ypoints,lift_dist)
+        plt.title("Lift distribution")
+        plt.xlabel("Span position [m]")
+        plt.ylabel("Lift_dist")
+        plt.legend(("alpha = 0"))
+        plt.tight_layout()
+        plt.show()
+    
+    # print(np.sum(new_distr_w))
+    shearvalues = np.array([shear(y) for y in ypoints]) + new_distr_w
 
     if show_graphs:
         plt.plot(ypoints,shearvalues)
@@ -248,12 +262,14 @@ def generate_loading(case_number: int, wingbox: Wingbox, show_graphs = False):
     n = float(envelope_data['n']) # [-]
     W = float(envelope_data['Mass']) * g # [N]
 
+    fuel_weight_percentage = 0 if W < 12000 * g else 0.7
+
     # Calculate relevant parameters    
     q = 1/2 * density * TAS**2
-    CL = n*W/(q*const['wing_area'])
+    CLd = n*W/(q*const['wing_area'])
 
     # Actually assumes that the whole lift curve is linear, which is of course nonsensical, maybe we could hardcode some values
-    results = loading(CL, q, wingbox, show_graphs)
+    results = loading(CLd, q, wingbox, fuel_weight_percentage, show_graphs)
     return results[0], results[1], results[2]
 
 
@@ -371,6 +387,6 @@ def find_worst_loading(first: int, last: int, wingbox, save_folder="worst_cases"
 # Put all code under this if statement otherwise the code becomes circular with xflr5
 if __name__ == "__main__":
     testclass = data_import.import_wingbox('test_cross_section')
-    #find_worst_loading(1, 30, testclass)
+    find_worst_loading(1, 32, testclass)
 
-    generate_loading(15, testclass, show_graphs=True)
+    #generate_loading(3, testclass, show_graphs=True)
