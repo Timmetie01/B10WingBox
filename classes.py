@@ -40,9 +40,49 @@ class Wingbox:
         scale = constants.local_chord_at_span(y)
         current_wingbox = ScaledWingbox(self, scale)
         return area_moments.Torsional_constant(current_wingbox.centroidal_points, current_wingbox.panel_thickness)
-
-
     
+    def z_max_min(self, y):
+        import area_moments
+        return area_moments.z_max_min(y, self)
+
+    def plot(self, showplot=True):
+        import graphing
+        graphing.wingbox_plot(self, showplot)
+
+    def wing_plot(self, Npoints=50, twowings=False):
+        import graphing
+        graphing.wing_plot(self, Npoints, twowings)
+
+    def deflection_plot(self, show_wing=True, two_wings=False):
+        import graphing
+        graphing.deflection_plot(self, show_wing, two_wings)
+
+    def twist_plot(self):
+        import graphing
+        graphing.twist_plot(self)
+
+    def I_plot(self,npoints=100):
+        import graphing
+        graphing.I_plot(self, npoints)
+    
+    def max_bending_stress(self, Npoints=250):
+        import stress_functions
+        import constants
+        import stress_functions
+        y_tab = np.linspace(0, constants.const['span']/2, Npoints)
+        stress_tab = []
+
+        max_stress = 0
+        y_max_stress = 0
+        for i in y_tab:
+            current_stress = stress_functions.max_bending_stress(self, i)
+            stress_tab.append(current_stress)
+            if current_stress > max_stress:
+                max_stress = current_stress
+                y_max_stress = i
+        
+        
+        return max(stress_tab), y_max_stress
     
     
 #When requiring full-size wingbox instead of unit length airfoil one, the class below can be used

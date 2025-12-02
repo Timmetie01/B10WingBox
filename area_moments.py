@@ -78,4 +78,8 @@ def second_area_moment(y, wingbox):
     
     return Ixx, Iyy, Ixy
 
-    
+#The following functions returns highest height and lowest height away from the current wingbox. Assuming stringers will always be inside the skin, and as such are not checked
+#To use, use wingbox.zmaxmin(y)
+def z_max_min(y, wingbox):
+    current_wingbox = classes.ScaledWingbox(wingbox, constants.local_chord_at_span(y))
+    return max(current_wingbox.points[:,1]), min(current_wingbox.points[:,1])   
