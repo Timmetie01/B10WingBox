@@ -138,13 +138,9 @@ def loading(CL_design: float, q: float, wingbox: Wingbox, fuel_weight_percentage
 
     #Weight distribution function
     fuel_weight_used = wing_fuel_percentage * fuel_weight
-    total_wing_weight = wing_weight + fuel_weight_used
 
     halfspan_chord_summation, error = sp.integrate.quad(chord_length,0.0,span/2.0)
     #print(f"Half-span chord integral = {halfspan_chord_summation}")
-
-    def distributed_weight(y):
-        return chord_length(y)/halfspan_chord_summation * total_wing_weight/2.0 * g
 
     def shear(y):
             S1, error = sp.integrate.quad(lambda yy: Lub(yy)*m.cos(alpha),y,span/2.0)
@@ -165,8 +161,8 @@ def loading(CL_design: float, q: float, wingbox: Wingbox, fuel_weight_percentage
 
     ypoints = np.linspace(0.0, span/2.0 ,100)
 
-    # Distributed weight
-    new_distr_w = np.array([total_wing_weight/const['wing_area']*chord_length(y)*span/2 /100 * g for y in ypoints])
+    # Distributed structural weight
+    new_distr_w = np.array([wing_weight/const['wing_area']*chord_length(y)*span/2 /100 * g for y in ypoints])
     new_distr_w = new_distr_w[::-1]
     new_distr_w = np.cumsum(new_distr_w)
     new_distr_w = new_distr_w[::-1]
@@ -387,6 +383,6 @@ def find_worst_loading(first: int, last: int, wingbox, save_folder="worst_cases"
 # Put all code under this if statement otherwise the code becomes circular with xflr5
 if __name__ == "__main__":
     testclass = data_import.import_wingbox('test_cross_section')
-    find_worst_loading(1, 32, testclass)
+    #find_worst_loading(1, 32, testclass)
 
-    #generate_loading(3, testclass, show_graphs=True)
+    generate_loading(3, testclass, show_graphs=True)
