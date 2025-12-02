@@ -172,6 +172,8 @@ def wing_plot(wingbox, Npoints=50, twowings=False):
         Zbottom[i] = data_import.airfoil_interpolation(np.linspace(0, 1, Npoints), side='bottom') * chord + v_list[i]
         Zbottom[i] += np.linspace(1 * chord /4 * np.sin(theta_list[i]), -3 * chord / 4 * np.sin(theta_list[i]), Npoints)
          
+    X, Y, Ztop, Zbottom = np.transpose(X), np.transpose(Y), np.transpose(Ztop), np.transpose(Zbottom),
+
     X = np.vstack((np.flip(X), X))
     Y = np.vstack((np.flip(Y), Y))
     Z = np.vstack((np.flip(Ztop), Zbottom))
@@ -187,6 +189,7 @@ def wing_plot(wingbox, Npoints=50, twowings=False):
     
     plt.show()
 
+#Plots the highest normal stress due to bending found in each cross section over y
 def bending_stress_plot(wingbox, Npoints = 250, showplot=True):
     import stress_functions
     y_tab = np.linspace(0, const['span']/2, Npoints)

@@ -65,6 +65,8 @@ def d2v_dy2(y, wingbox):
         Ixx_list[i] = wingbox.Ixx(y[i])
     return - M / (E * Ixx_list)
 
+#Returns two evenly spaced arrays. First an array of y-values, second an array of v-values corresponding to the y values in the first array.
+#To find the deflection at a specific y-value, either search the array or input y_end and take the [-1] indexed value of the array.
 def v(wingbox, y_end=None, N=2000):
     if y_end is None:
         y_end = const['span'] / 2
