@@ -198,7 +198,7 @@ def bending_stress_plot(wingbox, Npoints = 250, showplot=True):
     if showplot:
         plt.xlabel('Spanwise position (m)')
         plt.ylabel('Highest cross-sectional stress')
-        plt.title('Highest stresses at cross sections.')
+        plt.title('Highest normal stresses at cross sections.')
         plt.grid(axis='y', ls='--')
         plt.show()
         print(max(stress_tab))
