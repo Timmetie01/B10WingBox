@@ -136,17 +136,35 @@ def worst_torsion_plot():
     from worst_cases import worst_case_loading
     
     ytab = np.linspace(0, const['span']/2, 1000)
-    thetatabmax = []
-    thetatabmin = []
+    Ttabmax = []
+    Ttabmin = []
     for i in ytab:
-        thetatabmax.append(worst_case_loading.T(i, 'abs_max_torsion'))
-        thetatabmin.append(worst_case_loading.T(i, 'abs_min_torsion'))
+        Ttabmax.append(worst_case_loading.T(i, 'abs_max_torsion'))
+        Ttabmin.append(worst_case_loading.T(i, 'abs_min_torsion'))
 
-    plt.plot(ytab, thetatabmax)
-    plt.plot(ytab, thetatabmin)
+    plt.plot(ytab, Ttabmax)
+    plt.plot(ytab, Ttabmin)
     plt.title('Torsion over the wing span')
     plt.xlabel('y (m)')
     plt.ylabel('Torsion (Nm)')
+
+    plt.show()
+
+def worst_shear_plot():
+    from worst_cases import worst_case_loading
+    
+    ytab = np.linspace(0, const['span']/2, 1000)
+    Vtabmax = []
+    Vtabmin = []
+    for i in ytab:
+        Vtabmax.append(worst_case_loading.V(i, 'abs_max_shear'))
+        Vtabmin.append(worst_case_loading.V(i, 'abs_min_shear'))
+
+    plt.plot(ytab, Vtabmax)
+    plt.plot(ytab, Vtabmin)
+    plt.title('Shear over the wing span')
+    plt.xlabel('y (m)')
+    plt.ylabel('Shear (N)')
 
     plt.show()
 
