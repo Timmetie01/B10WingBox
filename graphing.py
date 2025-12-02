@@ -190,7 +190,7 @@ def wing_plot(wingbox, Npoints=50, twowings=False):
         Zbottom[i] = data_import.airfoil_interpolation(np.linspace(0, 1, Npoints), side='bottom') * chord + v_list[i]
         Zbottom[i] += np.linspace(1 * chord /4 * np.sin(theta_list[i]), -3 * chord / 4 * np.sin(theta_list[i]), Npoints)
          
-    X, Y, Ztop, Zbottom = np.transpose(X), np.transpose(Y), np.transpose(Ztop), np.transpose(Zbottom),
+    #X, Y, Ztop, Zbottom = np.transpose(X), np.transpose(Y), np.transpose(Ztop), np.transpose(Zbottom),
 
     X = np.vstack((np.flip(X), X))
     Y = np.vstack((np.flip(Y), Y))
