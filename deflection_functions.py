@@ -79,3 +79,13 @@ def v(wingbox, y_end=None, N=2000):
     v_values = sp.integrate.cumulative_trapezoid(dv_dy_values, y, initial=0)
 
     return y, v_values
+
+#Returns the maximum deflection and absolute maximum twist found along the wing. Twist is IN RADIANS!
+def max_deflection_and_twist(wingbox):
+    import deflection_functions
+    y_list, v_list = deflection_functions.v(wingbox)
+    deflection = max(v_list)
+    y_list, theta_list = deflection_functions.theta(wingbox)
+    twist = max(np.abs(theta_list))
+
+    return deflection, twist
