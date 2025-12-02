@@ -176,7 +176,7 @@ def loading(CL_design: float, q: float, wingbox: Wingbox, wing_fuel_percentage: 
     ypoints_A = np.array([wingbox.area(y) for y in ypoints])
     totalA = np.sum(ypoints_A)
     fuel_distr_w = ypoints_A/totalA * fuel_weight_used/2 * g
-    print(np.sum(fuel_distr_w))
+    #print(np.sum(fuel_distr_w))
     if show_graphs:
         plt.plot(ypoints,fuel_distr_w)
         plt.xlabel("Spanwise position [m]")
@@ -393,6 +393,6 @@ def find_worst_loading(first: int, last: int, wingbox, save_folder="worst_cases"
 # Put all code under this if statement otherwise the code becomes circular with xflr5
 if __name__ == "__main__":
     testclass = data_import.import_wingbox('test_cross_section')
-    #find_worst_loading(1, 30, testclass)
+    find_worst_loading(1, 32, testclass)
 
-    generate_loading(13, testclass, show_graphs=True)
+    #generate_loading(13, testclass, show_graphs=True)
