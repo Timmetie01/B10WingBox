@@ -6,12 +6,15 @@ from worst_cases import worst_case_loading
 import numpy as np
 import wingbox_design
 
-iterationwingbox, thickness = wingbox_design.thickness_iteration(0.1, 0.5, stringercount=20, stringer_areas=1e-5, stringerspacing='constant_no_endpoints', panelcount=50)
 
-graphing.airfoil_pointplot(showplot=False)
-iterationwingbox.plot()
+#Iteration 1:
+iterationwingbox, thickness = wingbox_design.thickness_iteration(0.1, 0.5, stringercount=0, stringer_areas=1e-5, stringerspacing='constant_no_endpoints', panelcount=50)
 
-#iterationwingbox.wing_plot(twowings=False)
+
+#graphing.airfoil_pointplot(showplot=False)
+#iterationwingbox.plot()
+
+iterationwingbox.wing_plot(Npoints=50)
 
 iterationwingbox.deflection_plot()
 #iterationwingbox.twist_plot()
