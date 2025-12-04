@@ -2,7 +2,6 @@ import numpy as np
 from classes import Wingbox
 import scipy as sp
 
-
 #State a wingbox folder (string), it returns a np array (n x 2) t of coordinates. File format for input:
 #Header row
 #x1  y1
@@ -61,8 +60,7 @@ def import_stringers(foldername):
 
     return coordinate_list, area_list
 
-
-#Give a list of points (nx2 numpy array of coords). Closes the cross-section if necessary. return nx4 array of panel coordinates in x1 y1 x2 y2 format
+#Give a list of points (nx2 numpy array of coords). Closes the cross-section if necessary. return nx4 array of panel coordinates in x_start y_start x_end y_end format. 
 def makepanels(inputcoordinates):
 
     #If the pointlist ends with something else, close the section
@@ -78,12 +76,12 @@ def makepanels(inputcoordinates):
 
     return panelarray   
 
-#When a folder with fully correct syntax provides wingbox data, just input the folder name (as a string) into this function and it will return a completely defined wingbox class!
+#When a folder with fully correct syntax provides wingbox data, just input the folder name (as a string) into this function and it will return a completely defined wingbox class! 
+#Only really useful in testing of functions.
 def import_wingbox(foldername):
     wingboxclass = Wingbox(import_wingbox_points('data/' + foldername), import_wingbox_thickness('data/' + foldername), import_stringers('data/' + foldername)[0], import_stringers('data/' + foldername)[1])
     return wingboxclass
 testwingbox = import_wingbox('test_cross_section')
-
 
 #Returns the coordinates of the airfoil we used for the wing. Call once and save array instead of calling multiple times to improve performance!
 def import_airfoil_points():
@@ -115,15 +113,14 @@ def airfoil_interpolation(x, side='top'):
     return np.interp(np.asarray(x), airfoil_points[:,0], airfoil_points[:,1], period=None)
 
 
-
 #The following function makes a wingbox that follows the contours of the airfoil between two x values
-#xstart and xend are basically the front and rear spar x/c location
-#Thickness: constant number when thicknesstype = 'constant', [top, right, bottom, left] array when  thicknesstype = 'partially_constant', or full array in order of panel when thicknesstype = 'full_array'
+#xstart and xend are the front and rear spar x/c location
+#Thickness: constant number when thicknesstype = 'constant', [top, right, bottom, left] array when  thicknesstype = 'partially_constant', or full array in order of panels when thicknesstype = 'full_array'
 #stringercount: amount of stringers
 #stringerspacing:'constant_endpoints' gives constant spacing including corners of wingbox, 'constant_no_endpoints' gives constant spacing excluding the corners of the wingbox
 #stringerareas: float for constant and array for variable areas
 #Panelcount: the amount of panels the wingbox will consist of, defaults to 50
-def create_airfoil_like_wingbox(xstart, xend, thickness, thicknesstype, stringercount, stringer_areas, stringerspacing='constant_endpoints', panelcount=50):
+def create_airfoil_like_wingbox(xstart, xend, thickness, thicknesstype, stringercount, stringer_areas, stringerspacing='constant_endpoints', panelcount=50, name=None):
     import classes
     import numbers
     panelcount = (panelcount//2) * 2
@@ -183,12 +180,7 @@ def create_airfoil_like_wingbox(xstart, xend, thickness, thicknesstype, stringer
             print('Make sure to give the thickness array with equal length as the amount of panels')
             quit()
     else:
-        print('Choose any of the available ways of entering thickness, or define your own :D.')
+        print('Choose any of the available ways of entering thickness! (or define your own :D )')
         quit()
-    
-    
 
-    return classes.Wingbox(wingbox_points, thickness, stringer_points, stringer_areas)
-
-    
-
+    return classes.Wingbox(wingbox_points, thickness, stringer_points, stringer_areas, name=name)

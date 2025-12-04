@@ -4,7 +4,6 @@ import data_import
 from worst_cases import worst_case_loading
 import numpy as np
 
-
 testclass = data_import.import_wingbox('test_cross_section')
 
 E = const['Modulus_of_Elasticity']
@@ -23,7 +22,7 @@ def dtheta_dy(y, wingbox):
 
 #Returns two evenly spaced arrays. First an array of y-values, second an array of theta-values corresponding to the y values in the first array.
 #To find the twist at a specific y-value, either search the array or input y_end and take the [-1] indexed value of the array.
-#Theat is in RADIANS!
+#Theta is in RADIANS!
 def theta(wingbox, y_end=None, N=2000):
     if y_end is None:
         y_end = b / 2
@@ -47,7 +46,7 @@ def d2v_dy2(y, wingbox):
         Ixx_list[i] = wingbox.Ixx(y[i])
     return - M / (E * Ixx_list)
 
-#Returns two evenly spaced arrays. First an array of y-values, second an array of v-values corresponding to the y values in the first array.
+#Returns two evenly spaced arrays. First an array of y-values (0-half span), second an array of v-values corresponding to the y values in the first array.
 #To find the deflection at a specific y-value, either search the array or input y_end and take the [-1] indexed value of the array.
 def v(wingbox, y_end=None, N=2000):
     if y_end is None:

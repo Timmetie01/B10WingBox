@@ -8,10 +8,12 @@ import scipy as sp
 #2: n x 1 array of thicknesses of the wingbox panels
 #3: n x 2 array of coords of stringers
 #4: n x 1 array of stringer areas
+#Optional KWArg: name. Used to title some plots. Defaults to None
 class Wingbox:
-    def __init__(self, wingboxpoints, panel_thickness, stringercoords, stringer_area):
+    def __init__(self, wingboxpoints, panel_thickness, stringercoords, stringer_area, name=None):
         import data_import
         import area_moments
+        self.name = name
 
         self.points = wingboxpoints
         self.panels = data_import.makepanels(wingboxpoints)
@@ -104,23 +106,20 @@ class Wingbox:
         print(f'The total wingbox weights {round(mass, 3)} kg.')
         return mass
         
-
     
 #When requiring full-size wingbox instead of unit length airfoil one, the class below can be used
 #Enter the unit-length-airfoil class and the scale (i.e. chord length)
-#root chord = const['root_chord']
 class ScaledWingbox:
     def __init__(self, originalclass, scale):
+        self.name = originalclass.name
         self.points = originalclass.points * scale
         self.panels = originalclass.panels * scale
-        self.panel_thickness = originalclass.panel_thickness# * scale
+        self.panel_thickness = originalclass.panel_thickness  #Unsure if scaling is required for the designs, will be considered during WP5
         self.stringers = originalclass.stringers * scale
-        self.stringer_area = originalclass.stringer_area * scale# ** 2
+        self.stringer_area = originalclass.stringer_area  #Stringer area is kept constant throughout all designs, and thus this line must be kept commented!
 
         self.centroid_coordinates = originalclass.centroid_coordinates * scale
         self.centroidal_points = originalclass.centroidal_points * scale
         self.centroidal_panels = originalclass.centroidal_panels * scale
         self.centroidal_stringers = originalclass.centroidal_stringers * scale
-
-
 

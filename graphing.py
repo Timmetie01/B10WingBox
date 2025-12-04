@@ -5,7 +5,7 @@ import constants
 import numpy as np
 
 #Give the wingbox class (and optionally the amount of points you want to plot)
-#Plots ixx, iyy and ixy against the half-span
+#Plots ixx, iyzz and ixz against the half-span
 def I_plot(wingbox, npoints=100):
     y_list = []
     Ixx_list = []
@@ -24,7 +24,7 @@ def I_plot(wingbox, npoints=100):
     plt.plot(y_list, Ixy_list, color='darkgreen')
     plt.plot(y_list, J_list, color='darkmagenta')
 
-    plt.legend(['Ixx', 'Iyy', 'Ixy', 'J'])
+    plt.legend(['Ixx', 'Izz', 'Ixz', 'J'])
     plt.axis
     plt.xlabel('Span (m)')
     plt.ylabel('I (m^4)')
@@ -45,12 +45,15 @@ def deflection_plot(wingbox, show_wing=True, two_wings=False):
             top_wing_list.append(v_list[i] + 0.5 * wingthickness)
             bottom_wing_list.append(v_list[i] - 0.5 * wingthickness)
 
+    plt.plot([const['span']/2 - 1, const['span']/2 + 0.3], [const['span'] * const['max_deflection_fraction'], const['span'] * const['max_deflection_fraction']], color='red')
     
 
     plt.plot(y_list, v_list, color='darkblue')
+    plt.legend('Wing Centerline')
     if show_wing:
         plt.plot(y_list, top_wing_list, color='black')
         plt.plot(y_list, bottom_wing_list, color='black')
+        plt.legend(('Allowed Deflection Limit (Centerline)', 'Wing Centerline', 'Wing surface'))
         
 
     if two_wings:
@@ -62,8 +65,6 @@ def deflection_plot(wingbox, show_wing=True, two_wings=False):
         plt.plot([const['span']/-2 + 1, const['span']/-2 - 0.3], [const['span'] * const['max_deflection_fraction'], const['span'] * const['max_deflection_fraction']], color='red')
     
 
-    plt.plot([const['span']/2 - 1, const['span']/2 + 0.3], [const['span'] * const['max_deflection_fraction'], const['span'] * const['max_deflection_fraction']], color='red')
-    
     plt.gca().set_aspect('equal')
     plt.title('Wing Deflection')
     plt.xlabel('Spanwise position (m)')
@@ -118,8 +119,15 @@ def wingbox_plot(wingbox, showplot=True):
 
     if showplot:
         plt.gca().set_aspect('equal')
+        plt.xlabel('x / chord')
+        plt.ylabel('y / chord')
         plt.grid(axis='y', ls='--')
         plt.grid(axis='x', ls='--')
+        #plt.title(wingbox.name)
+        if len(wingbox.stringers) > 0:
+            plt.legend(('Airfoil', 'Wingbox Skin', 'Stringers'))
+        else: 
+            plt.legend(('Airfoil', 'Wingbox Skin'))
         plt.show()
 
 #Plots the worst case moment
@@ -218,6 +226,7 @@ def wing_plot(wingbox, Npoints=50, twowings=False):
     plt.xlabel('x (m)')
     plt.ylabel('Span (m)')
     plt.gca().set_aspect('equal')
+    plt.title('3D Surface of the wing under maximum deflection and maximum twist')
     
     
     plt.show()
@@ -238,6 +247,3 @@ def bending_stress_plot(wingbox, Npoints = 250, showplot=True):
         plt.grid(axis='y', ls='--')
         plt.grid(axis='x', ls='--')
         plt.show()
-
-
-
