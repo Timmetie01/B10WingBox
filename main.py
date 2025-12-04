@@ -15,24 +15,24 @@ import NVMdiagrams
 #NVMdiagrams.find_worst_loading(13, 17, iterationwingbox)
 
 #Design 1:
-iterationwingbox, thickness = wingbox_design.thickness_iteration(0.2, 0.6, stringercount=0, stringer_areas=3e-5, stringerspacing='constant_no_endpoints', panelcount=50)
+iterationwingbox, thickness = wingbox_design.thickness_iteration(0.2, 0.6, stringercount=0, stringer_areas=1e-5, stringerspacing='constant_no_endpoints', panelcount=4)
 print(iterationwingbox.panel_thickness[0])
 
-#iterationwingbox = data_import.create_airfoil_like_wingbox(0.2, 0.6, thickness=0.002, thicknesstype='constant', stringercount=0, stringer_areas=3e-5, panelcount=50, stringerspacing='constant_no_endpoints')
 
 
 graphing.airfoil_pointplot(showplot=False)
 iterationwingbox.plot()
 
-#iterationwingbox1.wing_plot(Npoints=50)
+#iterationwingbox.wing_plot(Npoints=50)
 
 iterationwingbox.deflection_plot()
 iterationwingbox.twist_plot()
+iterationwingbox.weight()
 
 
 #graphing.worst_moment_plot()
 #graphing.I_plot(iterationwingbox)
 
 #print(iterationwingbox.max_bending_stress())
-graphing.bending_stress_plot(iterationwingbox)
+#graphing.bending_stress_plot(iterationwingbox)
 
