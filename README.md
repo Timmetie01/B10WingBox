@@ -12,3 +12,5 @@ Graphing:
 Many different graphing functions have been created that instantly create graphs for easy visualization. They typically take the wingbox as an argument, and produce the plot using the wingbox properties set above.
 Many graphing functions are also incorporated in the wingbox class and can be called by, for example, wingbox.I_plot()
 
+Manoeuvre envelope:
+To generate the manoeuvre envelope to obtain worst-case load scenarios, simply run the file loading_diagram.py. It uses airplane specifications from constants.py, and asks the user about the desired configuration and altitude of the aircraft. 
