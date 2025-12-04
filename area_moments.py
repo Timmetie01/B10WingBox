@@ -83,3 +83,12 @@ def second_area_moment(y, wingbox):
 def z_max_min(y, wingbox):
     current_wingbox = classes.ScaledWingbox(wingbox, constants.local_chord_at_span(y))
     return max(current_wingbox.points[:,1]), min(current_wingbox.points[:,1])   
+
+def cross_sectional_area(wingbox, y):
+    current_wingbox = classes.ScaledWingbox(wingbox, constants.local_chord_at_span(y))
+    panelcoords = current_wingbox.panels
+
+    panellength = np.sqrt((panelcoords[:,2] - panelcoords[:,0]) * (panelcoords[:,2] - panelcoords[:,0]) + (panelcoords[:,3] - panelcoords[:,1]) * (panelcoords[:,3] - panelcoords[:,1]))
+    panelarea = np.transpose(np.array([panellength])) * current_wingbox.panel_thickness
+
+    return np.sum(panelarea) + np.sum(current_wingbox.stringer_area)

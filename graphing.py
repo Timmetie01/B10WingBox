@@ -30,6 +30,7 @@ def I_plot(wingbox, npoints=100):
     plt.ylabel('I (m^4)')
 
     plt.grid(axis='y', ls='--')
+    plt.grid(axis='x', ls='--')
     plt.show()
 
 #Enter the wingbox class. When show_wing is true, it plots the upper and lower sides of the wing surface using the thickness-to-chord and chord functions
@@ -50,6 +51,7 @@ def deflection_plot(wingbox, show_wing=True, two_wings=False):
     if show_wing:
         plt.plot(y_list, top_wing_list, color='black')
         plt.plot(y_list, bottom_wing_list, color='black')
+        
 
     if two_wings:
         plt.plot(y_list * -1, v_list, color='darkblue')
@@ -66,6 +68,8 @@ def deflection_plot(wingbox, show_wing=True, two_wings=False):
     plt.title('Wing Deflection')
     plt.xlabel('Spanwise position (m)')
     plt.ylabel('Deflection (m)')
+    plt.grid(axis='y', ls='--')
+    plt.grid(axis='x', ls='--')
     plt.show()
 
 #Enter the wingbox class, shows graph of resulting twist at certain span locations
@@ -77,6 +81,8 @@ def twist_plot(wingbox):
     plt.title('Wing twist at different spanwise positions')
     plt.xlabel('Spanwise position (m)')
     plt.ylabel('Twist (deg)')
+    plt.grid(axis='y', ls='--')
+    plt.grid(axis='x', ls='--')
     plt.show()
 
 #Shows airfoil plot by default, but if required to plot another layer on top of this one, the function can be called using showplot=False
@@ -92,6 +98,8 @@ def airfoil_pointplot(showplot=True):
         ymin, ymax = inputcoordinates[:, 1].min(), inputcoordinates[:, 1].max()
         plt.xlim(xmin - 0.1, xmax + 0.1)
         plt.ylim(ymin - 0.1, ymax + 0.1)
+        plt.grid(axis='y', ls='--')
+        plt.grid(axis='x', ls='--')
 
         plt.show()
 
@@ -110,6 +118,8 @@ def wingbox_plot(wingbox, showplot=True):
 
     if showplot:
         plt.gca().set_aspect('equal')
+        plt.grid(axis='y', ls='--')
+        plt.grid(axis='x', ls='--')
         plt.show()
 
 #Plots the worst case moment
@@ -128,6 +138,8 @@ def worst_moment_plot():
     plt.title('Bending moment over the wing span')
     plt.xlabel('y (m)')
     plt.ylabel('Bending moment (Nm)')
+    plt.grid(axis='y', ls='--')
+    plt.grid(axis='x', ls='--')
 
     plt.show()
 
@@ -147,7 +159,8 @@ def worst_torsion_plot():
     plt.title('Torsion over the wing span')
     plt.xlabel('y (m)')
     plt.ylabel('Torsion (Nm)')
-
+    plt.grid(axis='y', ls='--')
+    plt.grid(axis='x', ls='--')
     plt.show()
 
 def worst_shear_plot():
@@ -165,6 +178,8 @@ def worst_shear_plot():
     plt.title('Shear over the wing span')
     plt.xlabel('y (m)')
     plt.ylabel('Shear (N)')
+    plt.grid(axis='y', ls='--')
+    plt.grid(axis='x', ls='--')
 
     plt.show()
 
@@ -221,8 +236,8 @@ def bending_stress_plot(wingbox, Npoints = 250, showplot=True):
         plt.ylabel('Highest cross-sectional stress')
         plt.title('Highest normal stresses at cross sections.')
         plt.grid(axis='y', ls='--')
+        plt.grid(axis='x', ls='--')
         plt.show()
-        print(max(stress_tab))
 
 
 

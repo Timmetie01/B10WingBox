@@ -52,9 +52,8 @@ def T(y, file_name):
 
 # print(V(0, 'abs_max_shear'))
 # print(M(0, 'abs_max_bending'))
-# print(T(0, 'abs_max_torsion'))
+#print(T(0, 'abs_max_torsion'))
 # print(V(0, 'abs_min_shear'))
 # print(M(0, 'abs_min_bending'))
 # print(T(0, 'abs_min_torsion'))
 
-M(5, 'abs_max_bending')

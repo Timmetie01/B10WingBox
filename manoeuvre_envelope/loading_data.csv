@@ -29,3 +29,5 @@ LC-27,Positive manoeuvring @ V_C,97.17,7773.18,2.99,FL410
 LC-28,Positive manoeuvring @ V_D,107.17,7773.18,2.99,FL410
 LC-29,Negative manoeuvring @ V_C,97.17,7773.18,-1,FL410
 LC-30,Negative manoeuvring @ V_A,79.87,7773.18,-1,FL410
+LC-31,positive maneuvering @ V_c,97.17,12314.28,1,FL0
+LC-32,positive maneuvering @ V_D,255.22,12314.28,1,FL0

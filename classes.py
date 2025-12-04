@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from constants import const
+import scipy as sp
 
 #Arguments to create wingbox class:
 #1: n x 2 array of coords from wingbox
@@ -91,6 +92,20 @@ class Wingbox:
         current_wingbox = ScaledWingbox(self, constants.local_chord_at_span(y))
         return area_moments.polygon_area(current_wingbox.points)
     
+    def weight(self):
+        import area_moments
+        y_tab = np.linspace(0, const['span']/2, 1000)
+        area_tab = []
+        for i in y_tab:
+            area_tab.append(area_moments.cross_sectional_area(self, i))
+
+        volume = 2 * sp.integrate.cumulative_trapezoid(area_tab, y_tab, initial=0)[-1]
+        mass = volume * const['Density']
+        print(f'The total wingbox weights {round(mass, 3)} kg.')
+        return mass
+        
+
+    
 #When requiring full-size wingbox instead of unit length airfoil one, the class below can be used
 #Enter the unit-length-airfoil class and the scale (i.e. chord length)
 #root chord = const['root_chord']
@@ -98,9 +113,9 @@ class ScaledWingbox:
     def __init__(self, originalclass, scale):
         self.points = originalclass.points * scale
         self.panels = originalclass.panels * scale
-        self.panel_thickness = originalclass.panel_thickness * scale
+        self.panel_thickness = originalclass.panel_thickness# * scale
         self.stringers = originalclass.stringers * scale
-        self.stringer_area = originalclass.stringer_area * scale ** 2
+        self.stringer_area = originalclass.stringer_area * scale# ** 2
 
         self.centroid_coordinates = originalclass.centroid_coordinates * scale
         self.centroidal_points = originalclass.centroidal_points * scale
