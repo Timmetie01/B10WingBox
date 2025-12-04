@@ -125,7 +125,7 @@ def get_centroid(wingbox):
         scpos = wingbox.centroid_coordinates[0]
         return scpos 
 
-def loading(CL_design: float, q: float, wingbox: Wingbox, wing_fuel_percentage: float, show_graphs: bool = False):
+def loading(CL_design: float, q: float, n: float, wingbox: Wingbox, wing_fuel_percentage: float, show_graphs: bool = False):
     CLd = CL_design
     alpha = alphafromCLd(CLd)
     wing_fuel_percentage = wing_fuel_percentage
@@ -167,7 +167,7 @@ def loading(CL_design: float, q: float, wingbox: Wingbox, wing_fuel_percentage: 
     ypoints = np.linspace(0.0, span/2.0 ,100)
 
     # Distributed structural weight
-    new_distr_w = np.array([wing_weight/const['wing_area']*chord_length(y)*span/2 /100 * g for y in ypoints])
+    new_distr_w = np.array([n * wing_weight/const['wing_area']*chord_length(y)*span/2 /100 * g for y in ypoints])
     new_distr_w = new_distr_w[::-1]
     new_distr_w = np.cumsum(new_distr_w)
     new_distr_w = new_distr_w[::-1]
@@ -175,7 +175,7 @@ def loading(CL_design: float, q: float, wingbox: Wingbox, wing_fuel_percentage: 
     # Distributed fuel weight
     ypoints_A = np.array([wingbox.area(y) for y in ypoints])
     totalA = np.sum(ypoints_A)
-    fuel_distr_w = ypoints_A/totalA * fuel_weight_used/2 * g
+    fuel_distr_w = ypoints_A/totalA * fuel_weight_used/2 * g * n
     #print(np.sum(fuel_distr_w))
     if show_graphs:
         plt.plot(ypoints,fuel_distr_w)
@@ -275,11 +275,11 @@ def generate_loading(case_number: int, wingbox: Wingbox, show_graphs = False):
     wing_fuel_percentage = 0 if W < 12000 * g else 0.7
 
     # Actually assumes that the whole lift curve is linear, which is of course nonsensical, maybe we could hardcode some values
-    results = loading(CL, q, wingbox, wing_fuel_percentage, show_graphs)
+    results = loading(CL, q, n, wingbox, wing_fuel_percentage, show_graphs)
     return results[0], results[1], results[2]
 
 
-def find_worst_loading(first: int, last: int, wingbox, save_folder="worst_cases"): # Made with ChatGPT
+def find_worst_loading(first: int, last: int, wingbox, save_folder="worst_cases", show_graphs = False): # Made with ChatGPT
     # Prepare output folder
     os.makedirs(save_folder, exist_ok=True)
 
