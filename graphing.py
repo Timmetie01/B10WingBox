@@ -5,7 +5,7 @@ import constants
 import numpy as np
 
 #Give the wingbox class (and optionally the amount of points you want to plot)
-#Plots ixx, iyy and ixy against the half-span
+#Plots ixx, iyzz and ixz against the half-span
 def I_plot(wingbox, npoints=100):
     y_list = []
     Ixx_list = []
@@ -24,7 +24,7 @@ def I_plot(wingbox, npoints=100):
     plt.plot(y_list, Ixy_list, color='darkgreen')
     plt.plot(y_list, J_list, color='darkmagenta')
 
-    plt.legend(['Ixx', 'Iyy', 'Ixy', 'J'])
+    plt.legend(['Ixx', 'Izz', 'Ixz', 'J'])
     plt.axis
     plt.xlabel('Span (m)')
     plt.ylabel('I (m^4)')

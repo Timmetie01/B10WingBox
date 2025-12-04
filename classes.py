@@ -115,7 +115,7 @@ class ScaledWingbox:
         self.name = originalclass.name
         self.points = originalclass.points * scale
         self.panels = originalclass.panels * scale
-        self.panel_thickness = originalclass.panel_thickness #* scale   #Unsure if scaling is required for the designs, will be considered during WP5
+        self.panel_thickness = originalclass.panel_thickness * scale   #Unsure if scaling is required for the designs, will be considered during WP5
         self.stringers = originalclass.stringers * scale
         self.stringer_area = originalclass.stringer_area # scale ** 2  #Stringer area is kept constant throughout all designs
 
