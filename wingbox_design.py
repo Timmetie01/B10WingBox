@@ -40,45 +40,45 @@ def thickness_iteration(xstart, xend, stringercount, stringer_areas, thicknessty
 
 #Design 1:
 #thickness constant
-#design1_wingbox, thickness1 = thickness_iteration(0.2, 0.6, stringercount=0, stringer_areas=3e-5, stringerspacing='constant_no_endpoints', panelcount=4, name='Preliminary Design Wingbox 1')
-#print(thickness1)
+design1_wingbox, thickness1 = thickness_iteration(0.2, 0.6, stringercount=0, stringer_areas=3e-5, stringerspacing='constant_no_endpoints', panelcount=4, name='Preliminary Design Wingbox 1')
+print(thickness1)
 #print(design1_wingbox.panels)
 #print(design1_wingbox.panel_thickness)
 
-#graphing.airfoil_pointplot(showplot=False)
-#design1_wingbox.plot()
-#design1_wingbox.deflection_plot()
-#design1_wingbox.twist_plot()
-#design1_wingbox.I_plot()
-#design1_wingbox.weight()
+graphing.airfoil_pointplot(showplot=False)
+design1_wingbox.plot()
+design1_wingbox.deflection_plot()
+design1_wingbox.twist_plot()
+design1_wingbox.I_plot()
+design1_wingbox.weight()
 #graphing.bending_stress_plot(design1_wingbox)
 
 
 #Design 2
 #Thickness constant, stringer area constant
-#design2_wingbox, thickness2 = thickness_iteration(0.2, 0.6, stringercount=20, stringer_areas=1.8e-5, stringerspacing='constant_no_endpoints', panelcount=82, name='Preliminary Design Wingbox 2')
-#print(thickness2)
+design2_wingbox, thickness2 = thickness_iteration(0.2, 0.6, stringercount=20, stringer_areas=1.8e-5, stringerspacing='constant_no_endpoints', panelcount=82, name='Preliminary Design Wingbox 2')
+print(thickness2)
 #print(design2_wingbox.panels)
 #print(design2_wingbox.panel_thickness)
 #print(design2_wingbox.stringers)
 #print(design2_wingbox.stringer_area)
-#graphing.airfoil_pointplot(showplot=False)
-#design2_wingbox.plot()
-#design2_wingbox.deflection_plot()
-#design2_wingbox.twist_plot()
-#design2_wingbox.weight()
-#design2_wingbox.I_plot()
+graphing.airfoil_pointplot(showplot=False)
+design2_wingbox.plot()
+design2_wingbox.deflection_plot()
+design2_wingbox.twist_plot()
+design2_wingbox.weight()
+design2_wingbox.I_plot()
 #graphing.bending_stress_plot(design2_wingbox)
 
 
 #Design 3
 #Thickness Variable, stringer area constant
-design3_wingbox, thickness3 = thickness_iteration(0.2, 0.6, stringercount=20, stringer_areas=1.8e-5, stringerspacing='constant_no_endpoints', panelcount=82, name='Preliminary Design Wingbox 3')
+#design3_wingbox, thickness3 = thickness_iteration(0.2, 0.6, stringercount=20, stringer_areas=1.8e-5, stringerspacing='constant_no_endpoints', panelcount=82, name='Preliminary Design Wingbox 3')
 #print(thickness3)
-print(design3_wingbox.panels)
-print(design3_wingbox.panel_thickness)
-print(design3_wingbox.stringers)
-print(design3_wingbox.stringer_area)
+#print(design3_wingbox.panels)
+#print(design3_wingbox.panel_thickness)
+#print(design3_wingbox.stringers)
+#print(design3_wingbox.stringer_area)
 #graphing.airfoil_pointplot(showplot=False)
 #design3_wingbox.plot()
 #design3_wingbox.deflection_plot()
