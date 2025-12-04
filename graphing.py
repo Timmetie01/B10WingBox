@@ -226,6 +226,7 @@ def wing_plot(wingbox, Npoints=50, twowings=False):
     plt.xlabel('x (m)')
     plt.ylabel('Span (m)')
     plt.gca().set_aspect('equal')
+    plt.title('3D Surface of the wing under maximum deflection and maximum twist')
     
     
     plt.show()
@@ -246,5 +247,3 @@ def bending_stress_plot(wingbox, Npoints = 250, showplot=True):
         plt.grid(axis='y', ls='--')
         plt.grid(axis='x', ls='--')
         plt.show()
-
-

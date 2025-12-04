@@ -59,20 +59,22 @@ def second_area_moment(y, wingbox):
     panelaveragecoords[:,0] = np.transpose((panelcoords[:,0] + panelcoords[:,2]) / 2)
     panelaveragecoords[:,1] = np.transpose((panelcoords[:,1] + panelcoords[:,3]) / 2)
 
+    #The length of each panel
     panellength = np.sqrt((panelcoords[:,2] - panelcoords[:,0]) ** 2 + (panelcoords[:,3] - panelcoords[:,1]) ** 2 )
     panellength = np.transpose(np.array([panellength]))
 
     panelangle = np.transpose([np.arctan2(panelcoords[:,3] - panelcoords[:,1], panelcoords[:,2] - panelcoords[:,0])])
 
-    Ixx = np.sum(local_wingbox.stringer_area * np.transpose([local_wingbox.centroidal_stringers[:,1]]) ** 2)            #Stringers
+    #Summing the total contributions. Uses coordinate system w.r.t. centroid. Stringer currently only contribute through PA THM
+    Ixx = np.sum(local_wingbox.stringer_area * np.transpose([local_wingbox.centroidal_stringers[:,1]]) ** 2)            #Stringers, parallel axis THM
     Ixx += np.sum(local_wingbox.panel_thickness * panellength ** 3 * np.sin(panelangle) ** 2) / 12                      #Plates
     Ixx += np.sum(local_wingbox.panel_thickness * panellength * np.transpose([panelaveragecoords[:,1]]) ** 2)           #Plates, parallel axis THM
 
-    Iyy = np.sum(local_wingbox.stringer_area * np.transpose([local_wingbox.centroidal_stringers[:,0]]) ** 2)            #Stringers
+    Iyy = np.sum(local_wingbox.stringer_area * np.transpose([local_wingbox.centroidal_stringers[:,0]]) ** 2)            #Stringers, parallel axis THM
     Iyy += np.sum(local_wingbox.panel_thickness * panellength ** 3 * np.cos(panelangle) ** 2) / 12                      #Plates
     Iyy += np.sum(local_wingbox.panel_thickness * panellength * np.transpose([panelaveragecoords[:,0]]) ** 2)           #Plates, parallel axis THM
 
-    Ixy = np.sum(local_wingbox.stringer_area * np.transpose([local_wingbox.centroidal_stringers[:,0]]) * local_wingbox.centroidal_stringers[:,1])       #Stringers
+    Ixy = np.sum(local_wingbox.stringer_area * np.transpose([local_wingbox.centroidal_stringers[:,0]]) * local_wingbox.centroidal_stringers[:,1])       #Stringers, parallel axis THM
     Ixy += np.sum(local_wingbox.panel_thickness * panellength ** 3 * np.sin(panelangle) * np.cos(panelangle)) / 12                                      #Plates
     Ixy += np.sum(local_wingbox.panel_thickness * panellength * np.transpose([panelaveragecoords[:,1]]) * np.transpose([panelaveragecoords[:,0]]))      #Plates, parallel axis THM
     
