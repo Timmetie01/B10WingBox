@@ -123,7 +123,7 @@ def airfoil_interpolation(x, side='top'):
 #stringerspacing:'constant_endpoints' gives constant spacing including corners of wingbox, 'constant_no_endpoints' gives constant spacing excluding the corners of the wingbox
 #stringerareas: float for constant and array for variable areas
 #Panelcount: the amount of panels the wingbox will consist of, defaults to 50
-def create_airfoil_like_wingbox(xstart, xend, thickness, thicknesstype, stringercount, stringer_areas, stringerspacing='constant_endpoints', panelcount=50):
+def create_airfoil_like_wingbox(xstart, xend, thickness, thicknesstype, stringercount, stringer_areas, stringerspacing='constant_endpoints', panelcount=50, name=None):
     import classes
     import numbers
     panelcount = (panelcount//2) * 2
@@ -185,10 +185,8 @@ def create_airfoil_like_wingbox(xstart, xend, thickness, thicknesstype, stringer
     else:
         print('Choose any of the available ways of entering thickness, or define your own :D.')
         quit()
-    
-    
 
-    return classes.Wingbox(wingbox_points, thickness, stringer_points, stringer_areas)
+    return classes.Wingbox(wingbox_points, thickness, stringer_points, stringer_areas, name=name)
 
     
 

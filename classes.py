@@ -9,9 +9,10 @@ import scipy as sp
 #3: n x 2 array of coords of stringers
 #4: n x 1 array of stringer areas
 class Wingbox:
-    def __init__(self, wingboxpoints, panel_thickness, stringercoords, stringer_area):
+    def __init__(self, wingboxpoints, panel_thickness, stringercoords, stringer_area, name=None):
         import data_import
         import area_moments
+        self.name = name
 
         self.points = wingboxpoints
         self.panels = data_import.makepanels(wingboxpoints)
@@ -111,11 +112,12 @@ class Wingbox:
 #root chord = const['root_chord']
 class ScaledWingbox:
     def __init__(self, originalclass, scale):
+        self.name = originalclass.name
         self.points = originalclass.points * scale
         self.panels = originalclass.panels * scale
-        self.panel_thickness = originalclass.panel_thickness# * scale
+        self.panel_thickness = originalclass.panel_thickness #* scale   #Unsure if scaling is required for the designs, will be considered during WP5
         self.stringers = originalclass.stringers * scale
-        self.stringer_area = originalclass.stringer_area * scale# ** 2
+        self.stringer_area = originalclass.stringer_area # scale ** 2  #Stringer area is kept constant throughout all designs
 
         self.centroid_coordinates = originalclass.centroid_coordinates * scale
         self.centroidal_points = originalclass.centroidal_points * scale

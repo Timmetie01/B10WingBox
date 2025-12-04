@@ -45,12 +45,15 @@ def deflection_plot(wingbox, show_wing=True, two_wings=False):
             top_wing_list.append(v_list[i] + 0.5 * wingthickness)
             bottom_wing_list.append(v_list[i] - 0.5 * wingthickness)
 
+    plt.plot([const['span']/2 - 1, const['span']/2 + 0.3], [const['span'] * const['max_deflection_fraction'], const['span'] * const['max_deflection_fraction']], color='red')
     
 
     plt.plot(y_list, v_list, color='darkblue')
+    plt.legend('Wing Centerline')
     if show_wing:
         plt.plot(y_list, top_wing_list, color='black')
         plt.plot(y_list, bottom_wing_list, color='black')
+        plt.legend(('Allowed Deflection Limit (Centerline)', 'Wing Centerline', 'Wing surface'))
         
 
     if two_wings:
@@ -62,8 +65,6 @@ def deflection_plot(wingbox, show_wing=True, two_wings=False):
         plt.plot([const['span']/-2 + 1, const['span']/-2 - 0.3], [const['span'] * const['max_deflection_fraction'], const['span'] * const['max_deflection_fraction']], color='red')
     
 
-    plt.plot([const['span']/2 - 1, const['span']/2 + 0.3], [const['span'] * const['max_deflection_fraction'], const['span'] * const['max_deflection_fraction']], color='red')
-    
     plt.gca().set_aspect('equal')
     plt.title('Wing Deflection')
     plt.xlabel('Spanwise position (m)')
@@ -118,8 +119,15 @@ def wingbox_plot(wingbox, showplot=True):
 
     if showplot:
         plt.gca().set_aspect('equal')
+        plt.xlabel('x / chord')
+        plt.ylabel('y / chord')
         plt.grid(axis='y', ls='--')
         plt.grid(axis='x', ls='--')
+        #plt.title(wingbox.name)
+        if len(wingbox.stringers) > 0:
+            plt.legend(('Airfoil', 'Wingbox Skin', 'Stringers'))
+        else: 
+            plt.legend(('Airfoil', 'Wingbox Skin'))
         plt.show()
 
 #Plots the worst case moment
@@ -238,6 +246,5 @@ def bending_stress_plot(wingbox, Npoints = 250, showplot=True):
         plt.grid(axis='y', ls='--')
         plt.grid(axis='x', ls='--')
         plt.show()
-
 
 
