@@ -1,6 +1,8 @@
 import numpy as np
 import math as m
 
+'''Interpolation code from XFLR5 for pressure coefficient xcp'''
+
 # AOA = 0deg
 tablezeroalpha = np.genfromtxt(r"xflr5data\MainWing_a=0.00_v=10.00ms.csv", delimiter=",", skip_header=21)
 
@@ -84,7 +86,11 @@ posofcplist = [posofcp_0, posofcp_1, posofcp_2, posofcp_3, posofcp_4, posofcp_5,
 
 
 def xcppos_func(CLd_specific):
-    from NVMdiagrams import alphafromCLd
+    '''Outputs a funciton that returns the position of xcp for any y at a given CLd
+    '''
+    from NVMdiagrams import alphafromCLd # Import inside this function to avoid loops
+
+    
 
     def xcp_officialpos(y):
         alpha: float = abs(m.degrees(alphafromCLd(CLd_specific)))

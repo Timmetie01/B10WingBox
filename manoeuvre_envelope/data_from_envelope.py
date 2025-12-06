@@ -1,4 +1,5 @@
 import numpy as np
+'''Code that reads data from loading_data.csv'''
 
 # Load table
 data = np.genfromtxt(r"manoeuvre_envelope\loading_data.csv", delimiter=",", dtype=None, names=True, encoding="utf-8")
@@ -15,7 +16,6 @@ def get_case(case_number: int):
     -------
     row: numpy.void
         basically a numpy dictionary with data for following categories: Case, Description, Indicated_Airspeed, Mass, n, Altitude
-    
     
     '''
     # Generate the case code (based on Adam's overleaf table)

@@ -1,3 +1,6 @@
+'''Code that generates loading diagrams for any scenario.'''
+
+
 import numpy as np
 import scipy as sp
 import matplotlib.pyplot as plt
@@ -122,10 +125,44 @@ def alphafromCLd(CLd):
     return m.radians(alpha_deg)
 
 def get_centroid(wingbox):
-        scpos = wingbox.centroid_coordinates[0]
-        return scpos 
+    """Function that returns the x-position of the centroid for a given wingbox
+    
+    Parameters
+    ----------
+    wingbox: Wingbox
+        desired wingbox
+        
+    Returns
+    -------
+    scpos: float
+        x-position of the wingbox (as a fraction of x/c since it is a unit wingbox)
+    """
+    scpos = wingbox.centroid_coordinates[0]
+    return scpos 
 
 def loading(CL_design: float, q: float, n: float, wingbox: Wingbox, wing_fuel_percentage: float, show_graphs: bool = False):
+    """Function that generates the loading diagrams
+    
+    Parameters
+    ----------
+    CL_design: float
+        design lift coefficient [-]
+    q: float
+        dynamic pressure [Pa]
+    n: float
+        load factor [-]
+    wingbox: Wingbox
+        wingbox to do torsion calculations on
+    wing_fuel_percentage: float
+        the fraction of total fuel weight stored in wings [-]
+    show_graphs: bool, default False
+        a boolean that determiines if graphs are shown during running
+        
+    Returns
+    -------
+    shearvalues, momentvalues, torsion_values: tuple
+        a tuple consisting of a numpy array for each loading
+    """
     CLd = CL_design
     alpha = alphafromCLd(CLd)
     wing_fuel_percentage = wing_fuel_percentage
@@ -148,34 +185,32 @@ def loading(CL_design: float, q: float, n: float, wingbox: Wingbox, wing_fuel_pe
     fuel_weight_used = wing_fuel_percentage * fuel_weight
 
     def shear(y):
-            S1, error = sp.integrate.quad(lambda yy: Lub(yy)*m.cos(alpha),y,span/2.0)
-            #S2, error = sp.integrate.quad(lambda yy: distributed_weight(yy)*m.cos(alpha),y,span/2.0)
-            S3,error = sp.integrate.quad(lambda yy: Dub(yy)*m.sin(alpha), y, span/2.0)
+        S1, error = sp.integrate.quad(lambda yy: Lub(yy)*m.cos(alpha),y,span/2.0) # Shear due to lift
+        S3,error = sp.integrate.quad(lambda yy: Dub(yy)*m.sin(alpha), y, span/2.0) # Shear due to drag
 
-            #V = -S1 + S2 - S3
-            V = 0
-            V = -S1 - S3
+        V = -S1 - S3
 
-            if y < LG_y_pos:
-                V += LG_weight * g
+        if y < LG_y_pos:    
+            V += LG_weight * g  # shear due to LG
 
-            return  V
+        return  V
     
 
 
 
     ypoints = np.linspace(0.0, span/2.0 ,100)
 
-    # Distributed structural weight
+    # Distributed structural weight, linear with chord
     new_distr_w = np.array([n * wing_weight/const['wing_area']*chord_length(y)*span/2 /100 * g for y in ypoints])
     new_distr_w = new_distr_w[::-1]
     new_distr_w = np.cumsum(new_distr_w)
     new_distr_w = new_distr_w[::-1]
 
-    # Distributed fuel weight
+    # Distributed fuel weight, quadratic with chord
     ypoints_A = np.array([wingbox.area(y) for y in ypoints])
     totalA = np.sum(ypoints_A)
     fuel_distr_w = ypoints_A/totalA * fuel_weight_used/2 * g * n
+    # Code for testing the distribution
     #print(np.sum(fuel_distr_w))
     # if show_graphs:
     #     plt.plot(ypoints,fuel_distr_w)
@@ -188,7 +223,7 @@ def loading(CL_design: float, q: float, n: float, wingbox: Wingbox, wing_fuel_pe
     fuel_distr_w = np.cumsum(fuel_distr_w)
     fuel_distr_w = fuel_distr_w[::-1]
     
-    
+    # Add shear due to the structure and fuel
     shearvalues = fuel_distr_w + np.array([shear(y) for y in ypoints]) + new_distr_w
 
     if show_graphs:
@@ -200,6 +235,7 @@ def loading(CL_design: float, q: float, n: float, wingbox: Wingbox, wing_fuel_pe
         plt.tight_layout()
         plt.show()
 
+    # Since quad.integrate is slow, use an estimation instead
     order = 15
     coefficients = np.polyfit(ypoints,shearvalues,order)
     polynomial = np.poly1d(coefficients)
@@ -268,6 +304,22 @@ def loading(CL_design: float, q: float, n: float, wingbox: Wingbox, wing_fuel_pe
     
 
 def generate_loading(case_number: int, wingbox: Wingbox, show_graphs = False):
+    '''Function that generates loading diagrams for a specific case from maneuvre envelope
+    
+    Parameters
+    ----------
+    case_number: int
+        the case number from loading_data.csv
+    wingbox: Wingbox
+        wingbox for which the torsion is calculated
+    show_graphs: bool, default False
+        a boolean determining if graphs are shown for the loading case
+    
+    Returns
+    -------
+    shearvalues, momentvalues, torsion_values: tuple
+        a tuple consisting of a numpy array for each loading
+    '''
     # Find loading parameters like density etc. from the loading case
     envelope_data: np.void = data_from_envelope.get_case(case_number)
     altitude = int(envelope_data['Altitude'][2:])* 100 * 0.3048 # [m]
@@ -288,7 +340,26 @@ def generate_loading(case_number: int, wingbox: Wingbox, show_graphs = False):
     return results[0], results[1], results[2]
 
 
-def find_worst_loading(first: int, last: int, wingbox, save_folder="worst_cases", show_graphs = False): # Made with ChatGPT
+def find_worst_loading(first: int, last: int, wingbox: Wingbox, save_folder="worst_cases", show_graphs = False): # Made with ChatGPT
+    '''Function that iterates through given cases, finds and saves the the worst ones
+
+    Parameters
+    ----------
+    first: int
+        the first loading case it iterats through
+    lase: int
+        the last loading case it iterates through
+    wingbox: Wingbox
+        the wingbox for which torsion is calculated
+    save_folder: str, default "worst_cases"
+        a folder in which the worst case loadings will be saved
+    show_graphs: bool, default False
+        a boolean determining if graphs are shown for the loading case`
+
+    Returns
+    save_map: dict
+        a dictionary mapping worst cases to the specific data
+    '''
     # Prepare output folder
     os.makedirs(save_folder, exist_ok=True)
 
@@ -380,11 +451,12 @@ def find_worst_loading(first: int, last: int, wingbox, save_folder="worst_cases"
 
     for key, case_num in save_map.items():
         if case_num is None:
-            continue  # skip if not found
-
+            continue  # skip if not found, may happen in some scenarios (e.g. either positive or negative V/M/T do not appear)
         shear, bending, torsion = worst_cases_data[key]
 
         save_path = os.path.join(save_folder, f"{key}.npz")
+
+        # Save information
         np.savez(
             save_path,
             case_number=case_num,
@@ -399,7 +471,7 @@ def find_worst_loading(first: int, last: int, wingbox, save_folder="worst_cases"
 
 
 
-# Put all code under this if statement otherwise the code becomes circular with xflr5
+# Put all code under this if statement otherwise the code becomes circular with data_from_xflr5
 if __name__ == "__main__":
     testclass = data_import.import_wingbox('test_cross_section')
     #find_worst_loading(1, 32, testclass)
