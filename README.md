@@ -14,3 +14,6 @@ Many graphing functions are also incorporated in the wingbox class and can be ca
 
 Manoeuvre envelope:
 To generate the manoeuvre envelope to obtain worst-case load scenarios, simply run the file loading_diagram.py. It uses airplane specifications from constants.py, and asks the user about the desired configuration and altitude of the aircraft. 
+
+VMT diagrams:
+To determine what the worst-case scenarios are, an iterative code was made that runs through all desired scenarios from a .csv file. To individually look at the diagrams, use the generate_loading(case_num, wingbox) function. This code integrates multiple files since a lot of input is required, such as data_from_xflr5 (interpolating xcp coefficients), data_from_envelope (reading specific loading cases), or the wingbox class.
