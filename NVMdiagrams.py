@@ -177,13 +177,13 @@ def loading(CL_design: float, q: float, n: float, wingbox: Wingbox, wing_fuel_pe
     totalA = np.sum(ypoints_A)
     fuel_distr_w = ypoints_A/totalA * fuel_weight_used/2 * g * n
     #print(np.sum(fuel_distr_w))
-    if show_graphs:
-        plt.plot(ypoints,fuel_distr_w)
-        plt.xlabel("Spanwise position [m]")
-        plt.ylabel("Fuel Weight [N]")
-        plt.title("Fuel Weight Distribution")
-        plt.tight_layout()
-        plt.show()
+    # if show_graphs:
+    #     plt.plot(ypoints,fuel_distr_w)
+    #     plt.xlabel("Spanwise position [m]")
+    #     plt.ylabel("Fuel Weight [N]")
+    #     # plt.title("Fuel Weight Distribution")
+    #     plt.tight_layout()
+    #     plt.show()
     fuel_distr_w = fuel_distr_w[::-1]
     fuel_distr_w = np.cumsum(fuel_distr_w)
     fuel_distr_w = fuel_distr_w[::-1]
@@ -193,9 +193,10 @@ def loading(CL_design: float, q: float, n: float, wingbox: Wingbox, wing_fuel_pe
 
     if show_graphs:
         plt.plot(ypoints,shearvalues)
+        plt.grid()
         plt.xlabel("Spanwise position [m]")
-        plt.ylabel("Shear Force[N]")
-        plt.title("Internal Shear Force Diagram")
+        plt.ylabel("Shear Force [N]")
+        # plt.title("Internal Shear Force Diagram")
         plt.tight_layout()
         plt.show()
 
@@ -204,11 +205,11 @@ def loading(CL_design: float, q: float, n: float, wingbox: Wingbox, wing_fuel_pe
     polynomial = np.poly1d(coefficients)
     shearsmooth = np.polyval(polynomial,ypoints)
 
-    if show_graphs:
-        plt.plot(ypoints,shearsmooth)
-        plt.plot(ypoints,shearvalues,"r+")
-        plt.title(f"Polynomial of {order}th order")
-        plt.show()
+    # if show_graphs:
+    #     plt.plot(ypoints,shearsmooth)
+    #     plt.plot(ypoints,shearvalues,"r+")
+    #     # plt.title(f"Polynomial of {order}th order")
+    #     plt.show()
 
     #Moment Function dM/dy = V
 
@@ -220,9 +221,10 @@ def loading(CL_design: float, q: float, n: float, wingbox: Wingbox, wing_fuel_pe
 
     if show_graphs:
         plt.plot(ypoints,momentvalues)
+        plt.grid()
         plt.xlabel("Spanwise position [m]")
-        plt.ylabel("Moment [N*m]")
-        plt.title("Internal Moment Diagram")
+        plt.ylabel("Moment [Nm]")
+        # plt.title("Internal Moment Diagram")
         plt.show()
 
     #We're going to have xcp as a funciton of (y)
@@ -242,6 +244,11 @@ def loading(CL_design: float, q: float, n: float, wingbox: Wingbox, wing_fuel_pe
 
     def Torsion(y):
         T,_ = sp.integrate.quad(lambda yy: infinites_torque(yy), y, span/2.0)
+
+        if y < const['main_landing_gear_y_position']:
+            T -= (2.24655-get_centroid(wingbox)*chord_length(const['main_landing_gear_y_position'])) * const['main_landing_gear_mass'] * g * n
+            #print(2.24655-get_centroid(wingbox)*chord_length(const['main_landing_gear_y_position']))
+
         return T
 
     torsion_values = np.array([Torsion(y) for y in ypoints])
@@ -250,13 +257,14 @@ def loading(CL_design: float, q: float, n: float, wingbox: Wingbox, wing_fuel_pe
         plt.plot(ypoints,torsion_values)
         plt.xlabel("Spanwise position [m]")
         plt.ylabel("Torsion [Nm]")
-        plt.title("Internal Torsion Diagram")
+        # plt.title("Internal Torsion Diagram")
         plt.tight_layout()
+        plt.grid()
         plt.show()
 
     return shearvalues, momentvalues, torsion_values
 
-    # Torsion (copied from listarm.py)
+    # Torsion (copied from liftarm.py)
     
 
 def generate_loading(case_number: int, wingbox: Wingbox, show_graphs = False):
@@ -271,6 +279,7 @@ def generate_loading(case_number: int, wingbox: Wingbox, show_graphs = False):
     # Calculate relevant parameters    
     q = 1/2 * density * TAS**2
     CL = n*W/(q*const['wing_area'])
+    #print(alphafromCLd(CL)*180/m.pi)
 
     wing_fuel_percentage = 0 if W < 12000 * g else 0.7
 
@@ -393,6 +402,6 @@ def find_worst_loading(first: int, last: int, wingbox, save_folder="worst_cases"
 # Put all code under this if statement otherwise the code becomes circular with xflr5
 if __name__ == "__main__":
     testclass = data_import.import_wingbox('test_cross_section')
-    find_worst_loading(1, 32, testclass)
+    #find_worst_loading(1, 32, testclass)
 
-    #generate_loading(13, testclass, show_graphs=True)
+    generate_loading(20, testclass, show_graphs=True)
