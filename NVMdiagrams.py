@@ -230,7 +230,7 @@ def loading(CL_design: float, q: float, n: float, wingbox: Wingbox, wing_fuel_pe
         plt.plot(ypoints,shearvalues)
         plt.grid()
         plt.xlabel("Spanwise position [m]")
-        plt.ylabel("Shear Force [N]")
+        plt.ylabel("Shear [N]")
         # plt.title("Internal Shear Force Diagram")
         plt.tight_layout()
         plt.show()
@@ -259,7 +259,7 @@ def loading(CL_design: float, q: float, n: float, wingbox: Wingbox, wing_fuel_pe
         plt.plot(ypoints,momentvalues)
         plt.grid()
         plt.xlabel("Spanwise position [m]")
-        plt.ylabel("Moment [Nm]")
+        plt.ylabel("Bending moment [Nm]")
         # plt.title("Internal Moment Diagram")
         plt.show()
 
@@ -476,4 +476,4 @@ if __name__ == "__main__":
     testclass = data_import.import_wingbox('test_cross_section')
     #find_worst_loading(1, 32, testclass)
 
-    generate_loading(20, testclass, show_graphs=True)
+    generate_loading(13, testclass, show_graphs=True)
