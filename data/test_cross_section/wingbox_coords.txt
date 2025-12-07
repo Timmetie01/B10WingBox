@@ -1,5 +1,5 @@
 This is a header row that will be ignored. Format: x  y
 0.2 -0.06
-0.5 -0.06
-0.5 0.06
+0.6 -0.06
+0.6 0.06
 0.2 0.06
