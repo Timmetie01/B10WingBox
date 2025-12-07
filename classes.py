@@ -10,7 +10,7 @@ import scipy as sp
 #4: n x 1 array of stringer areas
 #Optional KWArg: name. Used to title some plots. Defaults to None
 class Wingbox:
-    def __init__(self, wingboxpoints, panel_thickness, stringercoords, stringer_area, name=None):
+    def __init__(self, wingboxpoints, panel_thickness, stringercoords, stringer_area, scaled_thickness=False, name=None):
         import data_import
         import area_moments
         self.name = name
@@ -20,6 +20,7 @@ class Wingbox:
         self.panel_thickness = panel_thickness
         self.stringers = stringercoords
         self.stringer_area = stringer_area
+        self.scaled_thickness = scaled_thickness
 
         self.centroid_coordinates = area_moments.centroidcoords(self.panels, self.panel_thickness, self.stringers, self.stringer_area)
         self.centroidal_points = self.points - self.centroid_coordinates
@@ -128,7 +129,7 @@ class ScaledWingbox:
         self.name = originalclass.name
         self.points = originalclass.points * scale
         self.panels = originalclass.panels * scale
-        self.panel_thickness = originalclass.panel_thickness  #Unsure if scaling is required for the designs, will be considered during WP5
+        self.panel_thickness = originalclass.panel_thickness * (scale if originalclass.scaled_thickness else 1) #Unsure if scaling is required for the designs, will be considered during WP5
         self.stringers = originalclass.stringers * scale
         self.stringer_area = originalclass.stringer_area  #Stringer area is kept constant throughout all designs, and thus this line must be kept commented!
 
