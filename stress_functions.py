@@ -5,29 +5,115 @@ import numpy as np
 import area_moments
 
 
+
 #Using Mx*y/Ixx (but in different coordinate system). i.e. assuming Ixy=0 and only moment around X axis is present.
 def max_bending_stress(wingbox, y):
     sigma_z = worst_case_loading.M(y, 'abs_min_bending') * np.array([wingbox.z_max_min(y)[0], wingbox.z_max_min(y)[1]]) / wingbox.Ixx(y)
     return sigma_z[0] if sigma_z[0] > -1 * sigma_z[1] else sigma_z[1]
 
+
+
 def shear_stress(wingbox, y):
-        import classes
+        from classes import ScaledWingbox
         import constants
         from worst_cases import worst_case_loading
+        import area_moments
+        import data_from_xflr5
+        xcp = data_from_xflr5.xcppos_func(1.621258898884106)
+        #0.2312805658645682
         if not wingbox.idealizable:
             print('This wingbox can not be idealized, so it doenst make sense to calculate shear for it.')
             quit()
         
         #Since axis systems flipped, negative force means upward, but the wingbox is defined positive upward. Thus the force is flipped
-        Vy = worst_case_loading.V(y, 'abs_max_shear') * -1
-        current_wingbox = classes.ScaledWingbox(wingbox, constants.local_chord_at_span(y))
+        Vy = worst_case_loading.V(y, 'abs_min_shear') * -1
+        
+        current_wingbox = ScaledWingbox(wingbox, constants.local_chord_at_span(y))
 
         #Cut in the vertical panel under the leading edge top point, assumed Vx = 0 and Ixy = 0
-        wingbox.shear_b = np.zeros_like(wingbox.panel_thickness)
-        for i in range(len(wingbox.shear_b)):
-            wingbox.shear_b[i] = wingbox.shear_b[i - 1] - Vy / wingbox.Ixx(y) * wingbox.idealized_point_areas[i] * wingbox.centroidal_points[i,1]
+        shear_b = np.zeros_like(current_wingbox.panel_thickness)
+        for i in range(len(shear_b)):
+            shear_b[i] = shear_b[i - 1] - Vy / wingbox.Ixx(y) * current_wingbox.idealized_point_areas[i] * current_wingbox.centroidal_points[i,1]
 
-        print(np.sum(wingbox.shear_b * (wingbox.centroidal_panels[:,3] - wingbox.centroidal_panels[:,1]) / wingbox.panel_thickness))
+        #Moment around centroid, clockwise positive
+        centroidal_moment_qb = 0
+        for i in range(len(shear_b)):
+            centroidal_moment_qb += shear_b[i] * 2 * area_moments.polygon_area(np.array([[0,0], current_wingbox.centroidal_panels[i,:2], current_wingbox.centroidal_panels[i,2:]]))
+        
+        #Moment that should be created when loading=internal force
+        centroidal_moment_Vy = (wingbox.centroid_coordinates[0] - xcp(y)) * constants.local_chord_at_span(y) * Vy
+ 
+        #Calculating the qs0 such that internal loading and torque equal applied loading and torque
+        qs0_contribution = 2 * wingbox.area(y)
+        qs0 = (centroidal_moment_Vy - centroidal_moment_qb) / qs0_contribution
 
-        return wingbox.shear_b
+        current_wingbox.shear = shear_b + qs0
+
+        #IT WORKS! The internal load sums back to the applied load with less than 0.5% error
+        #print(f'Summed shear: {np.sum(current_wingbox.shear * np.transpose([current_wingbox.centroidal_panels[:,3] - current_wingbox.centroidal_panels[:,1]]))}')
+        #print(f'Vy: {Vy}')
+
+        return current_wingbox.shear
+
+def critical_spar_shear(wingbox, y):
+    """
+    Returns the critical shear stress for the front and rear spar
+    
+    :param wingbox: Wingbox Input
+    :param y: The spanwise location
+    :return tau_cr_front: The critical shear stress for the front spar
+    :return tau_cr_rear: The critical shear stress for the rear spar
+    """
+
+    import classes
+    import constants
+    current_wingbox = classes.ScaledWingbox(wingbox, constants.local_chord_at_span(y))
+
+    ks = 3 * 2 /11 + 9 #Page 41 of reader. aspect ratio >5 (wing long compared to height), and clamped edges
+
+    xmin, xmax = np.min(current_wingbox.centroidal_points[:,0]), np.max(current_wingbox.centroidal_points[:,0])
+    rear_spar_max, rear_spar_min = 0, 0
+    front_spar_max, front_spar_min = 0, 0
+    for i in current_wingbox.centroidal_points:
+        if i[0] <= xmin + 1e-7 and i[1] > front_spar_max:
+             front_spar_max = i[1]
+        elif i[0] <= xmin + 1e-7 and i[1] < front_spar_min:
+             front_spar_min = i[1]
+        elif i[0] >= xmax - 1e-7 and i[1] > rear_spar_max:
+             rear_spar_max = i[1]
+        elif i[0] >= xmax - 1e-7 and i[1] < rear_spar_min:
+             rear_spar_min = i[1]
+
+    rear_spar_height, front_spar_height = rear_spar_max - rear_spar_min, front_spar_max - front_spar_min
+    rear_spar_thickness, front_spar_thickness = current_wingbox.panel_thickness[len(current_wingbox.panel_thickness)//2 - 1], current_wingbox.panel_thickness[-1]
+
+    tau_cr_rear = np.pi ** 2 * ks * const['Modulus_of_Elasticity'] / (12 * (1 - const['Poisson\'s Ratio'] ** 2)) * (rear_spar_thickness / rear_spar_height) ** 2 
+    tau_cr_front = np.pi ** 2 * ks * const['Modulus_of_Elasticity'] / (12 * (1 - const['Poisson\'s Ratio'] ** 2)) * (front_spar_thickness / front_spar_height) ** 2 
+
+    return tau_cr_front, tau_cr_rear
+
+def spar_buckling_MOS(wingbox, y, return_info=False, margin_of_safety=1):
+    """
+    Checks if the spar shear-buckles. ASSUMES POSITIVE MOMENT CREATED BY LIFT!
+     
+    :param wingbox: The wingbox to be analyzed
+    :param y: Span-wise positon
+    :param return_info: Will return a string you can print that describes what failed.
+    
+    """
+    tau_cr_front, tau_cr_rear = critical_spar_shear(wingbox, y)
+    returnstring = 'The things that failed are: '
+    #margin
+    if max(wingbox.shear_stress(y)) > tau_cr_front:
+         returnstring += 'Shear buckling in front stringer, '
+    if abs(min(wingbox.shear_stress(y))) > tau_cr_rear:
+         returnstring += 'Shear buckling in rear stringer, '
+    #if max(max(wingbox.shear_stress(y)) > const['']:)
+         
+    
+
+
+     
+     
+    
 
