@@ -38,22 +38,8 @@ class Wingbox:
             self.idealized_point_areas += panelarea / 6 * (2 + np.roll(np.transpose([self.centroidal_points[:,1]]), -1, axis=0) / np.transpose([self.centroidal_points[:,1]]))
             self.idealized_point_areas += np.roll(panelarea, 1, axis=0) / 6 * (2 + np.roll(np.transpose([self.centroidal_points[:,1]]), 1, axis=0) / np.transpose([self.centroidal_points[:,1]]))
             
-            #print(f'Stringerless idealized areas: {self.idealized_point_areas}')
-
-            #print(f'Panel length: {self.panel_length}')
-            #print(f'Panel thickness: {self.panel_thickness}')
-            #print(f'panel area: {panelarea}')
-            #print(f'Centroidal panel coords {self.centroidal_points}')
             
-            #print(panelarea / 6 * (2 + np.roll(np.transpose([self.centroidal_points[:,1]]), -1, axis=0) / np.transpose([self.centroidal_points[:,1]])))
-            #print(np.roll(panelarea, 1, axis=0) / 6 * (2 + np.roll(np.transpose([self.centroidal_points[:,1]]), 1, axis=0) / np.transpose([self.centroidal_points[:,1]])))
-            #print(2 + np.roll(np.transpose([self.centroidal_points[:,1]]), -1, axis=0) / np.transpose([self.centroidal_points[:,1]]))
-            #print(2 + np.roll(np.transpose([self.centroidal_points[:,1]]), 1, axis=0) / np.transpose([self.centroidal_points[:,1]]))
-            #print(np.roll(np.transpose([self.centroidal_points[:,1]]), -1, axis=0) / np.transpose([self.centroidal_points[:,1]]) + np.roll(np.transpose([self.centroidal_points[:,1]]), 1, axis=0) / np.transpose([self.centroidal_points[:,1]]))
-
-            #Assuming the 
             top_or_bottom_panel_count = (len(self.centroidal_points) - (self.centroidal_points[:,0] >= np.max(self.centroidal_points[:,0]) - 1e-6).sum() * 2 + 4)//2
-            print(top_or_bottom_panel_count)
             #web_point_count = (len(self.centroidal_points) - 2 * top_or_bottom_panel_count)//2
     
             
@@ -163,10 +149,13 @@ class Wingbox:
             print(f'The total wingbox weights {round(mass, 3)} kg.')
         return mass
     
-    def shear_stress(self, y):
+    def shear_flow(self, y):
         from stress_functions import shear_stress
         return shear_stress(self, y)
     
+    def shear_stress(self, y):
+        shear_flow = self.shear_flow(y)
+        return shear_flow / self.panel_thickness
 
 
 

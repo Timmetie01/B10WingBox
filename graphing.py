@@ -249,11 +249,11 @@ def bending_stress_plot(wingbox, Npoints = 250, showplot=True):
         plt.show()
 
 
-def shear_stress_plot(wingbox, y=0):
+def shear_flow_plot(wingbox, y=0):
     X = wingbox.panels[:,0]/2 + wingbox.panels[:,2]/2
     Y = wingbox.panels[:,1]/2 + wingbox.panels[:,3]/2
     U_V = (wingbox.panels[:,2:] - wingbox.panels[:,:2]) @ np.array([[0,1],[-1,0]]) / wingbox.panel_length
-    U_V = U_V * np.abs(wingbox.shear_stress(y))
+    U_V = U_V * np.abs(wingbox.shear_flow(y))
     wingbox_plot(wingbox, showplot=False)
     plt.xlim((min(wingbox.points[:,0] - 0.1), max(wingbox.points[:,0] + 0.1)))
     plt.ylim((min(wingbox.points[:,1] - 0.2), max(wingbox.points[:,1] + 0.2)))

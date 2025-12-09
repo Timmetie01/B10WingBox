@@ -53,7 +53,67 @@ def shear_stress(wingbox, y):
         #print(f'Summed shear: {np.sum(current_wingbox.shear * np.transpose([current_wingbox.centroidal_panels[:,3] - current_wingbox.centroidal_panels[:,1]]))}')
         #print(f'Vy: {Vy}')
 
-
-
         return current_wingbox.shear
+
+def critical_spar_shear(wingbox, y):
+    """
+    Returns the critical shear stress for the front and rear spar
+    
+    :param wingbox: Wingbox Input
+    :param y: The spanwise location
+    :return tau_cr_front: The critical shear stress for the front spar
+    :return tau_cr_rear: The critical shear stress for the rear spar
+    """
+
+    import classes
+    import constants
+    current_wingbox = classes.ScaledWingbox(wingbox, constants.local_chord_at_span(y))
+
+    ks = 3 * 2 /11 + 9 #Page 41 of reader. aspect ratio >5 (wing long compared to height), and clamped edges
+
+    xmin, xmax = np.min(current_wingbox.centroidal_points[:,0]), np.max(current_wingbox.centroidal_points[:,0])
+    rear_spar_max, rear_spar_min = 0, 0
+    front_spar_max, front_spar_min = 0, 0
+    for i in current_wingbox.centroidal_points:
+        if i[0] <= xmin + 1e-7 and i[1] > front_spar_max:
+             front_spar_max = i[1]
+        elif i[0] <= xmin + 1e-7 and i[1] < front_spar_min:
+             front_spar_min = i[1]
+        elif i[0] >= xmax - 1e-7 and i[1] > rear_spar_max:
+             rear_spar_max = i[1]
+        elif i[0] >= xmax - 1e-7 and i[1] < rear_spar_min:
+             rear_spar_min = i[1]
+
+    rear_spar_height, front_spar_height = rear_spar_max - rear_spar_min, front_spar_max - front_spar_min
+    rear_spar_thickness, front_spar_thickness = current_wingbox.panel_thickness[len(current_wingbox.panel_thickness)//2 - 1], current_wingbox.panel_thickness[-1]
+
+    tau_cr_rear = np.pi ** 2 * ks * const['Modulus_of_Elasticity'] / (12 * (1 - const['Poisson\'s Ratio'] ** 2)) * (rear_spar_thickness / rear_spar_height) ** 2 
+    tau_cr_front = np.pi ** 2 * ks * const['Modulus_of_Elasticity'] / (12 * (1 - const['Poisson\'s Ratio'] ** 2)) * (front_spar_thickness / front_spar_height) ** 2 
+
+    return tau_cr_front, tau_cr_rear
+
+def spar_buckling_MOS(wingbox, y, return_info=False, margin_of_safety=1):
+    """
+    Checks if the spar shear-buckles. ASSUMES POSITIVE MOMENT CREATED BY LIFT!
+     
+    :param wingbox: The wingbox to be analyzed
+    :param y: Span-wise positon
+    :param return_info: Will return a string you can print that describes what failed.
+    
+    """
+    tau_cr_front, tau_cr_rear = critical_spar_shear(wingbox, y)
+    returnstring = 'The things that failed are: '
+    #margin
+    if max(wingbox.shear_stress(y)) > tau_cr_front:
+         returnstring += 'Shear buckling in front stringer, '
+    if abs(min(wingbox.shear_stress(y))) > tau_cr_rear:
+         returnstring += 'Shear buckling in rear stringer, '
+    #if max(max(wingbox.shear_stress(y)) > const['']:)
+         
+    
+
+
+     
+     
+    
 

@@ -39,12 +39,14 @@ const = {
     'main_landing_gear_y_position': 1.9808, # [m] (from axis of symmetry to main landing gear cg)
 
     #Material specs
+    #https://asm.matweb.com/search/SpecificMaterial.asp?bassnum=MA2024T81
     'Density': 2780, #[kg/m^3]
     'Modulus_of_Elasticity': 72.4e9, # [Pa] (assumed same modulus for tension & compression - only 2% variation in aluminium alloys)
     'Shear_Modulus': 28e9, # [Pa]
     'Yield_stress': 4.5e8, # [Pa]
     'Ultimate_tensile_stress': 4.85e8, # [Pa]
     'Fatigue_stress': 1.25e8, # [Pa]
+    'Poisson\'s Ratio': 0.33, # [-]
 
     #Design constraints
     'max_deflection_fraction': 0.15,
