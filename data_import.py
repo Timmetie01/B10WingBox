@@ -283,10 +283,6 @@ def idealizable_wingboxl(xstart, xend, thickness, thicknesstype, stringercount, 
     return classes.Wingbox(wingbox_points, thickness, stringer_points, stringer_areas, scaled_thickness=scaled_thickness, idealizable=True, name=name)
 
 
-
-idealizable_airfoil(0.2, 0.6, 0.001, 'constant', stringercount=20, stringer_areas=2e-5, stringerspacing='constant_no_endpoints', panels_per_stringer=10, web_panel_count=20)
-
-
 def list_to_string(lst):
     '''A function that print out a nested list (2 layers) as a string'''
     output = "["
