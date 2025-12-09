@@ -38,23 +38,34 @@ class Wingbox:
             self.idealized_point_areas += panelarea / 6 * (2 + np.roll(np.transpose([self.centroidal_points[:,1]]), -1, axis=0) / np.transpose([self.centroidal_points[:,1]]))
             self.idealized_point_areas += np.roll(panelarea, 1, axis=0) / 6 * (2 + np.roll(np.transpose([self.centroidal_points[:,1]]), 1, axis=0) / np.transpose([self.centroidal_points[:,1]]))
             
+            #print(f'Stringerless idealized areas: {self.idealized_point_areas}')
+
             #print(f'Panel length: {self.panel_length}')
             #print(f'Panel thickness: {self.panel_thickness}')
             #print(f'panel area: {panelarea}')
             #print(f'Centroidal panel coords {self.centroidal_points}')
             
-            print(panelarea / 6 * (2 + np.roll(np.transpose([self.centroidal_points[:,1]]), -1, axis=0) / np.transpose([self.centroidal_points[:,1]])))
-            print(np.roll(panelarea, 1, axis=0) / 6 * (2 + np.roll(np.transpose([self.centroidal_points[:,1]]), 1, axis=0) / np.transpose([self.centroidal_points[:,1]])))
+            #print(panelarea / 6 * (2 + np.roll(np.transpose([self.centroidal_points[:,1]]), -1, axis=0) / np.transpose([self.centroidal_points[:,1]])))
+            #print(np.roll(panelarea, 1, axis=0) / 6 * (2 + np.roll(np.transpose([self.centroidal_points[:,1]]), 1, axis=0) / np.transpose([self.centroidal_points[:,1]])))
             #print(2 + np.roll(np.transpose([self.centroidal_points[:,1]]), -1, axis=0) / np.transpose([self.centroidal_points[:,1]]))
             #print(2 + np.roll(np.transpose([self.centroidal_points[:,1]]), 1, axis=0) / np.transpose([self.centroidal_points[:,1]]))
             #print(np.roll(np.transpose([self.centroidal_points[:,1]]), -1, axis=0) / np.transpose([self.centroidal_points[:,1]]) + np.roll(np.transpose([self.centroidal_points[:,1]]), 1, axis=0) / np.transpose([self.centroidal_points[:,1]]))
 
-            print(f'Stringerless idealized areas: {self.idealized_point_areas}')
+            #Assuming the 
+            top_or_bottom_panel_count = (len(self.centroidal_points) - (self.centroidal_points[:,0] >= np.max(self.centroidal_points[:,0]) - 1e-6).sum() * 2 + 4)//2
+            print(top_or_bottom_panel_count)
+            #web_point_count = (len(self.centroidal_points) - 2 * top_or_bottom_panel_count)//2
+    
+            
+            stringers_per_side = len(self.stringers) // 2
+            panels_per_stringer = (top_or_bottom_panel_count - 1) // (stringers_per_side + 1)
 
-
-
-
+            for i in range(len(self.stringer_area) // 2):
+                #top
+                self.idealized_point_areas[(i + 1) * (panels_per_stringer)] += self.stringer_area[i]
                 
+                #bottom
+                self.idealized_point_areas[len(self.points)//2 + (i + 1) * (panels_per_stringer)] += self.stringer_area[i + len(self.stringers) //2]
 
     
     #Returns the Ixx at a certain spanwise location. Ixx is around chord-wise axis
@@ -150,6 +161,9 @@ class Wingbox:
         if print_value:
             print(f'The total wingbox weights {round(mass, 3)} kg.')
         return mass
+    
+    def shear_stress(self, y):
+        
         
     
 #When requiring full-size wingbox instead of unit length airfoil one, the class below can be used

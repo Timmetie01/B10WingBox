@@ -186,7 +186,7 @@ def create_airfoil_like_wingbox(xstart, xend, thickness, thicknesstype, stringer
     return classes.Wingbox(wingbox_points, thickness, stringer_points, stringer_areas, scaled_thickness=scaled_thickness, name=name)
 
 
-def idealizable_airfoil(xstart, xend, thickness, thicknesstype, stringercount, stringer_areas, stringerspacing='constant_endpoints', panels_per_stringer=5, web_panel_count=20, scaled_thickness=False, name=None):
+def idealizable_airfoil(xstart, xend, thickness, thicknesstype, stringercount, stringer_areas, stringerspacing='constant_no_endpoints', panels_per_stringer=5, web_panel_count=20, scaled_thickness=False, name=None):
     """
     Creates an airfoil which can be idealized by using the panel boom method
     
@@ -196,7 +196,7 @@ def idealizable_airfoil(xstart, xend, thickness, thicknesstype, stringercount, s
     :param thicknesstype: \'constant\' when inputting constant thickness,  \'partially_constant\' when inputting [top, right, bottom left]
     :param stringercount: The amount of stringers.  Will be rounded down to multiple of 2
     :param stringer_areas: Either a single number or an array with thicknesses of each stringer
-    :param stringerspacing: \'constant_endpoints\':constant spacing including corners of wingbox, \'constant_no_endpoints\' gives constant spacing excluding the corners of the wingbox
+    :param stringerspacing: \'constant_endpoints\':constant spacing including corners of wingbox (CURRENTLY NOT IMPLEMENTED), \'constant_no_endpoints\' gives constant spacing excluding the corners of the wingbox
     :param panels_per_stringer: Amount of panels generated per stringer, recommended to keep below 10
     :param web_panel_count: Amount of panels generated throughout the web
     :param scaled_thickness: If True, thickness will be multiplied by chord length. If false, it will be constant along span
@@ -231,19 +231,21 @@ def idealizable_airfoil(xstart, xend, thickness, thicknesstype, stringercount, s
     #Different types of stringer placements
     #stringerspacing:'constant_endpoints' gives constant spacing including corners of wingbox
     #'constant_no_endpoints' gives constant spacing excluding the corners of the wingbox
-    if stringerspacing == 'constant_endpoints':
-        stringer_points = np.zeros((stringercount, 2))
-        stringer_xcoords = np.linspace(xstart, xend, stringercount//2)
+    #if stringerspacing == 'constant_endpoints':
+    #    stringer_points = np.zeros((stringercount, 2))
+    #    stringer_xcoords = np.linspace(xstart, xend, stringercount//2)
 
-        stringer_points[:stringercount//2, 0], stringer_points[:stringercount//2, 1] = stringer_xcoords, airfoil_interpolation(stringer_xcoords, 'top')
-        stringer_points[stringercount//2:, 0], stringer_points[stringercount//2:, 1] = np.flip(stringer_xcoords), airfoil_interpolation(np.flip(stringer_xcoords), 'bottom')
-    elif stringerspacing == 'constant_no_endpoints':
+    #    stringer_points[:stringercount//2, 0], stringer_points[:stringercount//2, 1] = stringer_xcoords, airfoil_interpolation(stringer_xcoords, 'top')
+    #    stringer_points[stringercount//2:, 0], stringer_points[stringercount//2:, 1] = np.flip(stringer_xcoords), airfoil_interpolation(np.flip(stringer_xcoords), 'bottom')
+    if stringerspacing == 'constant_no_endpoints':
         stringer_points = np.zeros((stringercount, 2))
         stringer_xcoords = np.linspace(xstart, xend, stringercount//2 + 1, endpoint=False)[1:]
 
         stringer_points[:stringercount//2, 0], stringer_points[:stringercount//2, 1] = stringer_xcoords, airfoil_interpolation(stringer_xcoords, 'top')
         stringer_points[stringercount//2:, 0], stringer_points[stringercount//2:, 1] = np.flip(stringer_xcoords), airfoil_interpolation(np.flip(stringer_xcoords), 'bottom')
-
+    else:
+        print('Currently only \'constant no endpoints\' is the supported stringer spacing!')
+        quit()
        
 
     #For easy idealization, all stringer points should also be points in the wingbox skin. If not, throw an error.
@@ -282,4 +284,4 @@ def idealizable_airfoil(xstart, xend, thickness, thicknesstype, stringercount, s
 
 
 
-idealizable_airfoil(0.2, 0.6, 0.001, 'constant', stringercount=20, stringer_areas=2e-5, stringerspacing='constant_no_endpoints', panels_per_stringer=3, web_panel_count=30)
+idealizable_airfoil(0.2, 0.6, 0.001, 'constant', stringercount=20, stringer_areas=2e-5, stringerspacing='constant_no_endpoints', panels_per_stringer=10, web_panel_count=20)
