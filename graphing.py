@@ -255,12 +255,12 @@ def shear_stress_plot(wingbox, y=0):
     U_V = (wingbox.panels[:,2:] - wingbox.panels[:,:2]) @ np.array([[0,1],[-1,0]]) / wingbox.panel_length
     U_V = U_V * np.abs(wingbox.shear_stress(y))
     wingbox_plot(wingbox, showplot=False)
-    plt.xlim((-0.1, 1.1))
-    plt.ylim((-0.4, 0.4))
+    plt.xlim((min(wingbox.points[:,0] - 0.1), max(wingbox.points[:,0] + 0.1)))
+    plt.ylim((min(wingbox.points[:,1] - 0.2), max(wingbox.points[:,1] + 0.2)))
     plt.quiver( X,     # x
                 Y,     # y
                 U_V[:, 0],     # u
                 U_V[:, 1],     # v 
-                )
+                width=0.002)
     plt.show()
 

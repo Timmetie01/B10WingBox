@@ -51,6 +51,7 @@ class Wingbox:
                 
                 #bottom
                 self.idealized_point_areas[len(self.points)//2 + (i + 1) * (panels_per_stringer)] += self.stringer_area[i + len(self.stringers) //2]
+            
 
     
     #Returns the Ixx at a certain spanwise location. Ixx is around chord-wise axis
@@ -75,7 +76,7 @@ class Wingbox:
         scale = constants.local_chord_at_span(y)
         current_wingbox = ScaledWingbox(self, scale)
         return area_moments.Torsional_constant(current_wingbox.centroidal_points, current_wingbox.panel_thickness)
-    
+
     #Shows the point highest and lowest compared to the neutral axis. Required for normal stress due to bending.
     def z_max_min(self, y):
         import area_moments
@@ -148,8 +149,9 @@ class Wingbox:
         return mass
     
     def shear_stress(self, y):
-        import stress_functions
-        return stress_functions.shear_stress(self, y)
+        from stress_functions import shear_stress
+        return shear_stress(self, y)
+    
 
 
 
