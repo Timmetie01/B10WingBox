@@ -60,8 +60,7 @@ def second_area_moment(y, wingbox):
     panelaveragecoords[:,1] = np.transpose((panelcoords[:,1] + panelcoords[:,3]) / 2)
 
     #The length of each panel
-    panellength = np.sqrt((panelcoords[:,2] - panelcoords[:,0]) ** 2 + (panelcoords[:,3] - panelcoords[:,1]) ** 2 )
-    panellength = np.transpose(np.array([panellength]))
+    panellength = local_wingbox.panel_length
 
     panelangle = np.transpose([np.arctan2(panelcoords[:,3] - panelcoords[:,1], panelcoords[:,2] - panelcoords[:,0])])
 
