@@ -186,7 +186,7 @@ def create_airfoil_like_wingbox(xstart, xend, thickness, thicknesstype, stringer
     return classes.Wingbox(wingbox_points, thickness, stringer_points, stringer_areas, scaled_thickness=scaled_thickness, name=name)
 
 
-def idealizable_airfoil(xstart, xend, thickness, thicknesstype, stringercount, stringer_areas, stringerspacing='constant_endpoints', panels_per_stringer=5, scaled_thickness=False, name=None):
+def idealizable_airfoil(xstart, xend, thickness, thicknesstype, stringercount, stringer_areas, stringerspacing='constant_endpoints', panels_per_stringer=5, web_panel_count=20, scaled_thickness=False, name=None):
     """
     Creates an airfoil which can be idealized by using the panel boom method
     
@@ -198,6 +198,7 @@ def idealizable_airfoil(xstart, xend, thickness, thicknesstype, stringercount, s
     :param stringer_areas: Either a single number or an array with thicknesses of each stringer
     :param stringerspacing: \'constant_endpoints\':constant spacing including corners of wingbox, \'constant_no_endpoints\' gives constant spacing excluding the corners of the wingbox
     :param panels_per_stringer: Amount of panels generated per stringer, recommended to keep below 10
+    :param web_panel_count: Amount of panels generated throughout the web
     :param scaled_thickness: If True, thickness will be multiplied by chord length. If false, it will be constant along span
     :param name: The name of the wingbox, can be used to title plots
     :return wingbox: A wingbos-class that can use idealization!
@@ -206,7 +207,7 @@ def idealizable_airfoil(xstart, xend, thickness, thicknesstype, stringercount, s
     import classes
     import numbers
     #Amount of panels in each spar, to accurately model shear
-    web_panel_count = 2
+    web_panel_count -= 1
     stringercount = (stringercount//2) * 2
     #Amount of panels between spars at the top or bottom
     if stringerspacing == 'constant_endpoints':
@@ -277,9 +278,8 @@ def idealizable_airfoil(xstart, xend, thickness, thicknesstype, stringercount, s
         print('Choose any of the available ways of entering thickness! (or define your own :D )')
         quit()
 
-
     return classes.Wingbox(wingbox_points, thickness, stringer_points, stringer_areas, scaled_thickness=scaled_thickness, idealizable=True, name=name)
 
 
 
-idealizable_airfoil(0.2, 0.6, [0.001, 0.005, 0.001, 0.005], 'partially_constant', stringercount=6, stringer_areas=2e-5, stringerspacing='constant_no_endpoints', panels_per_stringer=1)
+idealizable_airfoil(0.2, 0.6, 0.001, 'constant', stringercount=20, stringer_areas=2e-5, stringerspacing='constant_no_endpoints', panels_per_stringer=3, web_panel_count=30)

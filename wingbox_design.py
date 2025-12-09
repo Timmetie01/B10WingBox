@@ -37,6 +37,8 @@ def thickness_iteration(xstart, xend, stringercount, stringer_areas, thicknessty
 
     return iterationwingbox, iteration_thickness
 
+
+
 #Uncomment lines as necessary to verify part of the design
 #Design 1:
 #thickness constant
