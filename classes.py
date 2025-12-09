@@ -12,12 +12,12 @@ import scipy as sp
 class Wingbox:
 
     def __init__(self, wingboxpoints, panel_thickness, stringercoords, stringer_area, scaled_thickness=False, idealizable=False, name=None):
-        import data_import
+        from data_import import makepanels
         import area_moments
         self.name = name
 
         self.points = wingboxpoints
-        self.panels = data_import.makepanels(wingboxpoints)
+        self.panels = makepanels(wingboxpoints)
         self.panel_thickness = panel_thickness
         self.stringers = stringercoords
         self.stringer_area = stringer_area
@@ -182,7 +182,6 @@ class ScaledWingbox:
             self.idealized_point_areas += np.roll(panelarea, 1, axis=0) / 6 * (2 + np.roll(np.transpose([self.centroidal_points[:,1]]), 1, axis=0) / np.transpose([self.centroidal_points[:,1]]))
             
             top_or_bottom_panel_count = (len(self.centroidal_points) - (self.centroidal_points[:,0] >= np.max(self.centroidal_points[:,0]) - 1e-6).sum() * 2 + 4)//2
-            print(top_or_bottom_panel_count)
             
             stringers_per_side = len(self.stringers) // 2
             panels_per_stringer = (top_or_bottom_panel_count - 1) // (stringers_per_side + 1)
