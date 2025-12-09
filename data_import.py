@@ -186,7 +186,7 @@ def create_airfoil_like_wingbox(xstart, xend, thickness, thicknesstype, stringer
     return classes.Wingbox(wingbox_points, thickness, stringer_points, stringer_areas, scaled_thickness=scaled_thickness, name=name)
 
 
-def idealizable_airfoil(xstart, xend, thickness, thicknesstype, stringercount, stringer_areas, stringerspacing='constant_no_endpoints', panels_per_stringer=5, web_panel_count=20, scaled_thickness=False, name=None):
+def idealizable_wingboxl(xstart, xend, thickness, thicknesstype, stringercount, stringer_areas, stringerspacing='constant_no_endpoints', panels_per_stringer=5, web_panel_count=20, scaled_thickness=False, name=None):
     """
     Creates an airfoil which can be idealized by using the panel boom method
     
@@ -296,3 +296,6 @@ def list_to_string(lst):
             output += str(item) + ", "
         output = output[:-2] + "],"
     return output[:-1] + "]"
+testwingbox = idealizable_wingboxl(0.2, 0.6, 0.001, 'constant', stringercount=20, stringer_areas=2e-5, stringerspacing='constant_no_endpoints', panels_per_stringer=10, web_panel_count=20)
+
+print(testwingbox.shear_stress(1))

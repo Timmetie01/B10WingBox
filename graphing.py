@@ -247,3 +247,10 @@ def bending_stress_plot(wingbox, Npoints = 250, showplot=True):
         plt.grid(axis='y', ls='--')
         plt.grid(axis='x', ls='--')
         plt.show()
+
+
+def shear_stress_plot(wingbox):
+    X = wingbox.centroidal_panels[:,0] / 2 + wingbox.centroidal_panels[:,2] / 2
+    Y = wingbox.centroidal_panels[:,1] / 2 + wingbox.centroidal_panels[:,3] / 2
+    U = 
+
