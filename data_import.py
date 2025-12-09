@@ -292,6 +292,4 @@ def list_to_string(lst):
             output += str(item) + ", "
         output = output[:-2] + "],"
     return output[:-1] + "]"
-testwingbox = idealizable_wingboxl(0.2, 0.6, 0.001, 'constant', stringercount=20, stringer_areas=2e-5, stringerspacing='constant_no_endpoints', panels_per_stringer=10, web_panel_count=20)
 
-print(testwingbox.shear_stress(1))
