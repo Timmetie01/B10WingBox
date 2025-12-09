@@ -285,3 +285,14 @@ def idealizable_airfoil(xstart, xend, thickness, thicknesstype, stringercount, s
 
 
 idealizable_airfoil(0.2, 0.6, 0.001, 'constant', stringercount=20, stringer_areas=2e-5, stringerspacing='constant_no_endpoints', panels_per_stringer=10, web_panel_count=20)
+
+
+def list_to_string(lst):
+    '''A function that print out a nested list (2 layers) as a string'''
+    output = "["
+    for nested_list in lst:
+        output += "["
+        for item in nested_list:
+            output += str(item) + ", "
+        output = output[:-2] + "],"
+    return output[:-1] + "]"
