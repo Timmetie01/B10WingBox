@@ -69,7 +69,7 @@ def critical_spar_shear(wingbox, y):
     import constants
     current_wingbox = classes.ScaledWingbox(wingbox, constants.local_chord_at_span(y))
 
-    ks = 3 * 2 /11 + 9 #Page 41 of reader. aspect ratio >5 (wing long compared to height), and clamped edges
+    ks = 6/11 + 9 #Page 41 of reader. aspect ratio >5 (wing long compared to height), and clamped edges
 
     xmin, xmax = np.min(current_wingbox.centroidal_points[:,0]), np.max(current_wingbox.centroidal_points[:,0])
     rear_spar_max, rear_spar_min = 0, 0
@@ -92,23 +92,41 @@ def critical_spar_shear(wingbox, y):
 
     return tau_cr_front, tau_cr_rear
 
-def spar_buckling_MOS(wingbox, y, return_info=False, margin_of_safety=1):
+def spar_buckling_MOS(wingbox, y, return_info=False):
     """
     Checks if the spar shear-buckles. ASSUMES POSITIVE MOMENT CREATED BY LIFT!
      
     :param wingbox: The wingbox to be analyzed
     :param y: Span-wise positon
     :param return_info: Will return a string you can print that describes what failed.
-    
+    :return MOS: Margin of safety under current loading
     """
+    from classes import ScaledWingbox
+    import constants
+    current_wingbox = ScaledWingbox(wingbox, constants.local_chord_at_span(y))
+
     tau_cr_front, tau_cr_rear = critical_spar_shear(wingbox, y)
+    
     returnstring = 'The things that failed are: '
-    #margin
-    if max(wingbox.shear_stress(y)) > tau_cr_front:
-         returnstring += 'Shear buckling in front stringer, '
-    if abs(min(wingbox.shear_stress(y))) > tau_cr_rear:
-         returnstring += 'Shear buckling in rear stringer, '
-    #if max(max(wingbox.shear_stress(y)) > const['']:)
+    
+    
+    rear_spar_thickness, front_spar_thickness = current_wingbox.panel_thickness[len(current_wingbox.panel_thickness)//2 - 1], current_wingbox.panel_thickness[-1]
+    front_spar_max = max(wingbox.shear_flow(y)) / front_spar_thickness
+    rear_spar_max = abs(min(wingbox.shear_flow(y))) / rear_spar_thickness
+
+    if tau_cr_front/front_spar_max < 1:
+        returnstring += 'Shear buckling in front stringer, '
+    if tau_cr_rear/rear_spar_max < 1:
+        returnstring += 'Shear buckling in rear stringer, '
+    if (const['Ultimate_tensile_stress']/2) / front_spar_max < 1:
+        returnstring += 'Ultimate shear stress in front stringer, '
+    if (const['Ultimate_tensile_stress']/2) / rear_spar_max < 1:
+        returnstring += 'Ultimate shear stress in rear stringer, '
+
+    print(front_spar_max, rear_spar_max)
+    print(tau_cr_front/front_spar_max, tau_cr_rear/rear_spar_max, (const['Ultimate_tensile_stress']/2) / front_spar_max, (const['Ultimate_tensile_stress']/2) / rear_spar_max)
+    margin_of_safety = min(tau_cr_front/front_spar_max, tau_cr_rear/rear_spar_max, (const['Ultimate_tensile_stress']/2) / front_spar_max, (const['Ultimate_tensile_stress']/2) / rear_spar_max)
+    return (margin_of_safety, returnstring) if return_info else margin_of_safety
          
     
 
