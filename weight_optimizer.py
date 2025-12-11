@@ -128,3 +128,8 @@ if __name__ == "__main__":
     print(f"number of stringers: ", x_opt[2])
     print(f"Minimum weight: {round(designwingbox.weight(print_value=False), 4)} kg")
     print(f"That is with xstart={xstart}, xend={xend}, Scaledthickness={scaled_thickness}, margin of safety of {margin_of_safety}.")
+
+    import graphing
+    graphing.compressive_strength_MOS_graph(designwingbox, showplot=False)
+    graphing.stringer_column_bucklin_MOS_graph(designwingbox, showplot=False)
+    graphing.spar_shear_MOS_plot(designwingbox)
