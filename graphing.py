@@ -284,15 +284,16 @@ def shear_flow_spanwise_plot(wingbox, showplot=True, Npoints=250):
         plt.grid(axis='x', ls='--')
         plt.show()
 
-def xcp_plot():
-    import data_from_xflr5
-    y_tab = np.linspace(0, const['span']/2, 500, endpoint=False)
-    xcp = data_from_xflr5.xcppos_func(1.621258898884106)
-    xcp_tab = []
-    for i in y_tab:
-        xcp_tab.append(xcp(i))
-
 def spar_shear_MOS_plot(wingbox, Npoints=100, showplot=True):
+    """
+    Plots the Margins Of Safety in the spar due to shear
+    
+    :param wingbox: The wingbox input
+    :param Npoints: The amount of points taken into account along the span
+    :param showplot: Either shows the plot when True, or does not show the plot and returns its entries for the legend
+    """
+
+
     import stress_functions
     y_tab = np.linspace(0, const['span']/2, Npoints, endpoint=False)
     MOS_buckle_tab = []
@@ -315,4 +316,7 @@ def spar_shear_MOS_plot(wingbox, Npoints=100, showplot=True):
         plt.grid(axis='y', ls='--')
         plt.grid(axis='x', ls='--')
         plt.show()
+        return None
+    else:
+        return 'Spar Shear Buckling', 'Spar Max Shear Stress'
 

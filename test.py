@@ -21,8 +21,9 @@ graphing.spar_shear_MOS_plot(testwingbox)
 #print(max(testwingbox.shear_stress(0)), min(testwingbox.shear_stress(0)))
 #print(testwingbox.shear_stress(0))
 
-print(stress_functions.spar_buckling_MOS(testwingbox, 0))
-print(testwingbox.shear_stress(0))
+#print(stress_functions.spar_buckling_MOS(testwingbox, 0))
+#print(testwingbox.shear_stress(0))
+
 
 
 

@@ -38,8 +38,10 @@ def shear_stress(wingbox, y):
         #Moment around centroid, clockwise positive
         centroidal_moment_qb = 0
         for i in range(len(shear_b)):
-            centroidal_moment_qb += shear_b[i] * 2 * area_moments.polygon_area(np.array([[0,0], current_wingbox.centroidal_panels[i,:2], current_wingbox.centroidal_panels[i,2:]]))
-        
+            #centroidal_moment_qb += shear_b[i] * 2 * area_moments.polygon_area(np.array([[0,0], current_wingbox.centroidal_panels[i,:2], current_wingbox.centroidal_panels[i,2:]]))
+            #More efficent way of triangle area with one vertex 0,0 below:
+            centroidal_moment_qb += shear_b[i] * 2 * 0.5 * abs(current_wingbox.centroidal_panels[i,0] * current_wingbox.centroidal_panels[i,3] - current_wingbox.centroidal_panels[i,2] * current_wingbox.centroidal_panels[i,1])
+            
         #Moment that should be created when loading=internal force
         #centroidal_moment_Vy = (wingbox.centroid_coordinates[0] - xcp(y)) * constants.local_chord_at_span(y) * Vy
         centroidal_moment_Vy = worst_case_loading.T(y, 'abs_max_torsion')

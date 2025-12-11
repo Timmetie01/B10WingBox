@@ -10,6 +10,7 @@ import scipy as sp
 #4: n x 1 array of stringer areas
 #Optional KWArg: name. Used to title some plots. Defaults to None
 class Wingbox:
+    
 
     def __init__(self, wingboxpoints, panel_thickness, stringercoords, stringer_area, scaled_thickness=False, idealizable=False, name=None):
         from data_import import makepanels
