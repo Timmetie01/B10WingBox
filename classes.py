@@ -10,14 +10,15 @@ import scipy as sp
 #4: n x 1 array of stringer areas
 #Optional KWArg: name. Used to title some plots. Defaults to None
 class Wingbox:
+    
 
     def __init__(self, wingboxpoints, panel_thickness, stringercoords, stringer_area, scaled_thickness=False, idealizable=False, name=None):
-        import data_import
+        from data_import import makepanels
         import area_moments
         self.name = name
 
         self.points = wingboxpoints
-        self.panels = data_import.makepanels(wingboxpoints)
+        self.panels = makepanels(wingboxpoints)
         self.panel_thickness = panel_thickness
         self.stringers = stringercoords
         self.stringer_area = stringer_area
@@ -38,10 +39,11 @@ class Wingbox:
             self.idealized_point_areas += panelarea / 6 * (2 + np.roll(np.transpose([self.centroidal_points[:,1]]), -1, axis=0) / np.transpose([self.centroidal_points[:,1]]))
             self.idealized_point_areas += np.roll(panelarea, 1, axis=0) / 6 * (2 + np.roll(np.transpose([self.centroidal_points[:,1]]), 1, axis=0) / np.transpose([self.centroidal_points[:,1]]))
             
-            #Assuming the 
+            
             top_or_bottom_panel_count = (len(self.centroidal_points) - (self.centroidal_points[:,0] >= np.max(self.centroidal_points[:,0]) - 1e-6).sum() * 2 + 4)//2
             #web_point_count = (len(self.centroidal_points) - 2 * top_or_bottom_panel_count)//2
-      
+    
+            
             stringers_per_side = len(self.stringers) // 2
             panels_per_stringer = (top_or_bottom_panel_count - 1) // (stringers_per_side + 1)
 
@@ -51,6 +53,7 @@ class Wingbox:
                 
                 #bottom
                 self.idealized_point_areas[len(self.points)//2 + (i + 1) * (panels_per_stringer)] += self.stringer_area[i + len(self.stringers) //2]
+            
 
     
     #Returns the Ixx at a certain spanwise location. Ixx is around chord-wise axis
@@ -75,7 +78,7 @@ class Wingbox:
         scale = constants.local_chord_at_span(y)
         current_wingbox = ScaledWingbox(self, scale)
         return area_moments.Torsional_constant(current_wingbox.centroidal_points, current_wingbox.panel_thickness)
-    
+
     #Shows the point highest and lowest compared to the neutral axis. Required for normal stress due to bending.
     def z_max_min(self, y):
         import area_moments
@@ -147,9 +150,31 @@ class Wingbox:
             print(f'The total wingbox weights {round(mass, 3)} kg.')
         return mass
     
+    def shear_flow(self, y):
+        from stress_functions import shear_stress
+        return shear_stress(self, y)
+    
     def shear_stress(self, y):
+        shear_flow = self.shear_flow(y)
+        return shear_flow / self.panel_thickness
+    
+    def shear_flow_plot(self, y):
+        import graphing
+        graphing.shear_flow_plot(self, y)
+
+    def shear_flow_spanwise_plot(self, showplot=True):
+        import graphing
+        graphing.shear_flow_spanwise_plot(self, showplot)
+
+    def worst_spar_shear_MOS(self, Npoints = 50, printing=True):
         import stress_functions
-        return stress_functions.shear_stress(self, y)
+        y_tab = np.linspace(0, const['span']/2, Npoints, endpoint=False)
+        MOS_tab = []
+        for i in y_tab:
+            MOS_tab.append(stress_functions.spar_buckling_MOS(self, i))
+            print(f'Calculating worst case shear MOS, {round(i * 100 / max(y_tab),1)}%', end='\r', flush=True)
+        print('')
+        return min(MOS_tab)
 
 
 
@@ -182,17 +207,8 @@ class ScaledWingbox:
             self.idealized_point_areas += np.roll(panelarea, 1, axis=0) / 6 * (2 + np.roll(np.transpose([self.centroidal_points[:,1]]), 1, axis=0) / np.transpose([self.centroidal_points[:,1]]))
             
             top_or_bottom_panel_count = (len(self.centroidal_points) - (self.centroidal_points[:,0] >= np.max(self.centroidal_points[:,0]) - 1e-6).sum() * 2 + 4)//2
-            print(top_or_bottom_panel_count)
             
             stringers_per_side = len(self.stringers) // 2
             panels_per_stringer = (top_or_bottom_panel_count - 1) // (stringers_per_side + 1)
 
-            for i in range(len(self.stringer_area) // 2):
-                #top
-                self.idealized_point_areas[(i + 1) * (panels_per_stringer)] += self.stringer_area[i]
-                
-                #bottom
-                self.idealized_point_areas[len(self.points)//2 + (i + 1) * (panels_per_stringer)] += self.stringer_area[i + len(self.stringers) //2]
-
-    
 
