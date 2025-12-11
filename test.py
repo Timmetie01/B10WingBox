@@ -14,6 +14,7 @@ testwingbox = data_import.idealizable_wingboxl(0.2, 0.6, [0.001, 0.003, 0.001, 0
 #graphing.shear_flow_spanwise_plot(testwingbox)
 graphing.shear_flow_plot(testwingbox, 1)
 graphing.compressive_strength_MOS_graph(testwingbox, showplot=False)
+graphing.stringer_column_bucklin_MOS_graph(testwingbox, showplot=False)
 graphing.spar_shear_MOS_plot(testwingbox)
 
 

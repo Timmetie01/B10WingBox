@@ -314,7 +314,7 @@ def spar_shear_MOS_plot(wingbox, Npoints=100, showplot=True):
         plt.xlabel('Spanwise position (m)')
         plt.ylabel('Margin of Safety (to max shear stress or buckling)')
         plt.title('MOS from shear flow in spars along span')
-        plt.ylim((-5, 50))
+        plt.ylim((-5, 30))
         plt.grid(axis='y', ls='--')
         plt.grid(axis='x', ls='--')
         plt.show()
@@ -377,6 +377,26 @@ def compressive_strength_MOS_graph(wingbox, showplot=True, Npoints=200):
         plt.plot(y_span, critical_sigma_z_compressive/sigma_compressive, label='Compressive stress safety margin')
     
    
-    
+def stringer_column_bucklin_MOS_graph(wingbox, showplot=True, Npoints=200):
+    import column_buckling
+
+    y_tab = np.linspace(0, const['span']/2, Npoints)
+    MOS_tab = []
+    for i in y_tab:
+        MOS_tab.append(column_buckling.stringer_buckling_MOS(wingbox, i))
+
+    if showplot:
+        plt.plot(y_tab, MOS_tab, color='darkblue', label='Stringer Column Buckling')
+        plt.plot([0, const['span']/2], [1,1], color='firebrick')
+        plt.legend()
+        plt.xlabel('Spanwise position (m)')
+        plt.ylabel('Margin of Safety (To stringer Column Buckling)')
+        plt.ylim((-5, 30))
+        plt.grid(axis='y', ls='--')
+        plt.grid(axis='x', ls='--')
+        plt.show()
+    else:
+        plt.plot(y_tab, MOS_tab, label='Stringer Column Buckling')
+
     
 
