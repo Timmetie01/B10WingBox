@@ -12,8 +12,8 @@ y_span = np.linspace(0, const['span']/2, 200)
 sigma_tensile = np.zeros_like(y_span)
 sigma_compressive = np.zeros_like(y_span)
 
-crtical_sigma_z_tensile=450.0e6 # Pa
-crtical_sigma_z_compressive=-450.0e6 # Pa
+critical_sigma_z_tensile=const['Yield_stress'] # Pa
+critical_sigma_z_compressive=-1 * const['Yield_stress'] # Pa
 
 data = np.loadtxt(r"data\test_cross_section\stringer_properties.txt", skiprows=1)
 z_positions = data[:, 1] 
@@ -30,8 +30,8 @@ for i, y in enumerate(y_span):
 
 
 plt.figure(figsize=(8,4))
-plt.plot(y_span, crtical_sigma_z_tensile/sigma_tensile, label='Tensile stress safety margin')
-plt.plot(y_span, crtical_sigma_z_compressive/sigma_compressive, label='Compressive stress safety margin')
+plt.plot(y_span, critical_sigma_z_tensile/sigma_tensile, label='Tensile stress safety margin')
+plt.plot(y_span, critical_sigma_z_compressive/sigma_compressive, label='Compressive stress safety margin')
 plt.axhline(0, color='k', linewidth=0.8)
 plt.xlabel('Spanwise location y [m]')
 plt.ylabel('Safety margin [-]')

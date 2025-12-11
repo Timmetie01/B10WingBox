@@ -307,10 +307,10 @@ def spar_shear_MOS_plot(wingbox, Npoints=100, showplot=True):
     
 
     if showplot:
-        plt.plot(y_tab, MOS_buckle_tab, color='darkblue')
-        plt.plot(y_tab, MOS_maxshear_tab, color='darkgreen')
+        plt.plot(y_tab, MOS_buckle_tab, color='darkblue', label='Spar Shear Buckling')
+        plt.plot(y_tab, MOS_maxshear_tab, color='darkgreen', label='Spar Max Shear Stress')
         plt.plot([0, const['span']/2], [1,1], color='firebrick')
-        plt.legend(('Margin Of Safety (spar shear buckling)', 'Margin Of Safety (Spar Max Shear Stress)', 'Lower Limit (1)'))
+        plt.legend()
         plt.xlabel('Spanwise position (m)')
         plt.ylabel('Margin of Safety (to max shear stress or buckling)')
         plt.title('MOS from shear flow in spars along span')
@@ -318,11 +318,9 @@ def spar_shear_MOS_plot(wingbox, Npoints=100, showplot=True):
         plt.grid(axis='y', ls='--')
         plt.grid(axis='x', ls='--')
         plt.show()
-        return None
     else:
-        plt.plot(y_tab, MOS_buckle_tab)
-        plt.plot(y_tab, MOS_maxshear_tab)
-        return np.array(['Spar Shear Buckling', 'Spar Max Shear Stress'])
+        plt.plot(y_tab, MOS_buckle_tab, label='Spar Shear Buckling')
+        plt.plot(y_tab, MOS_maxshear_tab, label='Spar Max Shear Stress')
 
 def deflection_twist_MOS_plot(wingbox, Npoints=100, showplot=True):
     y_list, v_list = deflection_functions.v(wingbox)
@@ -330,11 +328,11 @@ def deflection_twist_MOS_plot(wingbox, Npoints=100, showplot=True):
     MOS_v_list, MOS_theta_list = const['max_deflection_fraction'] * const['span'] / v_list, const['max_twist_degrees'] * np.pi / 180 / theta_list
 
     if showplot:
-        plt.plot(y_list, MOS_v_list, color='darkblue')
-        plt.plot(y_list, MOS_theta_list, color='darkgreen')
+        plt.plot(y_list, MOS_v_list, color='darkblue', label='Deflection Margin Of Safety')
+        plt.plot(y_list, MOS_theta_list, color='darkgreen', label='Twist Margin Of Safety')
 
         plt.plot([0, const['span']/2], [1,1], color='firebrick')
-        plt.legend(('Margin Of Safety (Deflection)', 'Margin Of Safety (Twist)', 'Lower Limit (1)'))
+        plt.legend()
         plt.xlabel('Spanwise position (m)')
         plt.ylabel('Margin of Safety')
         plt.title('MOS from Deflection and Twist')
@@ -342,9 +340,43 @@ def deflection_twist_MOS_plot(wingbox, Npoints=100, showplot=True):
         plt.grid(axis='y', ls='--')
         plt.grid(axis='x', ls='--')
         plt.show()
-        return None
     else:
-        plt.plot(y_list, MOS_v_list)
-        plt.plot(y_list, MOS_theta_list)
-        return np.array(['Deflection Margin Of Safety', 'Twist Margin Of Safety'])
+        plt.plot(y_list, MOS_v_list, label='Deflection Margin Of Safety')
+        plt.plot(y_list, MOS_theta_list, label='Twist Margin Of Safety')
+
+
+def compressive_strength_MOS_graph(wingbox, showplot=True, Npoints=200):
+    from compressive_strength import bending_stress
+
+    y_span = np.linspace(0, const['span']/2, Npoints)
+    sigma_tensile = np.zeros_like(y_span)
+    sigma_compressive = np.zeros_like(y_span)
+
+    critical_sigma_z_tensile = const['Yield_stress']
+    critical_sigma_z_compressive = -1 * const['Yield_stress']
+
+    for i, y in enumerate(y_span):
+        sigma_z = bending_stress(wingbox, y)
+        sigma_tensile[i] = np.max(sigma_z) 
+        sigma_compressive[i] = np.min(sigma_z) 
+
+    if showplot:
+        plt.plot(y_span, critical_sigma_z_tensile/sigma_tensile, label='Tensile stress safety margin')
+        plt.plot(y_span, critical_sigma_z_compressive/sigma_compressive, label='Compressive stress safety margin')
+        plt.axhline(0, color='k', linewidth=0.8)
+        plt.xlabel('Spanwise location y [m]')
+        plt.ylabel('Safety margin [-]')
+        plt.title('Spanwise Compressive and Tensile Stress Safety Margins')
+        plt.ylim(0, 20) 
+        plt.grid(axis='y', ls='--')
+        plt.grid(axis='x', ls='--')
+        plt.legend()
+        plt.show()
+    else:
+        plt.plot(y_span, critical_sigma_z_tensile/sigma_tensile, label='Tensile stress safety margin')
+        plt.plot(y_span, critical_sigma_z_compressive/sigma_compressive, label='Compressive stress safety margin')
+    
+   
+    
+    
 

@@ -13,9 +13,11 @@ testwingbox = data_import.idealizable_wingboxl(0.2, 0.6, [0.001, 0.003, 0.001, 0
 
 #graphing.shear_flow_spanwise_plot(testwingbox)
 graphing.shear_flow_plot(testwingbox, 1)
+graphing.compressive_strength_MOS_graph(testwingbox, showplot=False)
 graphing.spar_shear_MOS_plot(testwingbox)
-print(testwingbox.worst_spar_shear_MOS())
 
+
+#print(testwingbox.worst_spar_shear_MOS())
 
 #print(stress_functions.critical_spar_shear(testwingbox, 0))
 #print(max(testwingbox.shear_stress(0)), min(testwingbox.shear_stress(0)))
