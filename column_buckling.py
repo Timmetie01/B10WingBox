@@ -21,7 +21,7 @@ def min_stringer_buckling_stress(wingbox, y, printvalue=False):
     import classes
     local_wingbox = classes.ScaledWingbox(wingbox, constants.local_chord_at_span(y))
 
-    K = 1/4
+    K = 4
     E = const['Modulus_of_Elasticity']
     I = 1e-9
     #Assuming worst case
@@ -41,3 +41,12 @@ def stringer_buckling_MOS(wingbox, y):
     max_normal_Stress = stress_functions.max_bending_stress(wingbox, y)
 
     return critical_buckling_stress / max_normal_Stress
+
+def lowest_strigner_buckling_MOS(wingbox, Npoints = 200):
+    import stress_functions
+    y_tab = np.linspace(0, const['span']/2, Npoints)
+    MOS_tab = []
+    for i in y_tab:
+        MOS_tab.append(stringer_buckling_MOS(wingbox, i))
+
+    return np.min(MOS_tab)
