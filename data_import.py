@@ -208,12 +208,12 @@ def idealizable_wingbox(xstart, xend, thickness, thicknesstype, stringercount, s
     import numbers
     #Amount of panels in each spar, to accurately model shear
     web_panel_count -= 1
-    stringercount = (stringercount//2) * 2
+    stringercount = int((stringercount//2) * 2)
     #Amount of panels between spars at the top or bottom
     if stringerspacing == 'constant_endpoints':
-        flange_panel_count = (stringercount//2 - 1) * panels_per_stringer + 1
+        flange_panel_count = int((stringercount//2 - 1) * panels_per_stringer + 1)
     elif stringerspacing == 'constant_no_endpoints':
-        flange_panel_count = (stringercount//2 + 1) * panels_per_stringer + 1
+        flange_panel_count = int((stringercount//2 + 1) * panels_per_stringer + 1)
     else:
         print('Choose available method of stringer spacing please!! (from data_import.create_airfoil_like_wingbox)')
         quit()
