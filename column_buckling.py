@@ -40,7 +40,7 @@ def stringer_buckling_MOS(wingbox, y):
     critical_buckling_stress = min_stringer_buckling_stress(wingbox, y)
     max_normal_Stress = stress_functions.max_bending_stress(wingbox, y)
 
-    return critical_buckling_stress / max_normal_Stress
+    return critical_buckling_stress / (max_normal_Stress + 1e-5)
 
 def lowest_strigner_buckling_MOS(wingbox, Npoints = 200):
     import stress_functions

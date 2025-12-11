@@ -314,7 +314,7 @@ def spar_shear_MOS_plot(wingbox, Npoints=100, showplot=True):
         plt.xlabel('Spanwise position (m)')
         plt.ylabel('Margin of Safety (to max shear stress or buckling)')
         plt.title('MOS from shear flow in spars along span')
-        plt.ylim((-5, 30))
+        plt.ylim((-5, 20))
         plt.grid(axis='y', ls='--')
         plt.grid(axis='x', ls='--')
         plt.show()
@@ -361,20 +361,20 @@ def compressive_strength_MOS_graph(wingbox, showplot=True, Npoints=200):
         sigma_compressive[i] = np.min(sigma_z) 
 
     if showplot:
-        plt.plot(y_span, critical_sigma_z_tensile/sigma_tensile, label='Tensile stress safety margin')
-        plt.plot(y_span, critical_sigma_z_compressive/sigma_compressive, label='Compressive stress safety margin')
+        plt.plot(y_span, critical_sigma_z_tensile/(sigma_tensile + 1e-5), label='Tensile stress safety margin')
+        plt.plot(y_span, critical_sigma_z_compressive/(sigma_compressive + 1e-5), label='Compressive stress safety margin')
         plt.axhline(0, color='k', linewidth=0.8)
         plt.xlabel('Spanwise location y [m]')
         plt.ylabel('Safety margin [-]')
         plt.title('Spanwise Compressive and Tensile Stress Safety Margins')
-        plt.ylim(0, 20) 
+        plt.ylim(-5, 20) 
         plt.grid(axis='y', ls='--')
         plt.grid(axis='x', ls='--')
         plt.legend()
         plt.show()
     else:
-        plt.plot(y_span, critical_sigma_z_tensile/sigma_tensile, label='Tensile stress safety margin')
-        plt.plot(y_span, critical_sigma_z_compressive/sigma_compressive, label='Compressive stress safety margin')
+        plt.plot(y_span, np.abs(critical_sigma_z_tensile/(sigma_tensile + 1e-5)), label='Tensile stress safety margin')
+        plt.plot(y_span, np.abs(critical_sigma_z_compressive/(sigma_compressive + 1e-5)), label='Compressive stress safety margin')
     
    
 def stringer_column_bucklin_MOS_graph(wingbox, showplot=True, Npoints=200):
@@ -391,7 +391,7 @@ def stringer_column_bucklin_MOS_graph(wingbox, showplot=True, Npoints=200):
         plt.legend()
         plt.xlabel('Spanwise position (m)')
         plt.ylabel('Margin of Safety (To stringer Column Buckling)')
-        plt.ylim((-5, 30))
+        plt.ylim((-5, 20))
         plt.grid(axis='y', ls='--')
         plt.grid(axis='x', ls='--')
         plt.show()
