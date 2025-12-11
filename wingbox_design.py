@@ -41,8 +41,6 @@ def thickness_iteration(xstart, xend, stringercount, stringer_areas, thicknessty
 def optimize_for_MOS(xstart, xend, margin_of_safety = 1, scaled_thickness=False, panels_per_stringer=5, web_panel_count=20, name=None):
     from scipy.optimize import minimize
 
-    compressive_strength_MOS = 0
-    tensile_strength_MOS = 0
     stringer_column_buckling_MOS = 0
     wing_skin_buckling_MOS = 0
 
@@ -69,7 +67,7 @@ def optimize_for_MOS(xstart, xend, margin_of_safety = 1, scaled_thickness=False,
         wingbox = wingbox_simplified(x)
         return wingbox.worst_spar_shear_MOS() - margin_of_safety
     
-    def compressive_MOS(x):
+    def compressive_tensile_MOS(x):
         wingbox = wingbox_simplified(x)
         y_span = np.linspace(0, const['span']/2, 100)
         sigma_tensile = np.zeros_like(y_span)
@@ -85,7 +83,7 @@ def optimize_for_MOS(xstart, xend, margin_of_safety = 1, scaled_thickness=False,
 
 
 
-        return min(critical_sigma_z_tensile / max(sigma_tensile), critical_sigma_z_compressive / max(sigma_compressive))
+        return min(critical_sigma_z_tensile / max(sigma_tensile), critical_sigma_z_compressive / max(sigma_compressive)) - margin_of_safety
         
 
 
