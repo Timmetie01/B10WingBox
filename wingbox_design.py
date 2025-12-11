@@ -14,7 +14,7 @@ def thickness_iteration(xstart, xend, stringercount, stringer_areas, thicknessty
     twist = 100
     iteration_thickness = 0
     wingboxthickness=0
-
+    
     print('Iterating over thickness', end='')
 
     while deflection > const['span'] * const['max_deflection_fraction'] or abs(twist) > const['max_twist_degrees']:
@@ -39,16 +39,23 @@ def thickness_iteration(xstart, xend, stringercount, stringer_areas, thicknessty
     return iterationwingbox, iteration_thickness
 
 def optimize_for_MOS(xstart, xend, margin_of_safety = 1, scaled_thickness=False, panels_per_stringer=5, web_panel_count=20, name=None):
-    from scipy.optimize import minimize
-
-    stringer_column_buckling_MOS = 0
+    from scipy.optimize import minimize, differential_evolution
     wing_skin_buckling_MOS = 0
 
     #x = sparthickness, skinthickness, stringercount, stringerarea
     x = [0,0,0,0]
 
+    bounds = [
+        (0.0001, 0.05),
+        (0.0001, 0.01),
+        (4,50),
+        (1e-5, 2e-4)
+    ]
+
+    x0 = [0.01, 0.002, 20, 3e-5]
+
     def force_even_stringercount(x):
-        x[2] = x[2] // 2 * 2
+        x[2] = int(x[2] // 2 * 2)
         return x
 
     def wingbox_simplified(x):
@@ -57,11 +64,11 @@ def optimize_for_MOS(xstart, xend, margin_of_safety = 1, scaled_thickness=False,
 
     def deflection_MOS(x):
         wingbox = wingbox_simplified(x)
-        return (const['max_deflection_fraction'] * const['span'] / (max(deflection_functions.v(wingbox)))) - margin_of_safety
+        return (const['max_deflection_fraction'] * const['span'] / (max(deflection_functions.v(wingbox)[1]))) - margin_of_safety
 
     def twist_MOS(x):
         wingbox = wingbox_simplified(x)
-        return const['max_twist_degrees'] * np.pi / 180 / (max(abs(deflection_functions.theta(wingbox)))) - margin_of_safety
+        return const['max_twist_degrees'] * np.pi / 180 / (max(abs(deflection_functions.theta(wingbox)[1]))) - margin_of_safety
     
     def shear_MOS(x):
         wingbox = wingbox_simplified(x)
@@ -85,6 +92,69 @@ def optimize_for_MOS(xstart, xend, margin_of_safety = 1, scaled_thickness=False,
 
         return min(critical_sigma_z_tensile / max(sigma_tensile), critical_sigma_z_compressive / max(sigma_compressive)) - margin_of_safety
         
+    def stringer_column_MOS(x):
+        import column_buckling
+        wingbox = wingbox_simplified(x)
+        return column_buckling.lowest_stringer_buckling_MOS(wingbox) - margin_of_safety
+    
+    
+    def objective(x):
+        wingbox = wingbox_simplified(x)
+        print(x)
+        return wingbox.weight(print_value=False)
+
+    constraints = [
+        {"type": "ineq", "fun": deflection_MOS},
+        {"type": "ineq", "fun": twist_MOS},
+        {"type": "ineq", "fun": shear_MOS},
+        {"type": "ineq", "fun": compressive_tensile_MOS},
+        {"type": "ineq", "fun": stringer_column_MOS},        
+    ]
+
+    def constrained_objective(x):
+        x = x.copy()
+        wingbox = wingbox_simplified(x)
+
+        if deflection_MOS(x) < 0:           return 1e12
+        if twist_MOS(x) < 0:                return 1e12
+        if shear_MOS(x) < 0:                return 1e12
+        if compressive_tensile_MOS(x) < 0:  return 1e12
+        if stringer_column_MOS(x) < 0:      return 1e12
+
+        return wingbox.weight(print_value=False) 
+
+    # result = minimize(
+    #    objective,
+    #    x0,
+    #    method='SLSQP',
+    #    bounds=bounds,
+    #    constraints=constraints,
+    #    options={'disp': True, 'maxiter': 200}
+    #)
+
+    result = differential_evolution(
+        constrained_objective,
+        bounds=bounds,
+        maxiter=100,
+        popsize=15,
+        workers=1
+    )
+
+
+    x_opt = force_even_stringercount(result.x)
+    designwingbox = wingbox_simplified(x_opt)
+
+    print(f"Optimal design (integer stringers enforced):")
+    print(f"spar thickness: ", round(x_opt[0], 7))
+    print(f"skin thickness: ", round(x_opt[1], 7))
+    print(f"stringer area: ", round(x_opt[3], 8))
+    print(f"number of stringers: ", x_opt[2])
+    print(f"Minimum weight: {round(designwingbox.weight(), 4)} kg")
+    return designwingbox
+
+
+optimize_for_MOS(0.2, 0.6)
+
 
 
 #Uncomment lines as necessary to verify part of the design
