@@ -10,6 +10,7 @@ import scipy as sp
 #4: n x 1 array of stringer areas
 #Optional KWArg: name. Used to title some plots. Defaults to None
 class Wingbox:
+    
 
     def __init__(self, wingboxpoints, panel_thickness, stringercoords, stringer_area, scaled_thickness=False, idealizable=False, name=None):
         from data_import import makepanels
@@ -156,6 +157,24 @@ class Wingbox:
     def shear_stress(self, y):
         shear_flow = self.shear_flow(y)
         return shear_flow / self.panel_thickness
+    
+    def shear_flow_plot(self, y):
+        import graphing
+        graphing.shear_flow_plot(self, y)
+
+    def shear_flow_spanwise_plot(self, showplot=True):
+        import graphing
+        graphing.shear_flow_spanwise_plot(self, showplot)
+
+    def worst_spar_shear_MOS(self, Npoints = 50, printing=True):
+        import stress_functions
+        y_tab = np.linspace(0, const['span']/2, Npoints, endpoint=False)
+        MOS_tab = []
+        for i in y_tab:
+            MOS_tab.append(stress_functions.spar_buckling_MOS(self, i))
+            print(f'Calculating worst case shear MOS, {round(i * 100 / max(y_tab),1)}%', end='\r', flush=True)
+        print('')
+        return min(MOS_tab)
 
 
 
