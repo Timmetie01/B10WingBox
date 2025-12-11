@@ -19,7 +19,7 @@ from scipy.optimize import minimize, differential_evolution
 wing_skin_buckling_MOS = 0
 
 #x = sparthickness, skinthickness, stringercount, stringerarea
-x = [0,0,0,0]
+x = [0.,0.,0.,0.]
 
 bounds = [
     (0.0001, 0.05),
@@ -121,9 +121,9 @@ if __name__ == "__main__":
     x_opt = force_even_stringercount(result.x)
     designwingbox = wingbox_simplified(x_opt)
 
-    print(f"Optimal design (integer stringers enforced):")
-    print(f"spar thickness: ", round(x_opt[0]))
-    print(f"skin thickness: ", round(x_opt[1]))
-    print(f"stringer area: ", round(x_opt[3]))
+    print(f"Optimal design:")
+    print(f"spar thickness: ", x_opt[0])
+    print(f"skin thickness: ", x_opt[1])
+    print(f"stringer area: ", x_opt[3])
     print(f"number of stringers: ", x_opt[2])
-    print(f"Minimum weight: {round(designwingbox.weight(), 4)} kg")
+    print(f"Minimum weight: {round(designwingbox.weight(print_value=False), 4)} kg")
