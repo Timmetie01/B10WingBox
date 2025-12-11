@@ -70,3 +70,10 @@ def max_deflection_and_twist(wingbox):
     twist = max(np.abs(theta_list))
 
     return deflection, twist
+
+def worst_V_twist_MOS(wingbox):
+    y_list, v_list = v(wingbox)
+    y_list, theta_list = theta(wingbox)
+    MOS_v_list, MOS_theta_list = const['max_deflection_fraction'] * const['span'] / v_list, const['max_twist_degrees'] * np.pi / 180 / theta_list
+
+    return min(MOS_v_list), min(MOS_theta_list)
