@@ -95,7 +95,7 @@ def critical_spar_shear(wingbox, y):
 
 def spar_buckling_MOS(wingbox, y, return_info=False):
     """
-    Checks if the spar shear-buckles. 
+    Checks if the spar shear-buckles OR exceeds maximum shear stress.
      
     :param wingbox: The wingbox to be analyzed
     :param y: Span-wise positon
@@ -113,7 +113,6 @@ def spar_buckling_MOS(wingbox, y, return_info=False):
     
     rear_spar_thickness, front_spar_thickness = current_wingbox.panel_thickness[len(current_wingbox.panel_thickness)//2 - 1], current_wingbox.panel_thickness[-1]
     front_spar_max = max(wingbox.shear_flow(y)) / front_spar_thickness
-    print('stress:', front_spar_max, front_spar_thickness)
 
     rear_spar_max = abs(min(wingbox.shear_flow(y))) / rear_spar_thickness
 
@@ -128,8 +127,8 @@ def spar_buckling_MOS(wingbox, y, return_info=False):
 
     #print(front_spar_max, rear_spar_max)
     #print(tau_cr_front/front_spar_max, tau_cr_rear/rear_spar_max, (const['Ultimate_tensile_stress']/2) / front_spar_max, (const['Ultimate_tensile_stress']/2) / rear_spar_max)
-    margin_of_safety = min(tau_cr_front/front_spar_max, tau_cr_rear/rear_spar_max, (const['Ultimate_tensile_stress']/2) / front_spar_max, (const['Ultimate_tensile_stress']/2) / rear_spar_max)
-    return (margin_of_safety, returnstring) if return_info else margin_of_safety
+    margin_of_safety = (tau_cr_front/front_spar_max, tau_cr_rear/rear_spar_max, (const['Ultimate_tensile_stress']/2) / front_spar_max, (const['Ultimate_tensile_stress']/2) / rear_spar_max)
+    return (margin_of_safety, returnstring) if return_info else min(margin_of_safety)
          
     
 
