@@ -41,7 +41,8 @@ def shear_stress(wingbox, y):
             centroidal_moment_qb += shear_b[i] * 2 * area_moments.polygon_area(np.array([[0,0], current_wingbox.centroidal_panels[i,:2], current_wingbox.centroidal_panels[i,2:]]))
         
         #Moment that should be created when loading=internal force
-        centroidal_moment_Vy = (wingbox.centroid_coordinates[0] - xcp(y)) * constants.local_chord_at_span(y) * Vy
+        #centroidal_moment_Vy = (wingbox.centroid_coordinates[0] - xcp(y)) * constants.local_chord_at_span(y) * Vy
+        centroidal_moment_Vy = worst_case_loading.T(y, 'abs_max_torsion')
  
         #Calculating the qs0 such that internal loading and torque equal applied loading and torque
         qs0_contribution = 2 * wingbox.area(y)
@@ -94,7 +95,7 @@ def critical_spar_shear(wingbox, y):
 
 def spar_buckling_MOS(wingbox, y, return_info=False):
     """
-    Checks if the spar shear-buckles. ASSUMES POSITIVE MOMENT CREATED BY LIFT!
+    Checks if the spar shear-buckles. 
      
     :param wingbox: The wingbox to be analyzed
     :param y: Span-wise positon
@@ -112,19 +113,21 @@ def spar_buckling_MOS(wingbox, y, return_info=False):
     
     rear_spar_thickness, front_spar_thickness = current_wingbox.panel_thickness[len(current_wingbox.panel_thickness)//2 - 1], current_wingbox.panel_thickness[-1]
     front_spar_max = max(wingbox.shear_flow(y)) / front_spar_thickness
+    print('stress:', front_spar_max, front_spar_thickness)
+
     rear_spar_max = abs(min(wingbox.shear_flow(y))) / rear_spar_thickness
 
     if tau_cr_front/front_spar_max < 1:
         returnstring += 'Shear buckling in front stringer, '
     if tau_cr_rear/rear_spar_max < 1:
         returnstring += 'Shear buckling in rear stringer, '
-    if (const['Ultimate_tensile_stress']/2) / front_spar_max < 1:
-        returnstring += 'Ultimate shear stress in front stringer, '
-    if (const['Ultimate_tensile_stress']/2) / rear_spar_max < 1:
-        returnstring += 'Ultimate shear stress in rear stringer, '
+    if (const['Yield_stress']/2) / front_spar_max < 1:
+        returnstring += 'Yield shear stress in front stringer, '
+    if (const['Yield_stress']/2) / rear_spar_max < 1:
+        returnstring += 'Yield shear stress in rear stringer, '
 
-    print(front_spar_max, rear_spar_max)
-    print(tau_cr_front/front_spar_max, tau_cr_rear/rear_spar_max, (const['Ultimate_tensile_stress']/2) / front_spar_max, (const['Ultimate_tensile_stress']/2) / rear_spar_max)
+    #print(front_spar_max, rear_spar_max)
+    #print(tau_cr_front/front_spar_max, tau_cr_rear/rear_spar_max, (const['Ultimate_tensile_stress']/2) / front_spar_max, (const['Ultimate_tensile_stress']/2) / rear_spar_max)
     margin_of_safety = min(tau_cr_front/front_spar_max, tau_cr_rear/rear_spar_max, (const['Ultimate_tensile_stress']/2) / front_spar_max, (const['Ultimate_tensile_stress']/2) / rear_spar_max)
     return (margin_of_safety, returnstring) if return_info else margin_of_safety
          

@@ -156,6 +156,14 @@ class Wingbox:
     def shear_stress(self, y):
         shear_flow = self.shear_flow(y)
         return shear_flow / self.panel_thickness
+    
+    def shear_flow_plot(self, y):
+        import graphing
+        graphing.shear_flow_plot(self, y)
+
+    def shear_flow_spanwise_plot(self, showplot=True):
+        import graphing
+        graphing.shear_flow_spanwise_plot(self, showplot)
 
 
 

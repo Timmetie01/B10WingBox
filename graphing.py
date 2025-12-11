@@ -264,3 +264,52 @@ def shear_flow_plot(wingbox, y=0):
                 width=0.002)
     plt.show()
 
+def shear_flow_spanwise_plot(wingbox, showplot=True, Npoints=250):
+    y_tab = np.linspace(0, const['span']/2, Npoints, endpoint=False)
+    MOS_tab = []
+    
+    for i in y_tab:
+        MOS_tab.append(max(wingbox.shear_flow(i)))
+        print(f'Plotting shear flow distribution... {round(i * 100 / max(y_tab),1)}%', end='\r', flush=True)
+
+        
+
+    plt.plot(y_tab, MOS_tab)
+
+    if showplot:
+        plt.xlabel('Spanwise position (m)')
+        plt.ylabel('Shear Flow (N/m)')
+        plt.title('Highest shear flow at certain cross-sections')
+        plt.grid(axis='y', ls='--')
+        plt.grid(axis='x', ls='--')
+        plt.show()
+
+def xcp_plot():
+    import data_from_xflr5
+    y_tab = np.linspace(0, const['span']/2, 500, endpoint=False)
+    xcp = data_from_xflr5.xcppos_func(1.621258898884106)
+    xcp_tab = []
+    for i in y_tab:
+        xcp_tab.append(xcp(i))
+
+def spar_shear_MOS_plot(wingbox, Npoints=100, showplot=True):
+    import stress_functions
+    y_tab = np.linspace(0, const['span']/2, Npoints, endpoint=False)
+    MOS_tab = []
+    for i in y_tab:
+        MOS_tab.append(stress_functions.spar_buckling_MOS(wingbox, i))
+        print(f'Plotting shear flow distribution... {round(i * 100 / max(y_tab),1)}%', end='\r', flush=True)
+
+    plt.plot(y_tab, MOS_tab, color='darkblue')
+
+    if showplot:
+        plt.plot([0, const['span']/2], [1,1], color='firebrick')
+        plt.legend(('Margin Of Safety', 'Lower Limit (1)'))
+        plt.xlabel('Spanwise position (m)')
+        plt.ylabel('Margin of Safety (to max shear stress or buckling)')
+        plt.title('MOS from shear flow in spars along span')
+        plt.ylim((-5, 50))
+        plt.grid(axis='y', ls='--')
+        plt.grid(axis='x', ls='--')
+        plt.show()
+
