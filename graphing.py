@@ -265,13 +265,14 @@ def shear_flow_plot(wingbox, y=0):
     plt.show()
 
 def shear_flow_spanwise_plot(wingbox, showplot=True, Npoints=250):
+    
     y_tab = np.linspace(0, const['span']/2, Npoints, endpoint=False)
     MOS_tab = []
     
     for i in y_tab:
         MOS_tab.append(max(wingbox.shear_flow(i)))
         print(f'Plotting shear flow distribution... {round(i * 100 / max(y_tab),1)}%', end='\r', flush=True)
-
+    print('Plotting shear flow distribution... 100%!  ', end='\n', flush=True)
         
 
     plt.plot(y_tab, MOS_tab)
@@ -302,11 +303,12 @@ def spar_shear_MOS_plot(wingbox, Npoints=100, showplot=True):
         MOS_buckle_tab.append(min(stress_functions.spar_buckling_MOS(wingbox, i, return_info=True)[0][:2]))
         MOS_maxshear_tab.append(min(stress_functions.spar_buckling_MOS(wingbox, i, return_info=True)[0][2:]))
         print(f'Plotting shear flow distribution... {round(i * 100 / max(y_tab),1)}%', end='\r', flush=True)
-
-    plt.plot(y_tab, MOS_buckle_tab, color='darkblue')
-    plt.plot(y_tab, MOS_maxshear_tab, color='darkgreen')
+    print('Plotting shear flow distribution... 100%!  ', end='\n', flush=True)
+    
 
     if showplot:
+        plt.plot(y_tab, MOS_buckle_tab, color='darkblue')
+        plt.plot(y_tab, MOS_maxshear_tab, color='darkgreen')
         plt.plot([0, const['span']/2], [1,1], color='firebrick')
         plt.legend(('Margin Of Safety (spar shear buckling)', 'Margin Of Safety (Spar Max Shear Stress)', 'Lower Limit (1)'))
         plt.xlabel('Spanwise position (m)')
@@ -318,5 +320,31 @@ def spar_shear_MOS_plot(wingbox, Npoints=100, showplot=True):
         plt.show()
         return None
     else:
-        return 'Spar Shear Buckling', 'Spar Max Shear Stress'
+        plt.plot(y_tab, MOS_buckle_tab)
+        plt.plot(y_tab, MOS_maxshear_tab)
+        return np.array(['Spar Shear Buckling', 'Spar Max Shear Stress'])
+
+def deflection_twist_MOS_plot(wingbox, Npoints=100, showplot=True):
+    y_list, v_list = deflection_functions.v(wingbox)
+    y_list, theta_list = deflection_functions.theta(wingbox)
+    MOS_v_list, MOS_theta_list = const['max_deflection_fraction'] * const['span'] / v_list, const['max_twist_degrees'] * np.pi / 180 / theta_list
+
+    if showplot:
+        plt.plot(y_list, MOS_v_list, color='darkblue')
+        plt.plot(y_list, MOS_theta_list, color='darkgreen')
+
+        plt.plot([0, const['span']/2], [1,1], color='firebrick')
+        plt.legend(('Margin Of Safety (Deflection)', 'Margin Of Safety (Twist)', 'Lower Limit (1)'))
+        plt.xlabel('Spanwise position (m)')
+        plt.ylabel('Margin of Safety')
+        plt.title('MOS from Deflection and Twist')
+        plt.ylim((-5, 50))
+        plt.grid(axis='y', ls='--')
+        plt.grid(axis='x', ls='--')
+        plt.show()
+        return None
+    else:
+        plt.plot(y_list, MOS_v_list)
+        plt.plot(y_list, MOS_theta_list)
+        return np.array(['Deflection Margin Of Safety', 'Twist Margin Of Safety'])
 

@@ -74,6 +74,8 @@ def critical_spar_shear(wingbox, y):
 
     ks = 6/11 + 9 #Page 41 of reader. aspect ratio >5 (wing long compared to height), and clamped edges
 
+    #Reverse engineering how many points are contained in the skin vs the spars
+    #CODE BELOW CAN BE VECTORIZED FOR OPTIMIZATION (if required)
     xmin, xmax = np.min(current_wingbox.centroidal_points[:,0]), np.max(current_wingbox.centroidal_points[:,0])
     rear_spar_max, rear_spar_min = 0, 0
     front_spar_max, front_spar_min = 0, 0
@@ -112,12 +114,15 @@ def spar_buckling_MOS(wingbox, y, return_info=False):
     
     returnstring = 'The things that failed are: '
     
-    
+    #Assuming that the spar is created from top left corner and goes around clockwise, as all wingbox-creating functions do.
     rear_spar_thickness, front_spar_thickness = current_wingbox.panel_thickness[len(current_wingbox.panel_thickness)//2 - 1], current_wingbox.panel_thickness[-1]
+    
+    #Shear stress = q/t
+    #Since the highest moments are positive as determined in wp4, the max is on the left and the min on the right.
     front_spar_max = max(wingbox.shear_flow(y)) / front_spar_thickness
-
     rear_spar_max = abs(min(wingbox.shear_flow(y))) / rear_spar_thickness
 
+    #Calculating MOS for all cases
     if tau_cr_front/front_spar_max < 1:
         returnstring += 'Shear buckling in front stringer, '
     if tau_cr_rear/rear_spar_max < 1:

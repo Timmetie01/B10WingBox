@@ -166,6 +166,16 @@ class Wingbox:
         import graphing
         graphing.shear_flow_spanwise_plot(self, showplot)
 
+    def worst_spar_shear_MOS(self, Npoints = 50, printing=True):
+        import stress_functions
+        y_tab = np.linspace(0, const['span']/2, Npoints, endpoint=False)
+        MOS_tab = []
+        for i in y_tab:
+            MOS_tab.append(stress_functions.spar_buckling_MOS(self, i))
+            print(f'Calculating worst case shear MOS, {round(i * 100 / max(y_tab),1)}%', end='\r', flush=True)
+        print('')
+        return min(MOS_tab)
+
 
 
         
