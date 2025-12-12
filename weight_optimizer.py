@@ -5,7 +5,8 @@ import stress_functions
 import numpy as np
 
 
-
+#Due to limitations on the ways to enable multi-threaded processing in scipy.optimizide.differential_evolution,
+#The inputs for the final design must be manually entered. The performance increase is more than worth it.
 xstart = 0.2 
 xend = 0.6
 margin_of_safety = 1
@@ -28,7 +29,7 @@ bounds = [
     (1e-5, 2e-4)
 ]
 
-x0 = [0.01, 0.002, 20, 3e-5]
+x0 = [0.0001, 0.0002, 20, 1e-5]
 
 def force_even_stringercount(x):
     x[2] = int(x[2] // 2 * 2)
@@ -64,9 +65,7 @@ def compressive_tensile_MOS(x):
         sigma_tensile[i] = np.max(sigma_z) 
         sigma_compressive[i] = np.min(sigma_z) 
 
-
-
-    return min(critical_sigma_z_tensile / max(sigma_tensile), critical_sigma_z_compressive / max(sigma_compressive)) - margin_of_safety
+    return abs(min(critical_sigma_z_tensile / max(sigma_tensile), critical_sigma_z_compressive / max(sigma_compressive))) - margin_of_safety
     
 def stringer_column_MOS(x):
     import column_buckling
@@ -91,11 +90,11 @@ def constrained_objective(x):
     x = x.copy()
     wingbox = wingbox_simplified(x)
 
-    if deflection_MOS(x) < 0:           return 1e12
-    if twist_MOS(x) < 0:                return 1e12
-    if shear_MOS(x) < 0:                return 1e12
-    if compressive_tensile_MOS(x) < 0:  return 1e12
-    if stringer_column_MOS(x) < 0:      return 1e12
+    if deflection_MOS(x) < 0:           return 1e6
+    if twist_MOS(x) < 0:                return 1e6
+    if shear_MOS(x) < 0:                return 1e6
+    if compressive_tensile_MOS(x) < 0:  return 1e6
+    if stringer_column_MOS(x) < 0:      return 1e6
 
     return wingbox.weight(print_value=False) 
 
@@ -132,4 +131,10 @@ if __name__ == "__main__":
     import graphing
     graphing.compressive_strength_MOS_graph(designwingbox, showplot=False)
     graphing.stringer_column_bucklin_MOS_graph(designwingbox, showplot=False)
+    graphing.compressive_strength_MOS_graph(designwingbox, showplot=False)
     graphing.spar_shear_MOS_plot(designwingbox)
+
+    
+    print(result)
+    print(deflection_MOS(x_opt), twist_MOS(x_opt), shear_MOS(x_opt), abs(compressive_tensile_MOS(x_opt)), stringer_column_MOS(x_opt), constrained_objective(x_opt))
+
