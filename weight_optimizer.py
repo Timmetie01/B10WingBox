@@ -72,6 +72,15 @@ def stringer_column_MOS(x):
     wingbox = wingbox_simplified(x)
     return column_buckling.lowest_stringer_buckling_MOS(wingbox) - margin_of_safety
 
+def skin_buckling_MOS(x):
+    import skinbucklingcorrected
+    wingbox = wingbox_simplified(x)
+    y_tab = np.linspace(0, const['span']/2, 100)
+    MOS_tab = []
+    for i in y_tab:
+        MOS_tab.append(skinbucklingcorrected.margin_of_safety_skinbuckling(wingbox, i))
+
+    return min(MOS_tab) - margin_of_safety
 
 def objective(x):
     wingbox = wingbox_simplified(x)
