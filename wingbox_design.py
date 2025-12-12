@@ -90,7 +90,7 @@ def optimize_for_MOS(xstart, xend, margin_of_safety = 1, scaled_thickness=False,
 #Uncomment lines as necessary to verify part of the design
 #Design 1:
 #thickness constant
-#design1_wingbox, thickness1 = thickness_iteration(0.2, 0.6, stringercount=0, stringer_areas=3e-5, stringerspacing='constant_no_endpoints', panelcount=4, name='Preliminary Design Wingbox 1')
+design1_wingbox, thickness1 = thickness_iteration(0.2, 0.6, stringercount=0, stringer_areas=3e-5, stringerspacing='constant_no_endpoints', panelcount=4, name='Preliminary Design Wingbox 1')
 #print(thickness1)
 
 #print(design1_wingbox.panels)
@@ -133,7 +133,7 @@ def optimize_for_MOS(xstart, xend, margin_of_safety = 1, scaled_thickness=False,
 
 #Design 3
 #Thickness Variable, stringer area constant
-#design3_wingbox, thickness3 = thickness_iteration(0.2, 0.6, stringercount=20, stringer_areas=1.8e-5, stringerspacing='constant_no_endpoints', panelcount=82, scaled_thickness=True, name='Preliminary Design Wingbox 3')
+design3_wingbox, thickness3 = thickness_iteration(0.2, 0.6, stringercount=20, stringer_areas=1.8e-5, stringerspacing='constant_no_endpoints', panelcount=82, scaled_thickness=True, name='Preliminary Design Wingbox 3')
 #print(thickness3)
 
 # print(design3_wingbox.panels)

@@ -1,11 +1,12 @@
 from math import pi,sqrt
+from classes import Wingbox
 from constants import const
 from classes import ScaledWingbox
-from wingbox_design import design3_wingbox
-from wingbox_design import design1_wingbox
+from wingbox_design import design3_wingbox, thickness3 
 import matplotlib.pyplot as plt
 import constants
 import numpy as np
+from stress_functions import max_bending_stress
 from worst_cases import worst_case_loading
 
 # Constants
@@ -24,7 +25,7 @@ def stringer_pos_spanwise(wingbox,y):
 #Find maximum panel length spanwise
 def get_max_panel_len(wingbox,y):
     length_panel_lst = []
-    nmb_of_panels = len(wingbox.stringers) - 1
+    nmb_of_panels = len(wingbox.stringers) -1 
 
     for i in range(nmb_of_panels):
         b = sqrt((stringer_pos_spanwise(wingbox,y)[i+1][0]-stringer_pos_spanwise(wingbox,y)[i][0])**2 + (stringer_pos_spanwise(wingbox,y)[i+1][1]-stringer_pos_spanwise(wingbox,y)[i][1])**2)
@@ -33,17 +34,10 @@ def get_max_panel_len(wingbox,y):
     #Find y coordinates of stringer that confomr criticl b
 
     del length_panel_lst[len(length_panel_lst)//2]
-
-    index_maxb = length_panel_lst.index(max(length_panel_lst))
-    if index_maxb < (len(length_panel_lst)+2)//2:
-        index_maxb = index_maxb
-    if index_maxb > (len(length_panel_lst)+2)//2:
-        index_maxb = index_maxb + 1
     
-    zpos_for_stress = (stringer_pos_spanwise(wingbox,y)[index_maxb][1] + stringer_pos_spanwise(wingbox,y)[index_maxb +1][1])/2
+    return max(length_panel_lst)
 
-    return max(length_panel_lst),zpos_for_stress
-
+print(get_max_panel_len(design3_wingbox,a))
 #1. Find the minimum critical stress (biggest b)
 #2. Define b as a function of y 
 #3. Define thickness as a function of y
@@ -56,7 +50,7 @@ def thickness(wingbox,y):
 #1. Find b of the most critical value at the tip 
 
 def k_c_det(wingbox):
-    aoverb_ratio = a/get_max_panel_len(wingbox,a)[0]
+    aoverb_ratio = a/get_max_panel_len(wingbox,a)
     if aoverb_ratio >= 5:
         return 7.1
     else:
@@ -65,49 +59,14 @@ def k_c_det(wingbox):
 
 
 def crit_sigma_buckling(wingbox,y):
-    return pi**2*k_c_det(wingbox)*E/(12*(1-v_poisson**2))*(thickness(wingbox,y)/get_max_panel_len(wingbox,y)[0])**2*10**(-6)
+    return pi**2*k_c_det(wingbox)*E/(12*(1-v_poisson**2))*(thickness(wingbox,y)/get_max_panel_len(wingbox,y))**2*10**(-6)
 
 #Plotting (select wingbox)
-ypoints = np.linspace(0.0, const['span']/2.0 ,100)
+ypoints = np.linspace(0.0, a ,100)
 sigma_crit_points = np.array([crit_sigma_buckling(design3_wingbox,y) for y in ypoints])
 
 plt.plot(ypoints,sigma_crit_points)
-plt.xlabel("Span [m]")
-plt.ylabel("Buckling Stress [MPa]")
-plt.show()
-
-def bending_sress_func(wingbox,y):
-    return worst_case_loading.M(y, 'abs_min_bending')*get_max_panel_len(wingbox,y)[1]/ wingbox.Ixx(y)
-
- 
-def margin_of_safety_skinbuckling(wingbox,y):
-    return crit_sigma_buckling(wingbox,y)*10**6/bending_sress_func(wingbox,y)
-
-marginofsafety_points = np.array([margin_of_safety_skinbuckling(design3_wingbox,y) for y in ypoints])
-
-plt.plot(ypoints,marginofsafety_points)
 plt.xlabel("Span position [m]")
-plt.ylabel("Margin of Safety [-]")
+plt.ylabel("Critical buckling stress [MPa]")
 plt.show()
 
-
-
-
-
-
-
-
-'''
-def get_max_panel_len2(wingbox):
-    def max_b(y):
-        length_panel_lst = []
-        nmb_of_panels = len(wingbox.stringers)
-
-        for i in range(nmb_of_panels-1):
-            b = sqrt((stringer_pos_spanwise(wingbox,y)[i+1][0]-stringer_pos_spanwise(wingbox,y)[i][0])**2 + (stringer_pos_spanwise(wingbox,y)[i+1][1]-stringer_pos_spanwise(wingbox,y)[i][1])**2)
-            length_panel_lst.append(b)
-
-        del length_panel_lst[(len(length_panel_lst)+1)/2]
-        return max(length_panel_lst)
-    return max_b
-'''
