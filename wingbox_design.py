@@ -153,7 +153,7 @@ def thickness_iteration(xstart, xend, stringercount, stringer_areas, thicknessty
 #     return designwingbox
 
 
-optimize_for_MOS(0.2, 0.6)
+#optimize_for_MOS(0.2, 0.6)
 
 
 
