@@ -128,6 +128,9 @@ if __name__ == "__main__":
     print(f"Minimum weight: {round(designwingbox.weight(print_value=False), 4)} kg")
     print(f"That is with xstart={xstart}, xend={xend}, Scaledthickness={scaled_thickness}, margin of safety of {margin_of_safety}.")
 
+    print(result)
+    print(deflection_MOS(x_opt) + margin_of_safety, twist_MOS(x_opt) + margin_of_safety, shear_MOS(x_opt) + margin_of_safety, abs(compressive_tensile_MOS(x_opt)) + margin_of_safety, stringer_column_MOS(x_opt) + margin_of_safety, constrained_objective(x_opt) + margin_of_safety)
+
     import graphing
     graphing.compressive_strength_MOS_graph(designwingbox, showplot=False)
     graphing.stringer_column_bucklin_MOS_graph(designwingbox, showplot=False)
@@ -135,6 +138,4 @@ if __name__ == "__main__":
     graphing.spar_shear_MOS_plot(designwingbox)
 
     
-    print(result)
-    print(deflection_MOS(x_opt), twist_MOS(x_opt), shear_MOS(x_opt), abs(compressive_tensile_MOS(x_opt)), stringer_column_MOS(x_opt), constrained_objective(x_opt))
-
+    
