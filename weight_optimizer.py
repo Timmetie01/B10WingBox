@@ -78,7 +78,7 @@ def skin_buckling_MOS(x):
     y_tab = np.linspace(0, const['span']/2, 100)
     MOS_tab = []
     for i in y_tab:
-        MOS_tab.append(skinbucklingcorrected.margin_of_safety_skinbuckling(wingbox, i))
+        MOS_tab.append(abs(skinbucklingcorrected.margin_of_safety_skinbuckling(wingbox, i)))
 
     return min(MOS_tab) - margin_of_safety
 
