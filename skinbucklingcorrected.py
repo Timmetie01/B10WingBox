@@ -1,8 +1,8 @@
 from math import pi,sqrt
 from constants import const
 from classes import ScaledWingbox
-from wingbox_design import design3_wingbox
-from wingbox_design import design1_wingbox
+#from wingbox_design import design3_wingbox
+#from wingbox_design import design1_wingbox
 import matplotlib.pyplot as plt
 import constants
 import numpy as np
@@ -68,8 +68,8 @@ def crit_sigma_buckling(wingbox,y):
     return pi**2*k_c_det(wingbox)*E/(12*(1-v_poisson**2))*(thickness(wingbox,y)/get_max_panel_len(wingbox,y)[0])**2*10**(-6)
 
 #Plotting (select wingbox)
-ypoints = np.linspace(0.0, const['span']/2.0 ,100)
-sigma_crit_points = np.array([crit_sigma_buckling(design3_wingbox,y) for y in ypoints])
+#ypoints = np.linspace(0.0, const['span']/2.0 ,100)
+#sigma_crit_points = np.array([crit_sigma_buckling(design3_wingbox,y) for y in ypoints])
 
 '''
 plt.plot(ypoints,sigma_crit_points)
@@ -79,7 +79,7 @@ plt.show()
 '''
 
 def bending_sress_func(wingbox,y):
-    return worst_case_loading.M(y, 'abs_min_bending')*get_max_panel_len(wingbox,y)[1]/ wingbox.Ixx(y)
+    return (worst_case_loading.M(y, 'abs_min_bending') + 1e-5)*get_max_panel_len(wingbox,y)[1]/ wingbox.Ixx(y)
 
  
 def margin_of_safety_skinbuckling(wingbox,y):

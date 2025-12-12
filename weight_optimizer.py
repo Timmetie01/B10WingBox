@@ -92,7 +92,8 @@ constraints = [
     {"type": "ineq", "fun": twist_MOS},
     {"type": "ineq", "fun": shear_MOS},
     {"type": "ineq", "fun": compressive_tensile_MOS},
-    {"type": "ineq", "fun": stringer_column_MOS},        
+    {"type": "ineq", "fun": stringer_column_MOS},
+    {"type": "ineq", "fun": skin_buckling_MOS},        
 ]
 
 def constrained_objective(x):
@@ -104,6 +105,7 @@ def constrained_objective(x):
     if shear_MOS(x) < 0:                return 1e6
     if compressive_tensile_MOS(x) < 0:  return 1e6
     if stringer_column_MOS(x) < 0:      return 1e6
+    if skin_buckling_MOS(x) < 0:        return 1e6
 
     return wingbox.weight(print_value=False) 
 
