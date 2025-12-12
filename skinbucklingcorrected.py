@@ -71,10 +71,12 @@ def crit_sigma_buckling(wingbox,y):
 ypoints = np.linspace(0.0, const['span']/2.0 ,100)
 sigma_crit_points = np.array([crit_sigma_buckling(design3_wingbox,y) for y in ypoints])
 
+'''
 plt.plot(ypoints,sigma_crit_points)
 plt.xlabel("Span [m]")
 plt.ylabel("Buckling Stress [MPa]")
 plt.show()
+'''
 
 def bending_sress_func(wingbox,y):
     return worst_case_loading.M(y, 'abs_min_bending')*get_max_panel_len(wingbox,y)[1]/ wingbox.Ixx(y)
@@ -83,12 +85,14 @@ def bending_sress_func(wingbox,y):
 def margin_of_safety_skinbuckling(wingbox,y):
     return crit_sigma_buckling(wingbox,y)*10**6/bending_sress_func(wingbox,y)
 
+'''
 marginofsafety_points = np.array([margin_of_safety_skinbuckling(design3_wingbox,y) for y in ypoints])
 
 plt.plot(ypoints,marginofsafety_points)
 plt.xlabel("Span position [m]")
 plt.ylabel("Margin of Safety [-]")
 plt.show()
+'''
 
 
 
