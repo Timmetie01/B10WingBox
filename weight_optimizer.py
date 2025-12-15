@@ -3,9 +3,11 @@ from constants import const
 import deflection_functions
 import stress_functions
 import numpy as np
+from scipy.optimize import minimize, differential_evolution
 
+#WARNING: Running this file can take ~20 minutes. When using a laptop, letting it charge meanwhile and enabling any sort of 'performance mode' significantly reduces running time
 
-#Due to limitations on the ways to enable multi-threaded processing in scipy.optimizide.differential_evolution,
+#Due to limitations regarding the ways to enable multi-threaded processing in scipy.optimizide.differential_evolution,
 #The inputs for the final design must be manually entered. The performance increase is more than worth it.
 xstart = 0.2 
 xend = 0.6
@@ -14,14 +16,11 @@ scaled_thickness=False
 panels_per_stringer=5
 web_panel_count=20
 name=None
-    
-
-from scipy.optimize import minimize, differential_evolution
-wing_skin_buckling_MOS = 0
 
 #x = sparthickness, skinthickness, stringercount, stringerarea
 x = [0.,0.,0.,0.]
 
+#Upper and lower bounds taken into account by the differential evolution
 bounds = [
     (0.0001, 0.05),
     (0.0001, 0.01),
@@ -29,13 +28,24 @@ bounds = [
     (1e-5, 2e-4)
 ]
 
+#Initial guess, doesnt really matter
 x0 = [0.0001, 0.0002, 20, 1e-5]
 
 def force_even_stringercount(x):
+    '''
+    Since differential Evolution doesnt use integers, the stringer count must manually be forced to an integer
+    
+    :param x: Vector of unknowns
+    '''
     x[2] = int(x[2] // 2 * 2)
     return x
 
 def wingbox_simplified(x):
+    '''
+    Creates a wingbox while taking the iterables vector as an input
+    
+    :param x: The unknowns vector for the optimization
+    '''
     x = force_even_stringercount(x)
     return data_import.idealizable_wingbox(xstart, xend, [x[1], x[0], x[1], x[0]], 'partially_constant', x[2], x[3], stringerspacing='constant_no_endpoints', panels_per_stringer=panels_per_stringer, web_panel_count=web_panel_count, scaled_thickness=scaled_thickness, name=name)
 
@@ -146,6 +156,7 @@ if __name__ == "__main__":
     graphing.compressive_strength_MOS_graph(designwingbox, showplot=False)
     graphing.stringer_column_bucklin_MOS_graph(designwingbox, showplot=False)
     graphing.compressive_strength_MOS_graph(designwingbox, showplot=False)
+    graphing.skin_buckling_MOS_plot(designwingbox, showplot=False)
     graphing.spar_shear_MOS_plot(designwingbox)
 
     
