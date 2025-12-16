@@ -85,7 +85,8 @@ def bending_sress_func(wingbox,y):
  
 def margin_of_safety_skinbuckling(wingbox,y):
     import stress_functions
-    return abs(crit_sigma_buckling(wingbox,y)*10**6/stress_functions.max_bending_stress(wingbox,y))
+    #Add tiny increment to avoid dividing by 0.
+    return abs(crit_sigma_buckling(wingbox,y)*10**6/(stress_functions.max_bending_stress(wingbox,y)) + 1e-12)
 
 '''
 marginofsafety_points = np.array([margin_of_safety_skinbuckling(design3_wingbox,y) for y in ypoints])

@@ -11,7 +11,7 @@ from scipy.optimize import minimize, differential_evolution
 #The inputs for the final design must be manually entered. The performance increase is more than worth it.
 xstart = 0.2 
 xend = 0.6
-margin_of_safety = 1
+margin_of_safety = 1.5
 scaled_thickness = True
 web_panel_count = 20
 skin_panel_count = 200
