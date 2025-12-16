@@ -265,7 +265,7 @@ def shear_flow_plot(wingbox, y=0):
     plt.show()
 
 #Plots the highest shear flow found at each point in the cross seactino
-def shear_flow_spanwise_plot(wingbox, showplot=True, Npoints=250):
+def shear_flow_spanwise_plot(wingbox, showplot=True, Npoints=500):
     
     y_tab = np.linspace(0, const['span']/2, Npoints, endpoint=False)
     MOS_tab = []
@@ -286,7 +286,7 @@ def shear_flow_spanwise_plot(wingbox, showplot=True, Npoints=250):
         plt.grid(axis='x', ls='--')
         plt.show()
 
-#Plots the Margin of Safety of shear alongthe span
+#Plots the Margin of Safety of shear along the span
 def spar_shear_MOS_plot(wingbox, Npoints=100, showplot=True):
     """
     Plots the Margins Of Safety in the spar due to shear
@@ -325,7 +325,7 @@ def spar_shear_MOS_plot(wingbox, Npoints=100, showplot=True):
         plt.plot(y_tab, MOS_maxshear_tab, label='Spar Max Shear Stress')
 
 #Plots the Margin of Safety of deflection and twist alongthe span
-def deflection_twist_MOS_plot(wingbox, Npoints=100, showplot=True):
+def deflection_twist_MOS_plot(wingbox, Npoints=1000, showplot=True):
     y_list, v_list = deflection_functions.v(wingbox)
     y_list, theta_list = deflection_functions.theta(wingbox)
     #Add tiny increment to v list to avoid dividing by zero. Only for graphing purposes, so inaccuracy barely matters
@@ -349,7 +349,7 @@ def deflection_twist_MOS_plot(wingbox, Npoints=100, showplot=True):
         plt.plot(y_list, MOS_theta_list, label='Twist Margin Of Safety')
 
 #Plots the Margin of Safety of compressive and tensile strength alongthe span
-def compressive_strength_MOS_graph(wingbox, showplot=True, Npoints=200):
+def compressive_strength_MOS_graph(wingbox, showplot=True, Npoints=500):
     from compressive_strength import bending_stress
 
     y_span = np.linspace(0, const['span']/2, Npoints)
@@ -381,7 +381,7 @@ def compressive_strength_MOS_graph(wingbox, showplot=True, Npoints=200):
         plt.plot(y_span, np.abs(critical_sigma_z_compressive/(sigma_compressive + 1e-5)), label='Compressive stress')
      
 #Plots the Margin of Safety of column buckling alongthe span
-def stringer_column_bucklin_MOS_graph(wingbox, showplot=True, Npoints=200):
+def stringer_column_bucklin_MOS_graph(wingbox, showplot=True, Npoints=500):
     import column_buckling
 
     y_tab = np.linspace(0, const['span']/2, Npoints)
@@ -403,7 +403,7 @@ def stringer_column_bucklin_MOS_graph(wingbox, showplot=True, Npoints=200):
         plt.plot(y_tab, MOS_tab, label='Stringer Column Buckling')
 
 #Plots the Margin of Safety of skin buckling alongthe span
-def skin_buckling_MOS_plot(wingbox, showplot=True, Npoints=200):
+def skin_buckling_MOS_plot(wingbox, showplot=True, Npoints=500):
     import skinbucklingcorrected
     y_tab = np.linspace(0, const['span']/2, Npoints)
 
@@ -431,4 +431,4 @@ def plot_MOS_graph(wingbox):
     stringer_column_bucklin_MOS_graph(wingbox, showplot=False)
     skin_buckling_MOS_plot(wingbox, showplot=False)
     deflection_twist_MOS_plot(wingbox, showplot=False)
-    spar_shear_MOS_plot(wingbox)
+    spar_shear_MOS_plot(wingbox, Npoints=200)

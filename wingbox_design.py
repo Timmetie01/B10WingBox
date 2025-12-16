@@ -18,7 +18,7 @@ def thickness_iteration(xstart, xend, stringercount, stringer_areas, thicknessty
     :param stringercount: The total amount of stringers found in the wingbox, will be rounded such that top and bottom have the same amount
     :param stringer_areas: The surface area of each stringer
     :param thicknesstype: Either \'constant\' for the same thickness on spar and skin. \'partially_constant\' when wanting set spar thickness and iterating over skin thickness.
-    :param spar_thickness: When thicknesstype \'partially_constant\', the spar thickness can be given as a constant
+    :param spar_thickness: When thicknesstype == \'partially_constant\', the spar thickness can be given as a constant.
     :param stringerspacing: Either
     :param panelcount: Description \'constant_no_endpoints\' when not including the corners of the wingbox, or \'constant_endpoints\' when including those
     :param scaled_thickness: True when the thickness must be linearly related to span. Defaults to False, i.e. constant skin and spar thickness along the span
