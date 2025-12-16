@@ -222,7 +222,7 @@ class Wingbox:
         volume = 2 * sp.integrate.cumulative_trapezoid(area_tab, y_tab, initial=0)[-1]
         mass = volume * const['Density']
         if print_value:
-            print(f'The total wingbox weights {round(mass, 3)} kg.')
+            print(f'The total wingbox weighs {round(mass, 3)} kg.')
         return mass
     
     def shear_flow(self, y):
