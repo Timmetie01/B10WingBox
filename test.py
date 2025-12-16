@@ -1,14 +1,16 @@
 import data_import
 import graphing
-import skinbucklingcorrected
-import stress_functions
 print(.0020421020391436155/.0006572158442155239)
 
 #The final designs after iteration. First the constant thickness one:
-test_unscaled_wingbox = data_import.idealizable_wingbox(0.2, 0.6, [0.0020421020391436155, 0.0034692189338491365, 0.0020421020391436155, 0.0034692189338491365], 'partially_constant', 30, 1.4314458878848655e-05, scaled_thickness=False)
+test_unscaled_wingbox = data_import.idealizable_wingbox(0.2, 0.6, [ 0.0018923258935710516, 0.003417513470019843,  0.0018923258935710516, 0.003417513470019843], 'partially_constant', 42, 1.0232949682472236e-05, scaled_thickness=False)
 graphing.plot_MOS_graph(test_unscaled_wingbox)
-print(skinbucklingcorrected.bending_sress_func(test_unscaled_wingbox, 0))
-print(stress_functions.max_bending_stress(test_unscaled_wingbox, 0))
+
+#test_unscaled_rounded_wingbox = data_import.idealizable_wingbox(0.2, 0.6, [ 0.0019, 0.0035,  0.0019, 0.0035], 'partially_constant', 42, 1.03e-05, scaled_thickness=False)
+#graphing.plot_MOS_graph(test_unscaled_rounded_wingbox)
+
+
+
 
 #THe final design after iteration, here the variable thickness one
 #test_scaled_wingbox = data_import.idealizable_wingbox(0.2, 0.6, [0.0006572158442155239, 0.0011401876353445486, 0.0006572158442155239, 0.0011401876353445486], 'partially_constant', 4, 1.0487964101566806e-05, scaled_thickness=True)

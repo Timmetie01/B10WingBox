@@ -20,56 +20,56 @@ def max_bending_stress(wingbox, y):
 
 
 def shear_stress(wingbox, y):
-        '''
-        A function that calculates shear stress in each \'panel\' of the wingbox, using boom method and moment equivalence 
+    '''
+    A function that calculates shear stress in each \'panel\' of the wingbox, using boom method and moment equivalence 
+    
+    :param wingbox: The wingbox to calculate shear flow on
+    :param y: span-wise position
+    :return q: a matrix with the shear flow following each panel, as in wingbox.panels
+    '''
+    from classes import ScaledWingbox
+    import constants
+    from worst_cases import worst_case_loading
+    import area_moments
+    import data_from_xflr5
+    xcp = data_from_xflr5.xcppos_func(1.621258898884106)
+    #0.2312805658645682
+    if not wingbox.idealizable:
+        print('This wingbox can not be idealized, so it doenst make sense to calculate shear for it.')
+        quit()
+    
+    #Since axis systems flipped, negative force means upward, but the wingbox is defined positive upward. Thus the force is flipped
+    Vy = worst_case_loading.V(y, 'abs_min_shear') * -1
+    
+    current_wingbox = ScaledWingbox(wingbox, constants.local_chord_at_span(y))
+
+    #Cut in the vertical panel under the leading edge top point, assumed Vx = 0 and Ixy = 0
+    shear_b = np.zeros_like(current_wingbox.panel_thickness)
+    for i in range(len(shear_b)):
+        shear_b[i] = shear_b[i - 1] - Vy / wingbox.Ixx(y) * current_wingbox.idealized_point_areas[i] * current_wingbox.centroidal_points[i,1]
+
+    #Moment around centroid, clockwise positive
+    centroidal_moment_qb = 0
+    for i in range(len(shear_b)):
+        #centroidal_moment_qb += shear_b[i] * 2 * area_moments.polygon_area(np.array([[0,0], current_wingbox.centroidal_panels[i,:2], current_wingbox.centroidal_panels[i,2:]]))
+        #More efficent way of triangle area with one vertex 0,0 below:
+        centroidal_moment_qb += shear_b[i] * 2 * 0.5 * abs(current_wingbox.centroidal_panels[i,0] * current_wingbox.centroidal_panels[i,3] - current_wingbox.centroidal_panels[i,2] * current_wingbox.centroidal_panels[i,1])
         
-        :param wingbox: The wingbox to calculate shear flow on
-        :param y: span-wise position
-        :return q: a matrix with the shear flow following each panel, as in wingbox.panels
-        '''
-        from classes import ScaledWingbox
-        import constants
-        from worst_cases import worst_case_loading
-        import area_moments
-        import data_from_xflr5
-        xcp = data_from_xflr5.xcppos_func(1.621258898884106)
-        #0.2312805658645682
-        if not wingbox.idealizable:
-            print('This wingbox can not be idealized, so it doenst make sense to calculate shear for it.')
-            quit()
-        
-        #Since axis systems flipped, negative force means upward, but the wingbox is defined positive upward. Thus the force is flipped
-        Vy = worst_case_loading.V(y, 'abs_min_shear') * -1
-        
-        current_wingbox = ScaledWingbox(wingbox, constants.local_chord_at_span(y))
+    #Moment that should be created when loading=internal force
+    #centroidal_moment_Vy = (wingbox.centroid_coordinates[0] - xcp(y)) * constants.local_chord_at_span(y) * Vy
+    centroidal_moment_Vy = worst_case_loading.T(y, 'abs_max_torsion')
 
-        #Cut in the vertical panel under the leading edge top point, assumed Vx = 0 and Ixy = 0
-        shear_b = np.zeros_like(current_wingbox.panel_thickness)
-        for i in range(len(shear_b)):
-            shear_b[i] = shear_b[i - 1] - Vy / wingbox.Ixx(y) * current_wingbox.idealized_point_areas[i] * current_wingbox.centroidal_points[i,1]
+    #Calculating the qs0 such that internal loading and torque equal applied loading and torque
+    qs0_contribution = 2 * wingbox.area(y)
+    qs0 = (centroidal_moment_Vy - centroidal_moment_qb) / qs0_contribution
 
-        #Moment around centroid, clockwise positive
-        centroidal_moment_qb = 0
-        for i in range(len(shear_b)):
-            #centroidal_moment_qb += shear_b[i] * 2 * area_moments.polygon_area(np.array([[0,0], current_wingbox.centroidal_panels[i,:2], current_wingbox.centroidal_panels[i,2:]]))
-            #More efficent way of triangle area with one vertex 0,0 below:
-            centroidal_moment_qb += shear_b[i] * 2 * 0.5 * abs(current_wingbox.centroidal_panels[i,0] * current_wingbox.centroidal_panels[i,3] - current_wingbox.centroidal_panels[i,2] * current_wingbox.centroidal_panels[i,1])
-            
-        #Moment that should be created when loading=internal force
-        #centroidal_moment_Vy = (wingbox.centroid_coordinates[0] - xcp(y)) * constants.local_chord_at_span(y) * Vy
-        centroidal_moment_Vy = worst_case_loading.T(y, 'abs_max_torsion')
- 
-        #Calculating the qs0 such that internal loading and torque equal applied loading and torque
-        qs0_contribution = 2 * wingbox.area(y)
-        qs0 = (centroidal_moment_Vy - centroidal_moment_qb) / qs0_contribution
+    current_wingbox.shear = shear_b + qs0
 
-        current_wingbox.shear = shear_b + qs0
+    #It works! The internal load sums back to the applied load with less than 0.5% error. To check, uncomment the following lines
+    #print(f'Summed shear: {np.sum(current_wingbox.shear * np.transpose([current_wingbox.centroidal_panels[:,3] - current_wingbox.centroidal_panels[:,1]]))}')
+    #print(f'Vy: {Vy}')
 
-        #It works! The internal load sums back to the applied load with less than 0.5% error. To check, uncomment the following lines
-        #print(f'Summed shear: {np.sum(current_wingbox.shear * np.transpose([current_wingbox.centroidal_panels[:,3] - current_wingbox.centroidal_panels[:,1]]))}')
-        #print(f'Vy: {Vy}')
-
-        return current_wingbox.shear
+    return current_wingbox.shear
 
 def critical_spar_shear(wingbox, y):
     """

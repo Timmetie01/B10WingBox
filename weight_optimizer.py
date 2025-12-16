@@ -12,9 +12,9 @@ from scipy.optimize import minimize, differential_evolution
 xstart = 0.2 
 xend = 0.6
 margin_of_safety = 1
-scaled_thickness = False
+scaled_thickness = True
 web_panel_count = 20
-skin_panel_count = 160
+skin_panel_count = 200
 name=None
 
 #x = sparthickness, skinthickness, stringercount, stringerarea

@@ -43,7 +43,6 @@ def stringer_buckling_MOS(wingbox, y):
     return critical_buckling_stress / (max_normal_Stress + 1e-5)
 
 def lowest_stringer_buckling_MOS(wingbox, Npoints = 200):
-    import stress_functions
     y_tab = np.linspace(0, const['span']/2, Npoints)
     MOS_tab = []
     for i in y_tab:
