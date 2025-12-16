@@ -12,7 +12,7 @@ from scipy.optimize import minimize, differential_evolution
 xstart = 0.2 
 xend = 0.6
 margin_of_safety = 1.5
-scaled_thickness = True
+scaled_thickness = False
 web_panel_count = 20
 skin_panel_count = 200
 name=None
