@@ -403,27 +403,83 @@ def stringer_column_bucklin_MOS_graph(wingbox, showplot=True, Npoints=500):
         plt.plot(y_tab, MOS_tab, label='Stringer Column Buckling')
 
 #Plots the Margin of Safety of skin buckling alongthe span
-def skin_buckling_MOS_plot(wingbox, showplot=True, Npoints=500):
+def skin_buckling_MOS_plot(wingbox, discrete_graph=False, showplot=True, Npoints=500):
     import skinbucklingcorrected
-    y_tab = np.linspace(0, const['span']/2, Npoints)
+    
+    if not discrete_graph:
+        y_tab = np.linspace(0, const['span']/2, Npoints)
 
-    MOS_tab = []
-    for i in y_tab:
-        MOS_tab.append(skinbucklingcorrected.margin_of_safety_skinbuckling(wingbox, i))
-    MOS_tab = np.abs(MOS_tab)
+        MOS_tab = []
+        for i in y_tab:
+            MOS_tab.append(skinbucklingcorrected.margin_of_safety_skinbuckling(wingbox, i))
+        MOS_tab = np.abs(MOS_tab)
+
+        if showplot:
+            plt.plot(y_tab, MOS_tab, color='darkblue', label='Skin Buckling')
+            plt.plot([0, const['span']/2], [1,1], color='firebrick')
+            plt.legend()
+            plt.xlabel('Spanwise position (m)')
+            plt.ylabel('Margin of Safety [-]')
+            plt.ylim((-2, 20))
+            plt.grid(axis='y', ls='--')
+            plt.grid(axis='x', ls='--')
+            plt.show()
+        else:
+            plt.plot(y_tab, MOS_tab, label='Skin Buckling')
+
+    elif discrete_graph:
+        rib_count = const['total_rib_count']    
+        if rib_count % 2 == 1:
+            y_tab_start = np.linspace(0, const['span']/2, (rib_count + 1) //2)
+        else:
+            y_tab_start = np.linspace(-1 * const['span']/2, const['span']/2, rib_count)
+            y_tab_start = np.insert(y_tab_start[(len(y_tab_start))//2:], 0, 0)
+
+        y_tab = []
+        MOS_tab = []
+        for i in range(len(y_tab_start) - 1):
+            y_tab.append(y_tab_start[i])
+            y_tab.append(y_tab_start[i+1])
+            MOS_tab.append(skinbucklingcorrected.margin_of_safety_skinbuckling(wingbox, y_tab_start[i]))
+            MOS_tab.append(skinbucklingcorrected.margin_of_safety_skinbuckling(wingbox, y_tab_start[i]))
+
+        if showplot:
+            plt.plot(y_tab, MOS_tab, color='darkblue', label='Skin Buckling')
+            plt.plot([0, const['span']/2], [1,1], color='firebrick')
+            plt.legend()
+            plt.xlabel('Spanwise position (m)')
+            plt.ylabel('Margin of Safety [-]')
+            plt.ylim((-2, 20))
+            plt.grid(axis='y', ls='--')
+            plt.grid(axis='x', ls='--')
+            plt.show()
+        else:
+            plt.plot(y_tab, MOS_tab, label='Skin Buckling')
+    
+def MOS_rib_location_plot(showplot=True):
+    rib_count = const['total_rib_count']    
+    if rib_count % 2 == 1:
+        y_tab = np.linspace(0, const['span']/2, (rib_count + 1) //2)
+    else:
+        y_tab = np.linspace(-1 * const['span']/2, const['span']/2, rib_count)
+        y_tab = np.insert(y_tab[(len(y_tab))//2:], 0, 0)
+
+    rib_locations = np.zeros((len(y_tab), 2))
+    rib_locations[:,0] = y_tab
+
+    plt.plot(rib_locations[1:,0], rib_locations[1:,1], '|', label='Rib Locations', ms=20, color='black')
 
     if showplot:
-        plt.plot(y_tab, MOS_tab, color='darkblue', label='Skin Buckling')
-        plt.plot([0, const['span']/2], [1,1], color='firebrick')
-        plt.legend()
-        plt.xlabel('Spanwise position (m)')
-        plt.ylabel('Margin of Safety [-]')
-        plt.ylim((-2, 20))
-        plt.grid(axis='y', ls='--')
-        plt.grid(axis='x', ls='--')
-        plt.show()
-    else:
-        plt.plot(y_tab, MOS_tab, label='Skin Buckling')
+            plt.plot([0, const['span']/2], [1,1], color='firebrick')
+            plt.legend()
+            plt.xlabel('Spanwise position (m)')
+            plt.ylabel('Margin of Safety [-]')
+            plt.ylim((-2, 20))
+            plt.grid(axis='y', ls='--')
+            plt.grid(axis='x', ls='--')
+            plt.show()
+
+
 
 #Plots all MOS's along the span
 def plot_MOS_graph(wingbox):
@@ -431,4 +487,5 @@ def plot_MOS_graph(wingbox):
     stringer_column_bucklin_MOS_graph(wingbox, showplot=False)
     skin_buckling_MOS_plot(wingbox, showplot=False)
     deflection_twist_MOS_plot(wingbox, showplot=False)
-    spar_shear_MOS_plot(wingbox, Npoints=200)
+    MOS_rib_location_plot(showplot=False)
+    spar_shear_MOS_plot(wingbox, Npoints=135)

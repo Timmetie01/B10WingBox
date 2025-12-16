@@ -18,18 +18,18 @@ skin_panel_count = 200
 name=None
 
 #x = sparthickness, skinthickness, stringercount, stringerarea
-x = [0.0001, 0.0002, 20., 1e-5]
+x = [0.0001, 0.0002, 20., 5e-5]
 
 #Upper and lower bounds taken into account by the differential evolution
 bounds = [
     (0.0001, 0.05),
     (0.0001, 0.01),
     (4,50),
-    (1e-5, 2e-4)
+    (3e-5, 2e-4)
 ]
 
 #Initial guess, doesnt really matter
-x0 = [0.0001, 0.0002, 20, 1e-5]
+x0 = [0.0001, 0.0002, 20, 3e-5]
 
 def force_even_stringercount(x):
     '''
