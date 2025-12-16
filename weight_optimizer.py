@@ -47,7 +47,7 @@ def wingbox_simplified(x):
     :param x: The unknowns vector for the optimization
     '''
     x = force_even_stringercount(x)
-    return data_import.idealizable_wingbox(xstart, xend, [x[1], x[0], x[1], x[0]], 'partially_constant', x[2], x[3], stringerspacing='constant_no_endpoints', skin_buckling_MOS=160//x[2], web_panel_count=web_panel_count, scaled_thickness=scaled_thickness, name=name)
+    return data_import.idealizable_wingbox(xstart, xend, [x[1], x[0], x[1], x[0]], 'partially_constant', x[2], x[3], stringerspacing='constant_no_endpoints', panels_per_stringer=160//x[2], web_panel_count=web_panel_count, scaled_thickness=scaled_thickness, name=name)
 
 def deflection_MOS(x):
     wingbox = wingbox_simplified(x)
