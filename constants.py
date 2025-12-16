@@ -58,6 +58,15 @@ const = {
 
 #Returns the sweep angle (always in radians!!) at a certain chord fraction
 def sweep_at_chord_fraction(chord_fraction, leading_edge_sweep = const['leading_edge_sweep'], span = const['span'], taper = const['taper_ratio'], root_chord = const['root_chord']):
+    '''
+    DReturns the local sweep angle at a certain x/c location. Always returns RADIANS
+    
+    :param chord_fraction: At which x/c location you want the sweep
+    :param leading_edge_sweep: LE Sweep, defaults to the value found in const table
+    :param span: Span, defaults to the value found in const table
+    :param taper: Taper ratio, defaults to the value found in const table
+    :param root_chord: Root chord length, defaults to the value found in const table
+    '''
     if  chord_fraction < 0 or chord_fraction > 1:
         print(f'Cannot compute sweep. Chord fraction = {chord_fraction}, should be 0 =< chord_fraction =< 1.')
         quit()
@@ -69,6 +78,14 @@ def sweep_at_chord_fraction(chord_fraction, leading_edge_sweep = const['leading_
 
 #Returns the chord length at a certain span location of the wing
 def local_chord_at_span(target_span, root_chord = const['root_chord'], taper_ratio = const['taper_ratio'], total_span = const['span']):
+    '''
+    Returns the chord length of the wing at a certain spanwise location
+    
+    :param target_span: The spanwise location at which you want the chord length evaluated
+    :param root_chord: Root chord length, defaults to the value found in const table
+    :param taper_ratio: Taper ratio, defaults to the value found in const table
+    :param total_span: The two-wing span, defaults to the value found in const table
+    '''
     if abs(target_span - 1e-6) > total_span / 2:
         print(f'Target span out of bounds')
         quit()
@@ -78,8 +95,16 @@ def local_chord_at_span(target_span, root_chord = const['root_chord'], taper_rat
 
     return local_chord
 
-# ISA values calculator to an altitude of 20000m by Adam
+# ISA values calculator to an altitude of 20000m
 def ISA(alt):
+    '''
+    An ISA calculator. Works up to 20 km.
+    
+    :param alt: The input altitude, in meters
+    :return t_1: The temperature at the target altitude
+    :return p_1: the pressure at the target altitude
+    :return rho: the density at the target altitude
+    '''
     g_0 = 9.80665
     R = 287
     T_0 = 288.15

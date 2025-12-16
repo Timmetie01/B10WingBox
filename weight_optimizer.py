@@ -12,13 +12,13 @@ from scipy.optimize import minimize, differential_evolution
 xstart = 0.2 
 xend = 0.6
 margin_of_safety = 1
-scaled_thickness=False
-panels_per_stringer=5
-web_panel_count=20
+scaled_thickness = False
+web_panel_count = 20
+skin_panel_count = 160
 name=None
 
 #x = sparthickness, skinthickness, stringercount, stringerarea
-x = [0.,0.,0.,0.]
+x = [0.0001, 0.0002, 20., 1e-5]
 
 #Upper and lower bounds taken into account by the differential evolution
 bounds = [
@@ -47,7 +47,7 @@ def wingbox_simplified(x):
     :param x: The unknowns vector for the optimization
     '''
     x = force_even_stringercount(x)
-    return data_import.idealizable_wingbox(xstart, xend, [x[1], x[0], x[1], x[0]], 'partially_constant', x[2], x[3], stringerspacing='constant_no_endpoints', panels_per_stringer=panels_per_stringer, web_panel_count=web_panel_count, scaled_thickness=scaled_thickness, name=name)
+    return data_import.idealizable_wingbox(xstart, xend, [x[1], x[0], x[1], x[0]], 'partially_constant', x[2], x[3], stringerspacing='constant_no_endpoints', skin_buckling_MOS=160//x[2], web_panel_count=web_panel_count, scaled_thickness=scaled_thickness, name=name)
 
 def deflection_MOS(x):
     wingbox = wingbox_simplified(x)
@@ -92,6 +92,8 @@ def skin_buckling_MOS(x):
 
     return min(MOS_tab) - margin_of_safety
 
+
+'''
 def objective(x):
     wingbox = wingbox_simplified(x)
     print(x)
@@ -105,6 +107,7 @@ constraints = [
     {"type": "ineq", "fun": stringer_column_MOS},
     {"type": "ineq", "fun": skin_buckling_MOS},        
 ]
+'''
 
 def constrained_objective(x):
     x = x.copy()
@@ -119,15 +122,18 @@ def constrained_objective(x):
 
     return wingbox.weight(print_value=False) 
 
-# result = minimize(
-#    objective,
-#    x0,
-#    method='SLSQP',
-#    bounds=bounds,
-#    constraints=constraints,
-#    options={'disp': True, 'maxiter': 200}
-#)
+'''
+ result = minimize(
+    objective,
+    x0,
+    method='SLSQP',
+    bounds=bounds,
+    constraints=constraints,
+    options={'disp': True, 'maxiter': 200}
+)'
+'''
 
+#Has to be formatted as below to use all available cores
 if __name__ == "__main__":
     result = differential_evolution(
         constrained_objective,
@@ -137,7 +143,6 @@ if __name__ == "__main__":
         workers=-1
     )
 
-
     x_opt = force_even_stringercount(result.x)
     designwingbox = wingbox_simplified(x_opt)
 
@@ -146,18 +151,14 @@ if __name__ == "__main__":
     print(f"skin thickness: ", x_opt[1])
     print(f"stringer area: ", x_opt[3])
     print(f"number of stringers: ", x_opt[2])
-    print(f"Minimum weight: {round(designwingbox.weight(print_value=False), 4)} kg")
-    print(f"That is with xstart={xstart}, xend={xend}, Scaledthickness={scaled_thickness}, margin of safety of {margin_of_safety}.")
+    print(f"Final weight: {round(designwingbox.weight(print_value=False), 4)} kg")
+    print(f"That is with xstart={xstart}, xend={xend}, Scaledthickness={scaled_thickness}, margin of safety of at least {margin_of_safety}.")
 
     print(result)
-    print(deflection_MOS(x_opt) + margin_of_safety, twist_MOS(x_opt) + margin_of_safety, shear_MOS(x_opt) + margin_of_safety, abs(compressive_tensile_MOS(x_opt)) + margin_of_safety, stringer_column_MOS(x_opt) + margin_of_safety, constrained_objective(x_opt) + margin_of_safety)
+    #print(deflection_MOS(x_opt) + margin_of_safety, twist_MOS(x_opt) + margin_of_safety, shear_MOS(x_opt) + margin_of_safety, abs(compressive_tensile_MOS(x_opt)) + margin_of_safety, stringer_column_MOS(x_opt) + margin_of_safety, constrained_objective(x_opt) + margin_of_safety)
 
     import graphing
-    graphing.compressive_strength_MOS_graph(designwingbox, showplot=False)
-    graphing.stringer_column_bucklin_MOS_graph(designwingbox, showplot=False)
-    graphing.compressive_strength_MOS_graph(designwingbox, showplot=False)
-    graphing.skin_buckling_MOS_plot(designwingbox, showplot=False)
-    graphing.spar_shear_MOS_plot(designwingbox)
+    graphing.plot_MOS_graph(designwingbox)
 
     
     

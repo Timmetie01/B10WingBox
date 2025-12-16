@@ -8,12 +8,25 @@ import area_moments
 
 #Using Mx*y/Ixx (but in different coordinate system). i.e. assuming Ixy=0 and only moment around X axis is present.
 def max_bending_stress(wingbox, y):
+    '''
+    Returns the worst normal stress at a certain cross-section using Mx*y/Ixx (but in different coordinate system). i.e. assuming Ixy=0 and only moment around X axis is present.
+    
+    :param wingbox: The input wingbox-class
+    :param y: The spanwise location
+    '''
     sigma_z = worst_case_loading.M(y, 'abs_min_bending') * np.array([wingbox.z_max_min(y)[0], wingbox.z_max_min(y)[1]]) / wingbox.Ixx(y)
     return sigma_z[0] if sigma_z[0] > -1 * sigma_z[1] else sigma_z[1]
 
 
 
 def shear_stress(wingbox, y):
+        '''
+        A function that calculates shear stress in each \'panel\' of the wingbox, using boom method and moment equivalence 
+        
+        :param wingbox: The wingbox to calculate shear flow on
+        :param y: span-wise position
+        :return q: a matrix with the shear flow following each panel, as in wingbox.panels
+        '''
         from classes import ScaledWingbox
         import constants
         from worst_cases import worst_case_loading
@@ -52,7 +65,7 @@ def shear_stress(wingbox, y):
 
         current_wingbox.shear = shear_b + qs0
 
-        #IT WORKS! The internal load sums back to the applied load with less than 0.5% error
+        #It works! The internal load sums back to the applied load with less than 0.5% error. To check, uncomment the following lines
         #print(f'Summed shear: {np.sum(current_wingbox.shear * np.transpose([current_wingbox.centroidal_panels[:,3] - current_wingbox.centroidal_panels[:,1]]))}')
         #print(f'Vy: {Vy}')
 
