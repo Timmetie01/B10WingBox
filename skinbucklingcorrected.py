@@ -78,12 +78,14 @@ plt.ylabel("Buckling Stress [MPa]")
 plt.show()
 '''
 
+'''
 def bending_sress_func(wingbox,y):
     return (worst_case_loading.M(y, 'abs_min_bending') + 1e-5)*get_max_panel_len(wingbox,y)[1]/ wingbox.Ixx(y)
-
+'''
  
 def margin_of_safety_skinbuckling(wingbox,y):
-    return crit_sigma_buckling(wingbox,y)*10**6/bending_sress_func(wingbox,y)
+    import stress_functions
+    return abs(crit_sigma_buckling(wingbox,y)*10**6/stress_functions.max_bending_stress(wingbox,y))
 
 '''
 marginofsafety_points = np.array([margin_of_safety_skinbuckling(design3_wingbox,y) for y in ypoints])
