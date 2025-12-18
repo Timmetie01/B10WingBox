@@ -7,17 +7,17 @@ from data_import import import_wingbox
 from constants import local_chord_at_span
 from constants import const
 
-if __name__ == "__main__":
-    wingbox = import_wingbox('test_cross_section')
-    y_span = np.linspace(0, const['span']/2, 200)
-    sigma_tensile = np.zeros_like(y_span)
-    sigma_compressive = np.zeros_like(y_span)
 
-    critical_sigma_z_tensile=const['Yield_stress'] # Pa
-    critical_sigma_z_compressive=-1 * const['Yield_stress'] # Pa
+wingbox = import_wingbox('test_cross_section')
+y_span = np.linspace(0, const['span']/2, 200)
+sigma_tensile = np.zeros_like(y_span)
+sigma_compressive = np.zeros_like(y_span)
 
-    data = np.loadtxt(r"data\test_cross_section\stringer_properties.txt", skiprows=1)
-    z_positions = data[:, 1] 
+critical_sigma_z_tensile=const['Yield_stress'] # Pa
+critical_sigma_z_compressive=-1 * const['Yield_stress'] # Pa
+
+data = np.loadtxt(r"data\test_cross_section\stringer_properties.txt", skiprows=1)
+z_positions = data[:, 1] 
 
 def bending_stress(wingbox, y):
     # Bending stress formula: sigma = M * z / Ixx
