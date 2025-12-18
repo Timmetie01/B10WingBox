@@ -184,3 +184,112 @@ def create_airfoil_like_wingbox(xstart, xend, thickness, thicknesstype, stringer
         quit()
 
     return classes.Wingbox(wingbox_points, thickness, stringer_points, stringer_areas, scaled_thickness=scaled_thickness, name=name)
+
+
+def idealizable_wingbox(xstart, xend, thickness, thicknesstype, stringercount, stringer_areas, stringerspacing='constant_no_endpoints', panels_per_stringer=5, web_panel_count=20, scaled_thickness=False, name=None):
+    """
+    Creates an airfoil which can be idealized by using the panel boom method
+    
+    :param xstart: The x/c location of the front spar
+    :param xend: The x/c location of the rear spar
+    :param thickness: Either constant thickness or [top, right, bottom left] array 
+    :param thicknesstype: \'constant\' when inputting constant thickness,  \'partially_constant\' when inputting [top, right, bottom left]
+    :param stringercount: The amount of stringers.  Will be rounded down to multiple of 2
+    :param stringer_areas: Either a single number or an array with thicknesses of each stringer
+    :param stringerspacing: \'constant_endpoints\':constant spacing including corners of wingbox (CURRENTLY NOT IMPLEMENTED), \'constant_no_endpoints\' gives constant spacing excluding the corners of the wingbox
+    :param panels_per_stringer: Amount of panels generated per stringer, recommended to keep below 10
+    :param web_panel_count: Amount of panels generated throughout the web
+    :param scaled_thickness: If True, thickness will be multiplied by chord length. If false, it will be constant along span
+    :param name: The name of the wingbox, can be used to title plots
+    :return wingbox: A wingbos-class that can use idealization!
+    """
+
+    import classes
+    import numbers
+    #Amount of panels in each spar, to accurately model shear
+    web_panel_count -= 1
+    stringercount = int((stringercount//2) * 2)
+    #Amount of panels between spars at the top or bottom
+    if stringerspacing == 'constant_endpoints':
+        flange_panel_count = int((stringercount//2 - 1) * panels_per_stringer + 1)
+    elif stringerspacing == 'constant_no_endpoints':
+        flange_panel_count = int((stringercount//2 + 1) * panels_per_stringer + 1)
+    else:
+        print('Choose available method of stringer spacing please!! (from data_import.create_airfoil_like_wingbox)')
+        quit()
+    
+    
+
+    wingbox_points = np.zeros((2 * web_panel_count + 2 * flange_panel_count, 2))
+    wingbox_xcoords = np.linspace(xstart, xend, flange_panel_count)
+
+    wingbox_points[0:flange_panel_count, 0], wingbox_points[:flange_panel_count, 1] = wingbox_xcoords, airfoil_interpolation(wingbox_xcoords, 'top')
+    wingbox_points[flange_panel_count:flange_panel_count + web_panel_count, 0], wingbox_points[flange_panel_count:flange_panel_count + web_panel_count, 1] = xend, np.linspace(airfoil_interpolation(xend, 'top'), airfoil_interpolation(xend, 'bottom'), web_panel_count + 2)[1:-1]
+    wingbox_points[flange_panel_count + web_panel_count:2 * flange_panel_count + web_panel_count, 0], wingbox_points[flange_panel_count + web_panel_count:2 * flange_panel_count + web_panel_count, 1] = np.flip(wingbox_xcoords), airfoil_interpolation(np.flip(wingbox_xcoords), 'bottom')
+    wingbox_points[2 * flange_panel_count + web_panel_count:, 0], wingbox_points[2 * flange_panel_count + web_panel_count:, 1] = xstart, np.linspace(airfoil_interpolation(xstart, 'bottom'), airfoil_interpolation(xstart, 'top'), web_panel_count + 2)[1:-1]
+
+    #Different types of stringer placements
+    #stringerspacing:'constant_endpoints' gives constant spacing including corners of wingbox
+    #'constant_no_endpoints' gives constant spacing excluding the corners of the wingbox
+    #if stringerspacing == 'constant_endpoints':
+    #    stringer_points = np.zeros((stringercount, 2))
+    #    stringer_xcoords = np.linspace(xstart, xend, stringercount//2)
+
+    #    stringer_points[:stringercount//2, 0], stringer_points[:stringercount//2, 1] = stringer_xcoords, airfoil_interpolation(stringer_xcoords, 'top')
+    #    stringer_points[stringercount//2:, 0], stringer_points[stringercount//2:, 1] = np.flip(stringer_xcoords), airfoil_interpolation(np.flip(stringer_xcoords), 'bottom')
+    if stringerspacing == 'constant_no_endpoints':
+        stringer_points = np.zeros((stringercount, 2))
+        stringer_xcoords = np.linspace(xstart, xend, stringercount//2 + 1, endpoint=False)[1:]
+
+        stringer_points[:stringercount//2, 0], stringer_points[:stringercount//2, 1] = stringer_xcoords, airfoil_interpolation(stringer_xcoords, 'top')
+        stringer_points[stringercount//2:, 0], stringer_points[stringercount//2:, 1] = np.flip(stringer_xcoords), airfoil_interpolation(np.flip(stringer_xcoords), 'bottom')
+    else:
+        print('Currently only \'constant no endpoints\' is the supported stringer spacing!')
+        quit()
+       
+
+    #For easy idealization, all stringer points should also be points in the wingbox skin. If not, throw an error.
+    for i in range(len(stringer_points)):
+        if np.round(stringer_points[i,:], 7) not in np.round(wingbox_points, 7):
+            print('Something went wrong in creating an idealizable airfoil.')
+            print(stringer_points[i,:])
+            quit()
+
+    #Either make array when input is a number or keep array when array is given and check if it has the right length
+    if isinstance(stringer_areas, numbers.Number):
+        stringer_areas = np.transpose(np.array([[stringer_areas] * stringercount]))
+    elif len(stringer_areas) != stringercount:
+        print('Stringer thickness should either be a single number, or an array with the length of the amount of stringers.')
+        quit() 
+
+    #The different ways of entering thickness:
+    #Thickness: constant number when thicknesstype = 'constant', 
+    #[top, right, bottom, left] array when  thicknesstype = 'partially_constant'
+    if thicknesstype == 'constant':
+        thickness = np.transpose(np.array([[thickness] * len(wingbox_points)]))
+    elif thicknesstype == 'partially_constant':
+        if len(thickness) != 4:
+            print('When using partially constant panel thicknesses, an array of length 4 must be provided!')
+            quit()
+        thickness_top = np.ones((len(wingbox_xcoords) - 1,1)) * thickness[0]
+        thickness_right = np.ones((web_panel_count + 1,1)) * thickness[1]
+        thickness_bottom = np.ones((len(wingbox_xcoords) - 1,1)) * thickness[2]
+        thickness_left = np.ones((web_panel_count + 1,1)) * thickness[3]
+        thickness = np.vstack((thickness_top, thickness_right, thickness_bottom, thickness_left))    
+    else:
+        print('Choose any of the available ways of entering thickness! (or define your own :D )')
+        quit()
+
+    return classes.Wingbox(wingbox_points, thickness, stringer_points, stringer_areas, scaled_thickness=scaled_thickness, idealizable=True, name=name)
+
+
+def list_to_string(lst):
+    '''A function that print out a nested list (2 layers) as a string'''
+    output = "["
+    for nested_list in lst:
+        output += "["
+        for item in nested_list:
+            output += str(item) + ", "
+        output = output[:-2] + "],"
+    return output[:-1] + "]"
+

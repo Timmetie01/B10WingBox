@@ -6,14 +6,29 @@ import data_import
 import deflection_functions
 import graphing
 import NVMdiagrams
+import stress_functions
 
 #Assuming constant thickness, iterate until the thickness is enough to overcome deflection and twist requirements
-def thickness_iteration(xstart, xend, stringercount, stringer_areas, thicknesstype='constant', spar_thickness = 0.005, stringerspacing='constant_endpoints', panelcount=50, scaled_thickness=False, name=None):
+def thickness_iteration(xstart, xend, stringercount, stringer_areas, thicknesstype='constant', spar_thickness = 0.005, stringerspacing='constant_no_endpoints', panelcount=50, scaled_thickness=False, name=None):
+    '''
+    The function used to iterate over thickness for the WP4 designs
+    
+    :param xstart: the chord fraction of the front spar
+    :param xend: The chord fraction of the rear spar
+    :param stringercount: The total amount of stringers found in the wingbox, will be rounded such that top and bottom have the same amount
+    :param stringer_areas: The surface area of each stringer
+    :param thicknesstype: Either \'constant\' for the same thickness on spar and skin. \'partially_constant\' when wanting set spar thickness and iterating over skin thickness.
+    :param spar_thickness: When thicknesstype == \'partially_constant\', the spar thickness can be given as a constant.
+    :param stringerspacing: Either
+    :param panelcount: Description \'constant_no_endpoints\' when not including the corners of the wingbox, or \'constant_endpoints\' when including those
+    :param scaled_thickness: True when the thickness must be linearly related to span. Defaults to False, i.e. constant skin and spar thickness along the span
+    :param name: Optional: the name of the wingbox, used for naming some graphs
+    '''
     deflection = 100
     twist = 100
     iteration_thickness = 0
     wingboxthickness=0
-
+    
     print('Iterating over thickness', end='')
 
     while deflection > const['span'] * const['max_deflection_fraction'] or abs(twist) > const['max_twist_degrees']:
@@ -53,6 +68,15 @@ def thickness_iteration(xstart, xend, stringercount, stringer_areas, thicknessty
 #design1_wingbox.weight()
 #graphing.bending_stress_plot(design1_wingbox)
 
+# print(design1_wingbox.panels)
+# print(design1_wingbox.panel_thickness)
+# graphing.airfoil_pointplot(showplot=False)
+# design1_wingbox.plot()
+# design1_wingbox.deflection_plot()
+# design1_wingbox.twist_plot()
+# design1_wingbox.I_plot()
+# design1_wingbox.weight()
+# graphing.bending_stress_plot(design1_wingbox)
 
 #Design 2
 #Thickness constant, stringer area constant
@@ -77,15 +101,18 @@ def thickness_iteration(xstart, xend, stringercount, stringer_areas, thicknessty
 #design3_wingbox, thickness3 = thickness_iteration(0.2, 0.6, stringercount=20, stringer_areas=1.8e-5, stringerspacing='constant_no_endpoints', panelcount=82, scaled_thickness=True, name='Preliminary Design Wingbox 3')
 #print(thickness3)
 
-#print(design3_wingbox.panels)
-#print(design3_wingbox.panel_thickness)
-#print(design3_wingbox.stringers)
-#print(design3_wingbox.stringer_area)
-#graphing.airfoil_pointplot(showplot=False)
-#design3_wingbox.plot()
-#design3_wingbox.deflection_plot()
-#design3_wingbox.twist_plot()
-#design3_wingbox.weight()
-#design3_wingbox.I_plot()
-#graphing.bending_stress_plot(design2_wingbox)
+# print(design3_wingbox.panels)
+# print(design3_wingbox.panel_thickness)
+# print(design3_wingbox.stringers)
+# print(design3_wingbox.stringer_area)
+# graphing.airfoil_pointplot(showplot=False)
+# design3_wingbox.plot()
+# design3_wingbox.deflection_plot()
+# design3_wingbox.twist_plot()
+# design3_wingbox.weight()
+# design3_wingbox.I_plot()
+# graphing.bending_stress_plot(design3_wingbox)
 
+# print(data_import.list_to_string(design3_wingbox.points))
+# print(data_import.list_to_string(design3_wingbox.panel_thickness))
+# print(data_import.list_to_string(design3_wingbox.stringers))
