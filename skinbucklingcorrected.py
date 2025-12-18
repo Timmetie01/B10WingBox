@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import constants
 import numpy as np
 from worst_cases import worst_case_loading
-from test import test_unscaled_rounded_wingbox, test_scaled_rounded_wingbox
+
 
 # Constants
 E = const['Modulus_of_Elasticity']
@@ -68,11 +68,13 @@ def k_c_det(wingbox):
 def crit_sigma_buckling(wingbox,y):
     return pi**2*k_c_det(wingbox)*E/(12*(1-v_poisson**2))*(thickness(wingbox,y)/get_max_panel_len(wingbox,y)[0])**2*10**(-6)
 
-print(f"The critical buckling at the root of the scaled wingbox is {crit_sigma_buckling(test_scaled_rounded_wingbox,0)}")
-print(f"The critical buckling at the tip of the scaled wing is {crit_sigma_buckling(test_scaled_rounded_wingbox,a)}")
+if __name__ == '__main__':
+    from test import test_unscaled_rounded_wingbox, test_scaled_rounded_wingbox
+    print(f"The critical buckling at the root of the scaled wingbox is {crit_sigma_buckling(test_scaled_rounded_wingbox,0)}")
+    print(f"The critical buckling at the tip of the scaled wing is {crit_sigma_buckling(test_scaled_rounded_wingbox,a)}")
 
-print(f"The critical buckling at the root of the unscaled wingbox is {crit_sigma_buckling(test_unscaled_rounded_wingbox,0)}")
-print(f"The critical buckling at the tip of the unscaled wing is {crit_sigma_buckling(test_unscaled_rounded_wingbox,a)}")
+    print(f"The critical buckling at the root of the unscaled wingbox is {crit_sigma_buckling(test_unscaled_rounded_wingbox,0)}")
+    print(f"The critical buckling at the tip of the unscaled wing is {crit_sigma_buckling(test_unscaled_rounded_wingbox,a)}")
 
 #Plotting (select wingbox)
 #ypoints = np.linspace(0.0, const['span']/2.0 ,100)
