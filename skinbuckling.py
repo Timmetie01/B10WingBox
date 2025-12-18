@@ -27,6 +27,7 @@ def get_panel_length(wingbox):
 
 toverb_list = []
 
+
 #change wingbox argument to specific wingbox
 for i in range(len(design3_wingbox.panels)):
     toverbratio = get_panel_t(design3_wingbox)[i][0]/get_panel_length(design3_wingbox)[i][0]

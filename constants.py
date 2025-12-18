@@ -23,7 +23,7 @@ const = {
     'flap_end_position': 4.423, # [m]
     'thickness_to_chord': 0.12, # [-]
 
-    'total_rib_count': 20, #[-]
+    'total_rib_count': 33, #[-]
 
     #Fuselage specs
     'fuselage_length': 15.85, # [m]

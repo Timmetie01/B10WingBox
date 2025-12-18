@@ -23,9 +23,12 @@ def min_stringer_buckling_stress(wingbox, y, printvalue=False):
 
     K = 4
     E = const['Modulus_of_Elasticity']
-    I = 4.15e-8
     #Assuming worst case
     A = np.min(local_wingbox.stringer_area)
+    #Assuming 2:1 height to width L stringer, and 1:10 t:L ratio
+    I = 120/81 * A ** 2
+    
+    
     L = const['span'] / const['total_rib_count']
 
     critical_buckling_stress = K * math.pi**2 * E * I / (A * L ** 2)

@@ -479,8 +479,6 @@ def MOS_rib_location_plot(showplot=True):
             plt.grid(axis='x', ls='--')
             plt.show()
 
-
-
 #Plots all MOS's along the span
 def plot_MOS_graph(wingbox):
     compressive_strength_MOS_graph(wingbox, showplot=False)
