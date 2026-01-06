@@ -490,4 +490,21 @@ def plot_MOS_graph(wingbox):
     skin_buckling_MOS_plot(wingbox, showplot=False)
     deflection_twist_MOS_plot(wingbox, showplot=False)
     MOS_rib_location_plot(showplot=False)
-    spar_shear_MOS_plot(wingbox, Npoints=135)
+    spar_shear_MOS_plot(wingbox, Npoints=135, showplot=False)
+
+    ax = plt.gca()
+    for line in ax.lines:
+        line.set_ydata(line.get_ydata() / 1.5)
+    ax.relim()
+    ax.autoscale_view()
+
+    plt.plot([0, const['span']/2], [1,1], color='black', label='Lower Limit')
+    plt.legend(fontsize=25)
+    plt.xlabel('Spanwise position (m)', fontsize=40)
+    plt.ylabel('Margin of Safety [-]', fontsize=40)
+    plt.xticks(fontsize=20)
+    plt.yticks(fontsize=20)
+    plt.ylim((-2, 15))
+    plt.grid(axis='y', ls='--')
+    plt.grid(axis='x', ls='--')
+    plt.show()
