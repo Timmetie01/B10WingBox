@@ -262,6 +262,9 @@ def shear_flow_plot(wingbox, y=0):
                 U_V[:, 0],     # u
                 U_V[:, 1],     # v 
                 width=0.002)
+    
+    plt.xlabel('Span')
+
     plt.show()
 
 #Plots the highest shear flow found at each point in the cross seactino
@@ -312,10 +315,11 @@ def spar_shear_MOS_plot(wingbox, Npoints=100, showplot=True):
         plt.plot(y_tab, MOS_buckle_tab, color='darkblue', label='Spar Shear Buckling')
         plt.plot(y_tab, MOS_maxshear_tab, color='darkgreen', label='Spar Max Shear Stress')
         plt.plot([0, const['span']/2], [1,1], color='black', label='Lower Limit')
-        plt.legend()
-        plt.xlabel('Spanwise position (m)')
-        plt.ylabel('Margin of Safety [-]')
-        plt.title('MOS from shear flow in spars along span')
+        plt.legend(fontsize=15)
+        plt.xlabel('Spanwise position (m)', fontsize=20)
+        plt.ylabel('Margin of Safety [-]', fontsize=20)
+        plt.xticks(fontsize=15)
+        plt.yticks(fontsize=15)
         plt.ylim((-2, 20))
         plt.grid(axis='y', ls='--')
         plt.grid(axis='x', ls='--')
