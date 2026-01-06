@@ -3,6 +3,7 @@ from constants import const
 import deflection_functions
 import constants
 import numpy as np
+import matplotlib
 
 #Give the wingbox class (and optionally the amount of points you want to plot)
 #Plots ixx, iyzz and ixz against the half-span
@@ -254,17 +255,23 @@ def shear_flow_plot(wingbox, y=0):
     Y = wingbox.panels[:,1]/2 + wingbox.panels[:,3]/2
     U_V = (wingbox.panels[:,2:] - wingbox.panels[:,:2]) @ np.array([[0,1],[-1,0]]) / wingbox.panel_length
     U_V = U_V * np.abs(wingbox.shear_flow(y))
+    C = ['darkblue' if x > 0 else 'firebrick' for x in wingbox.shear_flow(y)]
     wingbox_plot(wingbox, showplot=False)
-    plt.xlim((min(wingbox.points[:,0] - 0.1), max(wingbox.points[:,0] + 0.1)))
-    plt.ylim((min(wingbox.points[:,1] - 0.2), max(wingbox.points[:,1] + 0.2)))
+    plt.xlim((min(wingbox.points[:,0] - 0.15), max(wingbox.points[:,0] + 0.15)))
+    plt.ylim((min(wingbox.points[:,1] - 0.1), max(wingbox.points[:,1] + 0.1)))
     plt.quiver( X,     # x
                 Y,     # y
                 U_V[:, 0],     # u
                 U_V[:, 1],     # v 
+                color=C,
                 width=0.002)
     
-    plt.xlabel('Span')
-
+    red_patch = matplotlib.patches.Patch(color='darkblue', label='Clockwise shear flow')
+    blue_patch = matplotlib.patches.Patch(color='firebrick', label='Counter-clockwise shear flow')    
+    plt.legend(handles=[red_patch, blue_patch], fontsize=30)
+    plt.xticks(fontsize=30)
+    plt.yticks(fontsize=30)
+    plt.gca().set_aspect('equal')
     plt.show()
 
 #Plots the highest shear flow found at each point in the cross seactino
@@ -490,4 +497,21 @@ def plot_MOS_graph(wingbox):
     skin_buckling_MOS_plot(wingbox, showplot=False)
     deflection_twist_MOS_plot(wingbox, showplot=False)
     MOS_rib_location_plot(showplot=False)
-    spar_shear_MOS_plot(wingbox, Npoints=135)
+    spar_shear_MOS_plot(wingbox, Npoints=135, showplot=False)
+
+    ax = plt.gca()
+    for line in ax.lines:
+        line.set_ydata(line.get_ydata() / 1.5)
+    ax.relim()
+    ax.autoscale_view()
+
+    plt.plot([0, const['span']/2], [1,1], color='black', label='Lower Limit')
+    plt.legend(fontsize=15)
+    plt.xlabel('Spanwise position (m)', fontsize=20)
+    plt.ylabel('Margin of Safety [-]', fontsize=20)
+    plt.xticks(fontsize=15)
+    plt.yticks(fontsize=15)
+    plt.ylim((-2, 15))
+    plt.grid(axis='y', ls='--')
+    plt.grid(axis='x', ls='--')
+    plt.show()
