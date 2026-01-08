@@ -8,7 +8,8 @@ import graphing
 
 test_unscaled_rounded_wingbox = data_import.idealizable_wingbox(0.2, 0.6, [ 0.0029, 0.0039,  0.0029, 0.0039], 'partially_constant', 26, 3.7e-05, scaled_thickness=False)
 graphing.plot_MOS_graph(test_unscaled_rounded_wingbox)
-test_unscaled_rounded_wingbox.weight()
+#test_unscaled_rounded_wingbox.weight()
+#graphing.shear_flow_plot(test_unscaled_rounded_wingbox)
 
 
 
@@ -18,5 +19,5 @@ test_unscaled_rounded_wingbox.weight()
 
 test_scaled_rounded_wingbox = data_import.idealizable_wingbox(0.2, 0.6, [0.0009, 0.0013, 0.0009, 0.0013], 'partially_constant', 28, 3.4e-05, scaled_thickness=True)
 graphing.plot_MOS_graph(test_scaled_rounded_wingbox)
-test_scaled_rounded_wingbox.weight()
-
+#test_scaled_rounded_wingbox.weight()
+#graphing.shear_flow_plot(test_scaled_rounded_wingbox)
