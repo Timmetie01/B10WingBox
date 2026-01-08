@@ -24,6 +24,7 @@ const = {
     'thickness_to_chord': 0.12, # [-]
 
     'total_rib_count': 33, #[-]
+    'half_wing_rib_locations': [0, 0.7, 1.6, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 6, 7, 8, 17.59150919/2], #m
 
     #Fuselage specs
     'fuselage_length': 15.85, # [m]

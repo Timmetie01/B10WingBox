@@ -385,13 +385,13 @@ def compressive_strength_MOS_graph(wingbox, showplot=True, Npoints=500):
         plt.plot(y_span, np.abs(critical_sigma_z_compressive/(sigma_compressive + 1e-5)), label='Compressive stress')
      
 #Plots the Margin of Safety of column buckling alongthe span
-def stringer_column_bucklin_MOS_graph(wingbox, showplot=True, Npoints=500):
+def stringer_column_bucklin_MOS_graph(wingbox, showplot=True, rib_list=const['half_wing_rib_locations'], Npoints=500):
     import column_buckling
 
-    y_tab = np.linspace(0, const['span']/2, Npoints)
+    y_tab = np.linspace(0, const['span']/2-0.01, Npoints)
     MOS_tab = []
     for i in y_tab:
-        MOS_tab.append(column_buckling.stringer_buckling_MOS(wingbox, i))
+        MOS_tab.append(column_buckling.stringer_buckling_MOS(wingbox, i, rib_list))
 
     if showplot:
         plt.plot(y_tab, MOS_tab, color='darkblue', label='Stringer Column Buckling')
@@ -460,8 +460,8 @@ def skin_buckling_MOS_plot(wingbox, discrete_graph=False, showplot=True, Npoints
         else:
             plt.plot(y_tab, MOS_tab, label='Skin Buckling')
     
-def MOS_rib_location_plot(showplot=True):
-    rib_count = const['total_rib_count']    
+def MOS_rib_location_plot(showplot=True, rib_list=const['half_wing_rib_locations']):
+    """ rib_count = const['total_rib_count']    
     if rib_count % 2 == 1:
         y_tab = np.linspace(0, const['span']/2, (rib_count + 1) //2)
     else:
@@ -469,9 +469,10 @@ def MOS_rib_location_plot(showplot=True):
         y_tab = np.insert(y_tab[(len(y_tab))//2:], 0, 0)
 
     rib_locations = np.zeros((len(y_tab), 2))
-    rib_locations[:,0] = y_tab
+    rib_locations[:,0] = y_tab """
 
-    plt.plot(rib_locations[1:,0], rib_locations[1:,1], '|', label='Rib Locations', ms=20, color='black')
+    rib_locations = rib_list
+    plt.plot(rib_locations, np.zeros_like(rib_locations), '|', label='Rib Locations', ms=20, color='black')
 
     if showplot:
             plt.plot([0, const['span']/2], [1,1], color='firebrick')
@@ -484,12 +485,12 @@ def MOS_rib_location_plot(showplot=True):
             plt.show()
 
 #Plots all MOS's along the span
-def plot_MOS_graph(wingbox):
+def plot_MOS_graph(wingbox, rib_list=const['half_wing_rib_locations']):
     compressive_strength_MOS_graph(wingbox, showplot=False)
-    stringer_column_bucklin_MOS_graph(wingbox, showplot=False)
+    stringer_column_bucklin_MOS_graph(wingbox, rib_list=rib_list, showplot=False, )
     skin_buckling_MOS_plot(wingbox, showplot=False)
     deflection_twist_MOS_plot(wingbox, showplot=False)
-    MOS_rib_location_plot(showplot=False)
+    MOS_rib_location_plot(False, rib_list)
     spar_shear_MOS_plot(wingbox, Npoints=135, showplot=False)
 
     ax = plt.gca()
@@ -499,9 +500,9 @@ def plot_MOS_graph(wingbox):
     ax.autoscale_view()
 
     plt.plot([0, const['span']/2], [1,1], color='black', label='Lower Limit')
-    plt.legend(fontsize=25)
-    plt.xlabel('Spanwise position (m)', fontsize=40)
-    plt.ylabel('Margin of Safety [-]', fontsize=40)
+    plt.legend(fontsize=18)
+    plt.xlabel('Spanwise position (m)', fontsize=30)
+    plt.ylabel('Margin of Safety [-]', fontsize=30)
     plt.xticks(fontsize=20)
     plt.yticks(fontsize=20)
     plt.ylim((-2, 15))
