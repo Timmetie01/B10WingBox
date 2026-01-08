@@ -8,6 +8,12 @@ A large part of this code has been built around the Wingbox class. Entering a li
 Multiple different (automated) ways of entering these points are present in data_import.py, such as reading from txt or generating by iteration.
 When this class has been created, all properties can be called. For example wingbox.Ixx(y) gives the second moment of area at span-wise location y, wingbox.plot() plots the skin and stringers, wingbox.deflection_plot() plots the deflection of the wingbox as a function of span-wise location
 
+Final Designs:
+The final designs were created by taking all failure modes into account and using scipy.optimize.differential_evolution. In weight_optimizer.py this is done. Since this code can run for op to half an hour, the final designs were saved, rounded and put in final_designs.py. Here, any graphs (Such as MOS) of the final design can quickly be made.
+
+Failure Calculations:
+Many files (stress_functions, skinbucklingcorrected, deflection_functions, compressive_strength, area_moments, column_buckling) are used in calculating the different failure modes to design for all of them. These files consist of functions called by the optimizer to ensure all requirements are met. Running final_designs.py plots the margins of safety, and for that it uses all the stress and deflection functions mentioned above. They usually take the wingbox class and a span-wise position as input, see the docstrings and comments for more detail.
+
 Graphing:
 Many different graphing functions have been created that instantly create graphs for easy visualization. They typically take the wingbox as an argument, and produce the plot using the wingbox properties set above.
 Many graphing functions are also incorporated in the wingbox class and can be called by, for example, wingbox.I_plot()
